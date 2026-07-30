@@ -1,0 +1,22 @@
+{
+    "id": 13,
+    "name": "button1_text",
+    "label": "Button 1 Text",
+    "type": "text",
+    "config": null,
+    "rules": null,
+    "is_required": false,
+    "default_value": null,
+    "sort_order": 4,
+    "parent_id": 1,
+    "mode": null,
+    "min": null,
+    "max": null,
+    "collapsed": null,
+    "sortable": null,
+    "cloneable": null,
+    "layouts": null,
+    "type_id": null,
+    "created_at": "2026-07-26 14:36:55",
+    "updated_at": "2026-07-26 14:36:55"
+}

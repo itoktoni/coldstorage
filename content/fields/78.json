@@ -1,0 +1,22 @@
+{
+    "id": 78,
+    "name": "description",
+    "label": "Description",
+    "type": "textarea",
+    "config": null,
+    "rules": null,
+    "is_required": false,
+    "default_value": null,
+    "sort_order": 2,
+    "parent_id": 75,
+    "mode": "single",
+    "min": null,
+    "max": null,
+    "collapsed": null,
+    "sortable": null,
+    "cloneable": null,
+    "layouts": null,
+    "type_id": null,
+    "created_at": "2026-07-30T00:45:00.000000Z",
+    "updated_at": "2026-07-30T00:45:00.000000Z"
+}

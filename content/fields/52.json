@@ -1,0 +1,22 @@
+{
+    "id": 52,
+    "name": "button2_link",
+    "label": "Button 2 Link",
+    "type": "text",
+    "config": null,
+    "rules": null,
+    "is_required": false,
+    "default_value": null,
+    "sort_order": 5,
+    "parent_id": 7,
+    "mode": null,
+    "min": null,
+    "max": null,
+    "collapsed": null,
+    "sortable": null,
+    "cloneable": null,
+    "layouts": null,
+    "type_id": null,
+    "created_at": "2026-07-26 14:36:55",
+    "updated_at": "2026-07-26 14:36:55"
+}

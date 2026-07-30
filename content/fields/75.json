@@ -1,0 +1,22 @@
+{
+    "id": 75,
+    "name": "gallery",
+    "label": "Gallery Photos",
+    "type": "container",
+    "config": null,
+    "rules": null,
+    "is_required": false,
+    "default_value": null,
+    "sort_order": 0,
+    "parent_id": null,
+    "mode": "multiple",
+    "min": null,
+    "max": null,
+    "collapsed": null,
+    "sortable": true,
+    "cloneable": true,
+    "layouts": null,
+    "type_id": null,
+    "created_at": "2026-07-30T00:45:00.000000Z",
+    "updated_at": "2026-07-30T00:45:00.000000Z"
+}

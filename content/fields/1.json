@@ -1,0 +1,22 @@
+{
+    "id": 1,
+    "name": "hero",
+    "label": "Hero Slider",
+    "type": "container",
+    "config": null,
+    "rules": null,
+    "is_required": false,
+    "default_value": null,
+    "sort_order": 0,
+    "parent_id": null,
+    "mode": "multiple",
+    "min": null,
+    "max": null,
+    "collapsed": null,
+    "sortable": null,
+    "cloneable": null,
+    "layouts": null,
+    "type_id": null,
+    "created_at": "2026-07-26 14:36:55",
+    "updated_at": "2026-07-26 14:36:55"
+}

@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>ECM - PT. Elsyahfi Calibratech Mandiri</title>
+    <meta name="description" content="PT. Elsyahfi Calibratech Mandiri (ECM) adalah Institusi Pengujian Fasilitas Kesehatan (IPFK) di Sumatera Barat yang menyediakan layanan kalibrasi dan inspeksi alat kesehatan.">
+    <meta name="keywords" content="ECM, PT. Elsyahfi Calibratech Mandiri, Kalibrasi alat kesehatan, IPFK, Sumatera Barat, Payakumbuh">
+    <meta name="author" content="ECM">
+    <meta property="og:title" content="ECM - PT. Elsyahfi Calibratech Mandiri">
+    <meta property="og:description" content="Institusi Pengujian Fasilitas Kesehatan (IPFK) di Sumatera Barat - Kalibrasi dan Inspeksi Alat Kesehatan">
+    <meta property="og:image" content="https://ecm.co.id/assets/img/ecm.png">
+    <meta property="og:url" content="https://ecm.co.id">
+    <meta property="og:type" content="website">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed-dim": "#f9bd00",
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#becabf",
+                        "background": "#f7f9fb",
+                        "tertiary-fixed-dim": "#b9c7e0",
+                        "tertiary": "#455368",
+                        "surface-dim": "#d8dadc",
+                        "error": "#ba1a1a",
+                        "on-secondary-fixed": "#251a00",
+                        "surface-container": "#eceef0",
+                        "on-surface": "#191c1e",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-tertiary-fixed-variant": "#3a485c",
+                        "primary-fixed-dim": "#79daa4",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "secondary": "#785a00",
+                        "secondary-fixed": "#ffdf9d",
+                        "outline": "#6e7a71",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#007a4d",
+                        "surface": "#f7f9fb",
+                        "on-primary-fixed-variant": "#005232",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-container": "#fdc008",
+                        "on-background": "#191c1e",
+                        "primary": "#005f3b",
+                        "on-tertiary-container": "#e2ecff",
+                        "surface-tint": "#006d44",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#6c5000",
+                        "on-primary": "#ffffff",
+                        "primary-fixed": "#95f6bf",
+                        "on-tertiary-fixed": "#0d1c2f",
+                        "inverse-primary": "#79daa4",
+                        "tertiary-container": "#5d6b81",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-low": "#f2f4f6",
+                        "tertiary-fixed": "#d5e3fd",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-primary-fixed": "#002111",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-container": "#a2ffc9",
+                        "on-surface-variant": "#3e4942",
+                        "inverse-surface": "#2d3133"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "gutter": "1.5rem",
+                        "section-gap": "4rem",
+                        "element-gap": "1rem",
+                        "container-padding": "2rem"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Manrope"],
+                        "headline-xl": ["Manrope"],
+                        "label-sm": ["Hanken Grotesk"],
+                        "headline-lg": ["Manrope"],
+                        "body-lg": ["Hanken Grotesk"],
+                        "body-md": ["Hanken Grotesk"],
+                        "label-md": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "1.3", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "headline-xl": ["48px", { "lineHeight": "1.1", "letterSpacing": "0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "0.015em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .emerald-gradient {
+            background: linear-gradient(135deg, #005f3b 0%, #007a4d 100%);
+        }
+
+        .gold-shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255, 194, 14, 0.1), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 3s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Hero Slider */
+        .hero-main-slider { position: relative; overflow: hidden; height: 100vh; }
+        .hero-main-slider .hs-track { display: flex; transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94); height: 100vh; }
+        .hero-main-slider .hs-slide { min-width: 100%; height: 100vh; position: relative; display: flex; align-items: center; }
+        .hero-main-slider .hs-slide img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-main-slider .hs-arrow {
+            position: absolute; top: 100px; z-index: 20;
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255,255,255,0.9); border: none;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .hero-main-slider .hs-arrow:hover { background: #005f3b; color: #fff; }
+        .hero-main-slider .hs-arrow:hover .material-symbols-outlined { color: #fff; }
+        .hero-main-slider .hs-arrow.hs-prev { right: 80px; }
+        .hero-main-slider .hs-arrow.hs-next { right: 24px; }
+        .hero-main-slider .hs-dots { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; gap: 10px; }
+        .hero-main-slider .hs-dot {
+            width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5);
+            border: 2px solid rgba(255,255,255,0.7); cursor: pointer; transition: all 0.3s;
+        }
+        .hero-main-slider .hs-dot.active { background: #fdc008; border-color: #fdc008; width: 30px; border-radius: 6px; }
+        .hero-main-slider .hs-content { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s; }
+        .hero-main-slider .hs-slide.active .hs-content { opacity: 1; transform: translateY(0); }
+
+        /* Client Slider */
+        .client-slid { position: relative; overflow: hidden; padding: 8px 0; }
+        .client-slid .cl-track { display: flex; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); }
+        .client-slid .cl-item { min-width: 20%; display: flex; justify-content: center; align-items: center; padding: 16px; box-sizing: border-box; }
+        .client-slid .cl-item .cl-card {
+            width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 24px; border: 1px solid #becabf33; border-radius: 12px; background: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+        }
+        .client-slid .cl-item .cl-card:hover { border-color: #005f3b33; background: #fff; transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .client-slid .cl-btn {
+            position: absolute; top: 50%; transform: translateY(-50%); z-index: 10;
+            width: 38px; height: 38px; border-radius: 50%;
+            background: #fff; border: 1px solid #becabf; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.25s; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .client-slid .cl-btn:hover { background: #005f3b; color: #fff; border-color: #005f3b; }
+        .client-slid .cl-btn:hover .material-symbols-outlined { color: #fff; }
+        .client-slid .cl-btn.cl-prev { left: 4px; }
+        .client-slid .cl-btn.cl-next { right: 4px; }
+        .cl-dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+        .cl-dot { width: 8px; height: 8px; border-radius: 50%; background: #becabf; cursor: pointer; transition: all 0.3s; }
+        .cl-dot.active { background: #005f3b; width: 24px; border-radius: 4px; }
+        @media (max-width: 640px) {
+            .client-slid .cl-item { min-width: 100%; }
+        }
+
+        /* Competency Slider */
+        .cmp-slid { position: relative; }
+        .cmp-slid .cmp-track { display: flex; transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94); gap: 24px; }
+        .cmp-slid .cmp-item { min-width: calc(33.333% - 16px); flex-shrink: 0; overflow: visible; }
+        .cmp-nav { display: flex; align-items: center; gap: 10px; }
+        .cmp-nav .cmp-btn {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: #fff; border: 1px solid #becabf; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        .cmp-nav .cmp-btn:hover { background: #005f3b; color: #fff; border-color: #005f3b; }
+        .cmp-nav .cmp-btn:hover .material-symbols-outlined { color: #fff; }
+        .cmp-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+        .cmp-dot { width: 8px; height: 8px; border-radius: 50%; background: #becabf; cursor: pointer; transition: all 0.3s; }
+        .cmp-dot.active { background: #005f3b; width: 24px; border-radius: 4px; }
+        @media (max-width: 1024px) {
+            .cmp-slid .cmp-item { min-width: calc(50% - 12px); }
+        }
+        @media (max-width: 640px) {
+            .cmp-slid .cmp-item { min-width: 100%; }
+        }
+
+        .clip-path-slant { clip-path: polygon(25% 0%, 100% 0%, 100% 100%, 0% 100%); }
+</style>
+</head>
+
+<body class="bg-background text-on-surface font-body-md selection:bg-secondary-container/30">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 shadow-sm transition-all duration-300"
+        id="main-nav">
+        <div class="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <img alt="ECM Logo" class="h-10 w-auto"
+                    src="https://ecm.co.id/assets/img/ecm.png" />
+                <span class="font-headline-md text-headline-md font-bold text-primary hidden">ECM</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a class="font-label-md text-label-md text-secondary border-b-2 border-secondary pb-1 hover:text-primary transition-colors duration-300"
+                    href="#">Home</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="why-us.html">Mengapa Kami</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="profile.html">Profil</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="#services">Pelayanan</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="#sertifikat">Sertifikat</a>
+                <a class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors duration-300"
+                    href="#contact">Hubungi Kami</a>
+            </div>
+            <div class="flex items-center gap-6">
+                <button
+                    class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">search</button>
+                <button
+                    class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all">Order
+                    Sekarang</button>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <!-- Hero Section Fullscreen Slider -->
+        <div class="hero-main-slider">
+            <div class="hs-track">
+                <!-- Slide 1 -->
+                <div class="hs-slide active">
+                    <div class="absolute inset-0 z-0">
+                        <img data-alt="Kalibrasi Alat Kesehatan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf-aS9V131adgmumVvTDQz-d_eJhhSPp7f73U69OguQA45zdhMhEYowf0HZr5X4XzvVICkyk1Pp5KisTlfFUP84ybja4ftXS99i_kluPea2e18hNENoubFMkb9muSJGKfJ2MWaG0eQrx5HCEk4TDa5aBEG_Z5z24orCECqt_v7hrx3Z3CtUDGgDt7IQt1UmOUFfr0e1SN_0DT-yi51sxdxftPBc-tlzoEA7H9vTTNJnYtPUgZyyNGMNzWHUp5ITOrpQ4ArUi-NIny7" />
+                        <div class="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent z-10"></div>
+                    </div>
+                    <div class="relative z-20 max-w-7xl mx-auto px-4 md:px-8 w-full">
+                        <div class="hs-content max-w-2xl glass-card p-6 md:p-12 rounded-xl">
+                            <span class="font-label-md text-primary tracking-[0.2em] uppercase mb-4 block">Institusi IPFK Terakreditasi</span>
+                            <h1 class="font-headline-xl text-headline-xl text-on-surface mb-6 leading-tight">Ketelitian dalam <span class="text-primary">Setiap Pengukuran</span></h1>
+                            <p class="font-body-lg text-body-lg text-on-surface-variant mb-10">Menjamin ketelitian dan keamanan melalui kalibrasi dan verifikasi teknis alat kesehatan sesuai standar nasional dan internasional.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <button class="bg-primary text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg flex items-center gap-2 hover:shadow-lg transition-all group">Order Sekarang <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span></button>
+                                <button class="border border-outline px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg hover:bg-surface-container transition-all">Layanan Kami</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="hs-slide">
+                    <div class="absolute inset-0 z-0">
+                        <img data-alt="Inspeksi Alat Kesehatan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiT2ICMT31yHvNTlw3DoKD-EtcQ8QSParinKwYZsDYy7LJyDVzi0SQbN-KuVBYsHG4RRuo68xFNAv-WMZM6mO33uvNUwOPMx_P3Wb9r8__3dXheQyf4626kp12aCig05lNhjbfJR97GoBSojdEpysX03xzIgBcDv7jyPuN_Fx_93m98JjfMU1zrXb2PhsftTvPbTOBj5q3WcJA2oiPAkXDwUCyEvl5UBjNdOGNIQOdqtd3tE-5LMoqameG9Xr2YzI4AdUulHQqYDj1" />
+                        <div class="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent z-10"></div>
+                    </div>
+                    <div class="relative z-20 max-w-7xl mx-auto px-4 md:px-8 w-full">
+                        <div class="hs-content max-w-2xl glass-card p-6 md:p-12 rounded-xl">
+                            <span class="font-label-md text-primary tracking-[0.2em] uppercase mb-4 block">Inspeksi Preventive</span>
+                            <h1 class="font-headline-xl text-headline-xl text-on-surface mb-6 leading-tight">Pencegahan Sejak <span class="text-primary">Dini</span></h1>
+                            <p class="font-body-lg text-body-lg text-on-surface-variant mb-10">Pemeriksaan berkala untuk memastikan alat kesehatan berfungsi optimal dan memenuhi standar keselamatan yang berlaku.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <button class="bg-primary text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg flex items-center gap-2 hover:shadow-lg transition-all group">Jadwalkan Inspeksi <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span></button>
+                                <button class="border border-outline px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg hover:bg-surface-container transition-all">Pelajari Lebih Lanjut</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 3 -->
+                <div class="hs-slide">
+                    <div class="absolute inset-0 z-0">
+                        <img data-alt="Verifikasi Sertifikat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfBzaN7GVPg5R1-N15vIiN7ALsjLuEiE0ciwhNuFrUwfLQQqznUs4D_vCdCJTL9FVqewA1EJG1k0gorTBJLLtdmxDlRkkurIgnIX9b4WqdsXFXvOsYbTYs_xHfQr9_rPet5toxmK-SV_AVjzJSBm-bVxypkZ8pDuIov7B-nn600nIkjK8ff_QkpNDV4YcvN_pZRo16yrmd0IcUyyDS64XiskopusEofGaKcle-Ky00zuP5tAwFAPXtfpPaKfc1PfaLmtTNIc58Extu" />
+                        <div class="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent z-10"></div>
+                    </div>
+                    <div class="relative z-20 max-w-7xl mx-auto px-4 md:px-8 w-full">
+                        <div class="hs-content max-w-2xl glass-card p-6 md:p-12 rounded-xl">
+                            <span class="font-label-md text-primary tracking-[0.2em] uppercase mb-4 block">Verifikasi Sertifikat</span>
+                            <h1 class="font-headline-xl text-headline-xl text-on-surface mb-6 leading-tight">Kapan Saja, <span class="text-primary">Di Saja</span></h1>
+                            <p class="font-body-lg text-body-lg text-on-surface-variant mb-10">Pastikan keaslian sertifikat kalibrasi Anda melalui database akreditasi kami yang terintegrasi dan terpercaya.</p>
+                            <div class="flex flex-wrap gap-4">
+                                <button class="bg-primary text-on-primary px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg flex items-center gap-2 hover:shadow-lg transition-all group">Verifikasi Sekarang <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span></button>
+                                <button class="border border-outline px-6 md:px-8 py-3 md:py-4 rounded-lg font-label-md text-base md:text-lg hover:bg-surface-container transition-all">Lihat Sertifikat</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="hs-arrow hs-prev" aria-label="Prev"><span class="material-symbols-outlined text-on-surface">chevron_left</span></button>
+            <button class="hs-arrow hs-next" aria-label="Next"><span class="material-symbols-outlined text-on-surface">chevron_right</span></button>
+            <div class="hs-dots">
+                <span class="hs-dot active" data-slide="0"></span>
+                <span class="hs-dot" data-slide="1"></span>
+                <span class="hs-dot" data-slide="2"></span>
+            </div>
+        </div>
+        <!-- Certifications Section -->
+        <section class="py-24 bg-surface-container-low">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="text-center mb-16">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Standar Kualitas Kami</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- KAN Card -->
+                    <div
+                        class="glass-card p-8 rounded-xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute inset-0 gold-shimmer opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div class="w-24 h-24 mb-6 relative">
+                            <img class="w-full h-full object-contain" data-alt="Official high-resolution KAN logo"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAni7KlIuMfqfnEQ_xYG7xGURljqIBBhN1LZSLAetRSJWwY9fTZm2sjPZQcrynMPEjeJhf9PxYdTlcZfLo9BS0W5QTKEh4hprmUOag6MxXdivQL6qpl-ayH0Y_wSQNUizWjUNeR836PhR1DOnv3Ep0UAG61AQ1QA9_h_ZGhkgJ8cwZBjpv_DoeR8S6BzTwE6GxYlPdte8fRkoU6aS7W6F89XcG_4WfUA67cyD4HSp5Wqk8s3xtNDgcqsZzeb3_wIPV7iw3R5vOF5Vq5" />
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">KAN LK-XXX-IDN</h3>
+                        <p class="text-on-surface-variant font-body-md">Akreditasi nasional untuk institusi pengujian
+                            fasilitas kesehatan sesuai standar nasional dan internasional.</p>
+                        <div class="mt-6 text-secondary-container flex items-center gap-2 font-label-md">
+                            Verify Details <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        </div>
+                    </div>
+                    <!-- ISO 17025 Card -->
+                    <div
+                        class="glass-card p-8 rounded-xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute inset-0 gold-shimmer opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div class="w-24 h-24 mb-6">
+                            <img class="w-full h-full object-contain"
+                                data-alt="International ISO 17025 certification mark"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHXcQ4pYaxFlXnw4afuReAYyYozJTtqq1_xu7PIXXwz3jmwNQb8iFN1kpLHG_1XQL__NYC5-X5TOwNUMARBpCRByGF41PqvqkctH66qWwAqXtle339tKsYTEQIl-1GgN-3ABOFxeS4wQbxcm2mDmewwc6u31v9OLjgpnESB-mTu4kfD6t2MZ7U27kW4vNzsR6bMi0XYY-LJoF9z3pLH5LUd4ml7ya1b-snpleH-4RfKchIaPcnQ6MR5rHrC5AwarmqN0DP3ElTrma6" />
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">IPFK Berstandar</h3>
+                        <p class="text-on-surface-variant font-body-md">Standar kompetensi lembaga pengujian fasilitas
+                            kesehatan untuk memastikan ketelitian teknis dan mutu layanan.</p>
+                        <div class="mt-6 text-secondary-container flex items-center gap-2 font-label-md">
+                            Verify Details <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        </div>
+                    </div>
+                    <!-- Quality Assurance Card -->
+                    <div
+                        class="glass-card p-8 rounded-xl flex flex-col items-center text-center group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                        <div class="absolute inset-0 gold-shimmer opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div class="w-24 h-24 mb-6">
+                            <img class="w-full h-full object-contain" data-alt="Modern quality assurance seal"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpZmIBi2QvqRC46sGLZQP7BvqUcnWA_XbRqAONaeGEjT967DViGQ2s_kA2ZXKn_Bl0x6f9R7aoB0MH1LmaIkPepUH4iMGyFaMOy0DQyh0Tas5zKY3bwRga6GpRcZCryfwP3N993SsgQHc-iiDBP0Sr8jOhBNlVimtzXvZxzRM-cxDeEBSD9gV4hysMhutAZWwlerM01lWFkBgCaCJ4VtojG6eUT9ZMytCPaCocpgs4rQ9hvLhMpnkdjiX7g_M8HOiAYRUQiH-cCmJM" />
+                        </div>
+                        <h3 class="font-headline-md text-headline-md mb-2">Ketelitian Tinggi</h3>
+                        <p class="text-on-surface-variant font-body-md">Ketelitian mutlak melalui standar yang
+                            tertraceability untuk setiap alat yang dikalibrasi.</p>
+                        <div class="mt-6 text-secondary-container flex items-center gap-2 font-label-md">
+                            Verify Details <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Verification Tool (Command Center) - REDESIGNED -->
+        <section class="py-24 bg-[#007A4D] relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div
+                    class="absolute top-0 right-0 w-96 h-96 bg-secondary-container rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2">
+                </div>
+                <div
+                    class="absolute bottom-0 left-0 w-96 h-96 bg-secondary-container rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2">
+                </div>
+            </div>
+            <div class="max-w-4xl mx-auto px-8 relative z-10">
+                <div class="text-center mb-12">
+                    <span
+                        class="font-label-md text-secondary-container tracking-widest uppercase block mb-2">Otoritas
+                        Sertifikat</span>
+                    <h2 class="font-headline-lg text-headline-lg text-white">Portal Verifikasi Sertifikat</h2>
+                    <p class="text-white/80 mt-4 max-w-lg mx-auto">Verifikasi keaslian sertifikat kalibrasi alat kesehatan
+                        Anda menggunakan database akreditasi kami yang terintegrasi.</p>
+                </div>
+                <div class="glass-dark p-2 rounded-2xl flex flex-col md:flex-row items-stretch gap-2 border-white/20">
+                    <div class="flex-grow flex items-center px-6 py-4 gap-4">
+                        <span class="material-symbols-outlined text-secondary-container text-3xl">qr_code_scanner</span>
+                        <input
+                            class="w-full bg-transparent border-none text-white focus:ring-0 text-lg placeholder:text-white/40"
+                            placeholder="Masukkan Nomor Sertifikat (contoh: ECM-2024-XXXX)" type="text" />
+                    </div>
+                    <button
+                        class="bg-secondary-container text-on-secondary-container px-10 py-4 rounded-xl font-headline-md flex items-center justify-center gap-3 hover:bg-secondary-fixed-dim transition-all shadow-lg shadow-black/10">
+                        Verifikasi Sekarang
+                    </button>
+                </div>
+                <div class="flex justify-center gap-8 mt-10">
+                    <div class="flex items-center gap-2 text-white/70 text-label-sm">
+                        <span class="material-symbols-outlined text-sm text-secondary-container">verified_user</span>
+                        256-bit Encrypted
+                    </div>
+                    <div class="flex items-center gap-2 text-white/70 text-label-sm">
+                        <span class="material-symbols-outlined text-sm text-secondary-container">history</span>
+                        Real-time Logs
+                    </div>
+                    <div class="flex items-center gap-2 text-white/70 text-label-sm">
+                        <span class="material-symbols-outlined text-sm text-secondary-container">account_balance</span>
+                        Terakreditasi KAN
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Clinical Solutions Ecosystem -->
+        <section class="py-24 bg-surface-container-low">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div class="max-w-2xl">
+                        <div class="w-12 h-1 bg-secondary-container mb-6"></div>
+                        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Pelayanan Kami</h2>
+                        <p class="text-on-surface-variant text-body-lg">Solusi teknis terdepan untuk fasilitas kesehatan modern, memastikan setiap alat diagnostik beroperasi dalam batas presisi yang ketat.</p>
+                    </div>
+                    <a class="text-primary font-label-md font-bold inline-flex items-center gap-2 hover:gap-3 transition-all shrink-0" href="#">Semua Layanan <span class="material-symbols-outlined">arrow_right_alt</span></a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-white rounded-xl p-8 border border-outline-variant/30 hover:shadow-xl transition-all group">
+                        <div class="w-14 h-14 bg-surface-container-low text-primary flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-[32px]">monitor_heart</span>
+                        </div>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Kalibrasi Alat Kesehatan</h3>
+                        <p class="text-on-surface-variant text-[15px] mb-6 leading-relaxed">Pengukuran dan penyesuaian ketelitian alat kesehatan sesuai standar nasional dan internasional.</p>
+                        <div class="h-px bg-outline-variant/30 mb-6"></div>
+                        <ul class="space-y-3 font-body-md text-[13px] text-outline">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Alat Monitoring Vital Signs</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Alat Lab &amp; Diagnostik</li>
+                        </ul>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="bg-white rounded-xl p-8 border border-outline-variant/30 hover:shadow-xl transition-all group">
+                        <div class="w-14 h-14 bg-surface-container-low text-primary flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-[32px]">radiology</span>
+                        </div>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Inspeksi Preventive</h3>
+                        <p class="text-on-surface-variant text-[15px] mb-6 leading-relaxed">Pemeriksaan berkala untuk memastikan alat kesehatan berfungsi optimal dan aman digunakan.</p>
+                        <div class="h-px bg-outline-variant/30 mb-6"></div>
+                        <ul class="space-y-3 font-body-md text-[13px] text-outline">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Pemeriksaan Fungsional</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Uji Keselamatan Alat</li>
+                        </ul>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="bg-white rounded-xl p-8 border border-outline-variant/30 hover:shadow-xl transition-all group">
+                        <div class="w-14 h-14 bg-surface-container-low text-primary flex items-center justify-center rounded-lg mb-6 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+                            <span class="material-symbols-outlined text-[32px]">medical_services</span>
+                        </div>
+                        <h3 class="font-headline-md text-headline-md text-on-surface mb-4">Konsultasi Teknis</h3>
+                        <p class="text-on-surface-variant text-[15px] mb-6 leading-relaxed">Bimbingan ahli untuk pengelolaan dan pemeliharaan alat kesehatan di fasilitas Anda.</p>
+                        <div class="h-px bg-outline-variant/30 mb-6"></div>
+                        <ul class="space-y-3 font-body-md text-[13px] text-outline">
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Rencana Pemeliharaan</li>
+                            <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 bg-secondary-container rounded-full"></span> Dokumentasi &amp; Sertifikat</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Services Section -->
+        <section class="py-32 bg-background">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+                    <div class="max-w-2xl">
+                        <h2 class="font-headline-lg text-headline-lg text-on-surface mb-4">Keunggulan <span class="text-primary italic">Teknis Kami</span></h2>
+                        <p class="text-on-surface-variant text-body-lg">Lebih dari sekadar kalibrasi, kami menyediakan jaminan teknis menyeluruh untuk lingkungan medis paling kritis.</p>
+                    </div>
+                    <div class="cmp-nav shrink-0">
+                        <button class="cmp-btn cmp-prev" aria-label="Prev"><span class="material-symbols-outlined text-on-surface">chevron_left</span></button>
+                        <button class="cmp-btn cmp-next" aria-label="Next"><span class="material-symbols-outlined text-on-surface">chevron_right</span></button>
+                    </div>
+                </div>
+                <div class="cmp-slid">
+                    <div style="overflow:hidden;">
+                    <div class="cmp-track">
+                        <!-- Service 1 -->
+                        <div class="cmp-item">
+                            <div class="group rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div class="h-48 overflow-hidden relative">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        data-alt="Technician calibrating a digital infusion pump"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiT2ICMT31yHvNTlw3DoKD-EtcQ8QSParinKwYZsDYy7LJyDVzi0SQbN-KuVBYsHG4RRuo68xFNAv-WMZM6mO33uvNUwOPMx_P3Wb9r8__3dXheQyf4626kp12aCig05lNhjbfJR97GoBSojdEpysX03xzIgBcDv7jyPuN_Fx_93m98JjfMU1zrXb2PhsftTvPbTOBj5q3WcJA2oiPAkXDwUCyEvl5UBjNdOGNIQOdqtd3tE-5LMoqameG9Xr2YzI4AdUulHQqYDj1" />
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+                                        </div>
+                                        <h4 class="font-headline-md text-headline-md group-hover:text-primary transition-colors">Peralatan Diagnostik</h4>
+                                    </div>
+                                    <p class="text-on-surface-variant text-sm">Kalibrasi menyeluruh untuk radiologi, ultrasonografi, dan sistem monitoring hemodinamik.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Service 2 -->
+                        <div class="cmp-item">
+                            <div class="group rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div class="h-48 overflow-hidden relative">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        data-alt="Anesthetic workstation"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_MQvVMWqA2WzHZCaT40MEuZHXZF_IUxQ0SIi_gXQ7UzrSiMtC735KEtlU5AS0VNjivAyTU_YxthvLqC83-CazK5HfEWuJk4EW_8WTNXVTxzc07SRUj91e_qSd1rJmw6VGSw4DjEUBZRsZKPk_vT80-jBIG2LCcePYwNm3aN3f6QDRwfdg_Zge3cfHUFGd0UKcXnwemIY4RhQiR3-rJtjdHTzaeFO2wLR7FFMqLBn4eIMbPGjjc9tUHF5LuGnsDJpHOGedPhl2CVoP" />
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">vital_signs</span>
+                                        </div>
+                                        <h4 class="font-headline-md text-headline-md group-hover:text-primary transition-colors">Sistem Life Support</h4>
+                                    </div>
+                                    <p class="text-on-surface-variant text-sm">Verifikasi kritis untuk ventilator, mesin anestesi, dan unit life support jantung.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Service 3 -->
+                        <div class="cmp-item">
+                            <div class="group rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div class="h-48 overflow-hidden relative">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        data-alt="Automated clinical laboratory"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfBzaN7GVPg5R1-N15vIiN7ALsjLuEiE0ciwhNuFrUwfLQQqznUs4D_vCdCJTL9FVqewA1EJG1k0gorTBJLLtdmxDlRkkurIgnIX9b4WqdsXFXvOsYbTYs_xHfQr9_rPet5toxmK-SV_AVjzJSBm-bVxypkZ8pDuIov7B-nn600nIkjK8ff_QkpNDV4YcvN_pZRo16yrmd0IcUyyDS64XiskopusEofGaKcle-Ky00zuP5tAwFAPXtfpPaKfc1PfaLmtTNIc58Extu" />
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">biotech</span>
+                                        </div>
+                                        <h4 class="font-headline-md text-headline-md group-hover:text-primary transition-colors">Analisis Laboratorium</h4>
+                                    </div>
+                                    <p class="text-on-surface-variant text-sm">Traceability metrologis untuk analyzer otomatis, pipet, dan spektrofotometer.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Service 4 -->
+                        <div class="cmp-item">
+                            <div class="group rounded-2xl overflow-hidden bg-white shadow-sm border border-outline-variant/30 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                                <div class="h-48 overflow-hidden relative">
+                                    <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        data-alt="Surgical laser device"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW9kZzAbRGg-YAIHL2H8MRy2IKQSuT0ffZIMZsC8AHNsI1N5JBSnbGy0U4Xm5KQYZmzwWQQM_lV9zEiqbuuFbZGFlH_0UTEJXvb3ieqnLn4xVAHyceQYfjnJmpMabseKnc3ik7D1JF8HOUzSB1gstQdK820_nh4KVkJxVLyRbyAyG8DD1MN_WFqu_YmJbtCAx0hnyAXmwCr2bE4SsBFc-w8F1KEFJe8vHOnJCTaHeP-kCcmCsLDKcNFH3IC8IQnJ23pabmUN4heBOp" />
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex items-center gap-3 mb-3">
+                                        <div class="w-10 h-10 rounded-lg bg-primary-container/10 flex items-center justify-center shrink-0">
+                                            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+                                        </div>
+                                        <h4 class="font-headline-md text-headline-md group-hover:text-primary transition-colors">Instrumen Bedah</h4>
+                                    </div>
+                                    <p class="text-on-surface-variant text-sm">Pengujian presisi untuk laser bedah, unit elektrokauter, dan asisten robotik.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                <div class="cmp-dots">
+                    <span class="cmp-dot active" data-group="0"></span>
+                    <span class="cmp-dot" data-group="1"></span>
+                </div>
+            </div>
+        </section>
+        <!-- Industry Insights (Bento Grid) -->
+        <section class="py-24 bg-surface-container-highest">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="flex items-center gap-4 mb-12">
+                    <div class="h-px bg-outline-variant flex-grow"></div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface shrink-0 px-4">Berita &amp; Informasi
+                    </h2>
+                    <div class="h-px bg-outline-variant flex-grow"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+                    <!-- Main Feature -->
+                    <div class="md:col-span-7 h-full relative group rounded-2xl overflow-hidden shadow-xl">
+                        <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                            data-alt="Senior medical director reviewing data"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd8xKBdkjsLHWibHkNIx5Nn4N8Z-446sgDnskdWs7Rbio7ON1Zjmf1qg0xtT9v5g48WtqcAkljp642B287Sk0xjGOpqa7Zs1rD89wSum2TB0uMrzJKqt_Vd-gVdSSDHa5dLQGz9ecLgIRGTXFRALl0fEUilDx8phdo6z9fC6Z-_w3K1oDO0uFsG8lIdeohBqvI3FzuJyOJqpaFCkOdLibJR0guo1MSJuWIK7OYzoz96j3ra0ydC_cwaJYEWn2HZqJp83MWZnuigdZ1" />
+                        <div
+                            class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/40 to-transparent p-12 flex flex-col justify-end">
+                            <span class="font-label-md text-secondary-fixed-dim mb-4">ARTIKEL • 2024</span>
+                            <h3 class="font-headline-xl text-headline-xl text-white mb-6">Kalibrasi Alat Kesehatan:
+                                Panduan Lengkap untuk Fasilitas Kesehatan</h3>
+                            <button
+                                class="text-white flex items-center gap-2 font-label-md hover:translate-x-2 transition-transform w-fit">
+                                Baca Selengkapnya <span class="material-symbols-outlined">north_east</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Side Grid -->
+                    <div class="md:col-span-5 grid grid-rows-2 gap-6 h-full">
+                        <div
+                            class="bg-primary p-10 rounded-2xl text-on-primary flex flex-col justify-between group cursor-pointer hover:shadow-2xl transition-all border border-primary-container">
+                            <div>
+                                <span
+                                    class="material-symbols-outlined text-4xl mb-4 text-secondary-container">policy</span>
+                                <h4 class="font-headline-md text-headline-md mb-4">Regulasi Terbaru: Pedoman Kemenkes
+                                    2024</h4>
+                                <p class="opacity-80 line-clamp-2">Bagaimana mandat baru untuk alat terapi mempengaruhi
+                                    penyedia layanan kesehatan di Indonesia.</p>
+                            </div>
+                            <span
+                                class="font-label-md mt-6 group-hover:translate-x-2 transition-transform flex items-center gap-2">Baca
+                                Selengkapnya <span class="material-symbols-outlined">arrow_right_alt</span></span>
+                        </div>
+                        <div
+                            class="glass-card p-10 rounded-2xl flex flex-col justify-between group cursor-pointer hover:bg-surface transition-all">
+                            <div>
+                                <span class="material-symbols-outlined text-4xl mb-4 text-primary">microwave</span>
+                                <h4 class="font-headline-md text-headline-md mb-4">Studi Kasus: Efisiensi Kalibrasi
+                                    di Fasilitas Kesehatan</h4>
+                                <p class="text-on-surface-variant line-clamp-2">Analisis mendalam implementasi sistem
+                                    manajemen kalibrasi terintegrasi kami.</p>
+                            </div>
+                            <span
+                                class="font-label-md mt-6 text-primary group-hover:translate-x-2 transition-transform flex items-center gap-2">Lihat
+                                Metrics <span class="material-symbols-outlined">arrow_right_alt</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- CTA Section -->
+        <section class="py-24 relative overflow-hidden bg-white">
+            <div class="absolute top-0 right-0 w-1/3 h-full emerald-gradient clip-path-slant opacity-10"></div>
+            <div class="max-w-7xl mx-auto px-8 relative z-10 flex flex-col md:flex-row items-center gap-16">
+                <div class="flex-grow">
+                    <h2 class="font-headline-xl text-headline-xl mb-6">Tingkatkan Keandalan <span
+                            class="text-primary">Fasilitas Anda</span></h2>
+                    <p class="text-body-lg text-on-surface-variant max-w-xl mb-10">Bekerja sama dengan ECM untuk audit teknis dan siklus kalibrasi yang menjamin ketersediaan alat dan ketelitian maksimal.</p>
+                    <div class="flex flex-wrap gap-4">
+                        <button
+                            class="bg-primary text-on-primary px-10 py-5 rounded-xl font-headline-md text-lg shadow-xl shadow-primary/20 hover:scale-105 transition-all">Konsultasi
+                            Sekarang</button>
+                        <button
+                            class="bg-white border-2 border-primary text-primary px-10 py-5 rounded-xl font-headline-md text-lg hover:bg-surface-container transition-all">Lihat
+                            Katalog Layanan</button>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 glass-card p-1 rounded-2xl rotate-3 shadow-2xl">
+                    <img class="rounded-xl w-full" data-alt="Premium calibration certificate template"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDfRjdC6ppIdw5jdSCd8Lce1igf3dUFJWbP2IRf59vbWKvWzNFDTtGmFnSkQvOl7ye99nQs09SwAR7H0NIQkdJX3OQhv6ljvXpOovVPwttC6cX36KVgPzSYaMgn43VvPYSXla4rxkMls1NKwyTqDMxVFpIaIhyEYXJqkc292X8bgxQDmBjWZzY4FyC1XN2TeYMAkW0P3AB94-Q2XJEvbMvq2uNE9Y-HnsJohg5DZHJQRTc3rDODA7VcwOMjCsMQLnTaWDyG18BMvHk" />
+                </div>
+            </div>
+        </section>
+        <!-- Our Trusted Clients Section -->
+        <section class="py-24 bg-surface-container-low">
+            <div class="max-w-7xl mx-auto px-8">
+                <div class="text-center mb-12">
+                    <span class="font-label-sm text-primary tracking-[0.25em] uppercase mb-2 block">Daftar Klien Kami</span>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Dipercaya oleh Institusi Terkemuka</h2>
+                </div>
+                <div class="client-slid">
+                    <div class="cl-track">
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">apartment</span><span class="font-label-md text-on-surface-variant text-center">National Hospital</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">science</span><span class="font-label-md text-on-surface-variant text-center">BioMed Research Lab</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">medical_services</span><span class="font-label-md text-on-surface-variant text-center">St. Mary's Medical</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">public</span><span class="font-label-md text-on-surface-variant text-center">Global Health Institute</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">biotech</span><span class="font-label-md text-on-surface-variant text-center">Apex Diagnostics</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">local_hospital</span><span class="font-label-md text-on-surface-variant text-center">Mayo Regional Clinic</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">biotech</span><span class="font-label-md text-on-surface-variant text-center">Siloam Hospitals</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">science</span><span class="font-label-md text-on-surface-variant text-center">Pondok Indah Group</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">apartment</span><span class="font-label-md text-on-surface-variant text-center">RS Cipto</span></div></div>
+                        <div class="cl-item"><div class="cl-card"><span class="material-symbols-outlined text-4xl text-primary/40 mb-2">health_and_safety</span><span class="font-label-md text-on-surface-variant text-center">Medistra Hospital</span></div></div>
+                    </div>
+                    <button class="cl-btn cl-prev" aria-label="Prev"><span class="material-symbols-outlined text-on-surface text-[20px]">chevron_left</span></button>
+                    <button class="cl-btn cl-next" aria-label="Next"><span class="material-symbols-outlined text-on-surface text-[20px]">chevron_right</span></button>
+                </div>
+                <div class="cl-dots">
+                    <span class="cl-dot active" data-group="0"></span>
+                    <span class="cl-dot" data-group="1"></span>
+                    <span class="cl-dot" data-group="2"></span>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer - REDESIGNED -->
+    <footer class="bg-[#007A4D] py-24 text-white">
+        <div class="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-4 gap-gutter">
+            <div class="md:col-span-1">
+                <div class="flex items-center gap-3 mb-8">
+                    <img alt="ECM Logo" class="h-8 w-auto brightness-0 invert"
+                        src="https://ecm.co.id/assets/img/ecm.png" />
+                </div>
+                <p class="text-white/70 font-body-md mb-8">PT. Elsyahfi Calibratech Mandiri adalah Institusi Pengujian
+                    Fasilitas Kesehatan (IPFK) di Sumatera Barat yang berdiri sejak tahun 2018.</p>
+                <div class="flex gap-4">
+                    <a href="https://www.instagram.com/ecm.elsyahfi/" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-container hover:text-on-secondary-container transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-xl">share</span>
+                    </a>
+                    <a href="mailto:ecm.pwk@gmail.com"
+                        class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-container hover:text-on-secondary-container transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-xl">mail</span>
+                    </a>
+                    <a href="https://wa.me/6285263339098" target="_blank"
+                        class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary-container hover:text-on-secondary-container transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-xl">call</span>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h5 class="text-secondary-container font-headline-md mb-8">Layanan</h5>
+                <ul class="space-y-4">
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#services">Kalibrasi Alat Kesehatan</a></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#services">Inspeksi Preventive</a></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#services">Konsultasi Teknis</a></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#sertifikat">Verifikasi Sertifikat</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-secondary-container font-headline-md mb-8">Perusahaan</h5>
+                <ul class="space-y-4">
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#about">Tentang Kami</a>
+                    </li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#berita">Berita</a>
+                    </li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="#">Sertifikat
+                            Akreditasi</a></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors"
+                            href="#contact">Hubungi Kami</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-secondary-container font-headline-md mb-8">Kantor &amp; Lab</h5>
+                <ul class="space-y-4">
+                    <li><span class="text-white/70 font-label-md flex items-start gap-2">
+                            <span class="material-symbols-outlined text-sm mt-0.5">location_on</span>
+                            Jl. Perkutut Komp. Perumahan Nuansa Mandiri No B4, Payakumbuh - Sumatera Barat
+                        </span></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="https://wa.me/6285263339098" target="_blank">+62 852 6333 9098</a></li>
+                    <li><a class="text-white/70 font-label-md hover:text-white transition-colors" href="mailto:ecm.pwk@gmail.com">ecm.pwk@gmail.com</a></li>
+                    <li><span class="text-white/70 font-label-md">IPFK Terakreditasi KAN</span></li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-8 mt-24 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span class="text-label-sm text-white/40">&copy; 2024 PT. Elsyahfi Calibratech Mandiri. All Rights Reserved.</span>
+            <div class="flex gap-8 items-center">
+                <span class="text-label-sm text-white/40 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span> Systems Operational
+                </span>
+                <span class="text-label-sm text-white/40">HQ: Payakumbuh, Sumatera Barat</span>
+            </div>
+        </div>
+    </footer>
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6285263339098" target="_blank" class="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform" aria-label="Chat WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+    </a>
+    <script>
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('main-nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2', 'shadow-md');
+                nav.classList.remove('py-4', 'shadow-sm');
+            } else {
+                nav.classList.add('py-4', 'shadow-sm');
+                nav.classList.remove('py-2', 'shadow-md');
+            }
+        });
+
+        const verifInput = document.querySelector('input[placeholder*="Certificate"]');
+        if (verifInput) {
+            verifInput.addEventListener('focus', () => { verifInput.parentElement.parentElement.classList.add('ring-2', 'ring-secondary-container/50'); });
+            verifInput.addEventListener('blur', () => { verifInput.parentElement.parentElement.classList.remove('ring-2', 'ring-secondary-container/50'); });
+        }
+
+        // Hero Slider
+        (function () {
+            const slider = document.querySelector('.hero-main-slider');
+            if (!slider) return;
+            const track = slider.querySelector('.hs-track');
+            const slides = slider.querySelectorAll('.hs-slide');
+            const dots = slider.querySelectorAll('.hs-dot');
+            const total = slides.length;
+            let current = 0;
+            let autoPlay;
+
+            function goTo(n) {
+                slides[current].classList.remove('active');
+                dots[current].classList.remove('active');
+                current = ((n % total) + total) % total;
+                track.style.transform = `translateX(-${current * 100}%)`;
+                slides[current].classList.add('active');
+                dots[current].classList.add('active');
+            }
+
+            function startAuto() { stopAuto(); autoPlay = setInterval(() => goTo(current + 1), 5500); }
+            function stopAuto() { clearInterval(autoPlay); }
+
+            slider.querySelector('.hs-prev').addEventListener('click', () => { goTo(current - 1); startAuto(); });
+            slider.querySelector('.hs-next').addEventListener('click', () => { goTo(current + 1); startAuto(); });
+            dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.slide)); startAuto(); }));
+            slider.addEventListener('mouseenter', stopAuto);
+            slider.addEventListener('mouseleave', startAuto);
+
+            let tx = 0;
+            slider.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; stopAuto(); }, { passive: true });
+            slider.addEventListener('touchend', e => { const d = tx - e.changedTouches[0].screenX; if (Math.abs(d) > 50) { goTo(current + (d > 0 ? 1 : -1)); } startAuto(); }, { passive: true });
+
+            slides[0].classList.add('active');
+            startAuto();
+        })();
+
+        // Client Slider
+        (function () {
+            const el = document.querySelector('.client-slid');
+            if (!el) return;
+            const track = el.querySelector('.cl-track');
+            const items = el.querySelectorAll('.cl-item');
+            const dots = document.querySelectorAll('.cl-dot');
+            const total = items.length;
+            let cur = 0, perPage = 5, autoPlay;
+
+            function calcPer() { perPage = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 3 : 5; }
+            function maxG() { return Math.max(0, total - perPage); }
+
+            function goTo(g) {
+                calcPer();
+                if (g > maxG()) g = 0; if (g < 0) g = maxG();
+                cur = g;
+                const w = 100 / perPage;
+                track.style.transform = `translateX(-${cur * w}%)`;
+                dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+            }
+
+            function startA() { stopA(); autoPlay = setInterval(() => goTo(cur + 1), 4000); }
+            function stopA() { clearInterval(autoPlay); }
+
+            el.querySelector('.cl-prev').addEventListener('click', () => { goTo(cur - 1); startA(); });
+            el.querySelector('.cl-next').addEventListener('click', () => { goTo(cur + 1); startA(); });
+            dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.group)); startA(); }));
+
+            calcPer(); goTo(0); startA();
+        })();
+
+        // Competency Slider
+        (function () {
+            const el = document.querySelector('.cmp-slid');
+            if (!el) return;
+            const section = el.closest('section');
+            const nav = section.querySelector('.cmp-nav');
+            const dotsWrap = section.querySelector('.cmp-dots');
+            const track = el.querySelector('.cmp-track');
+            const items = el.querySelectorAll('.cmp-item');
+            const dots = document.querySelectorAll('.cmp-dot');
+            const total = items.length;
+            let cur = 0, perPage = 4, autoPlay;
+
+            function calcPer() { perPage = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : 3; }
+            function maxG() { return Math.max(0, total - perPage); }
+
+            function goTo(g) {
+                calcPer();
+                if (maxG() === 0) { track.style.transform = 'translateX(0)'; nav.style.display = 'none'; dotsWrap.style.display = 'none'; return; }
+                nav.style.display = ''; dotsWrap.style.display = '';
+                if (g > maxG()) g = 0; if (g < 0) g = maxG();
+                cur = g;
+                const itemW = items[0].offsetWidth + 24;
+                track.style.transform = `translateX(-${cur * itemW}px)`;
+                dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+            }
+
+            function startA() { stopA(); autoPlay = setInterval(() => goTo(cur + 1), 5000); }
+            function stopA() { clearInterval(autoPlay); }
+
+            section.querySelector('.cmp-prev').addEventListener('click', () => { goTo(cur - 1); startA(); });
+            section.querySelector('.cmp-next').addEventListener('click', () => { goTo(cur + 1); startA(); });
+            dots.forEach(d => d.addEventListener('click', () => { goTo(parseInt(d.dataset.group)); startA(); }));
+
+            calcPer(); goTo(0); startA();
+        })();
+    </script>
+</body>
+
+</html>
