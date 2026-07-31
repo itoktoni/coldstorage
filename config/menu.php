@@ -44,6 +44,43 @@ return [
             ],
         ],
         [
+            'label' => 'Master Data',
+            'items' => [
+                ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
+                ['route' => 'wms-lokasi.getTable', 'icon' => 'place', 'label' => 'Lokasi'],
+                ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
+                ['route' => 'wms-stock.getTable', 'icon' => 'store', 'label' => 'Stock'],
+            ],
+        ],
+        [
+            'label' => 'Procurement',
+            'items' => [
+                ['route' => 'wms-po.getTable', 'icon' => 'shopping_cart', 'label' => 'Purchase Order'],
+                ['route' => 'wms-po-detail.getTable', 'icon' => 'list_alt', 'label' => 'PO Detail'],
+            ],
+        ],
+        [
+            'label' => 'Inbound',
+            'items' => [
+                ['route' => 'wms-masuk-detail.getTable', 'icon' => 'input', 'label' => 'Masuk Detail'],
+                ['route' => 'wms-masuk-realisasi.getTable', 'icon' => 'check_circle', 'label' => 'Masuk Realisasi'],
+            ],
+        ],
+        [
+            'label' => 'Outbound',
+            'items' => [
+                ['route' => 'wms-keluar.getTable', 'icon' => 'output', 'label' => 'Keluar'],
+                ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail'],
+                ['route' => 'wms-keluar-realisasi.getTable', 'icon' => 'task_alt', 'label' => 'Keluar Realisasi'],
+            ],
+        ],
+        [
+            'label' => 'Split',
+            'items' => [
+                ['route' => 'wms-split.getTable', 'icon' => 'call_split', 'label' => 'Split Stock'],
+            ],
+        ],
+        [
             'label' => 'Settings',
             'items' => [
                 ['route' => 'profile.edit', 'icon' => 'person', 'label' => 'My Profile'],

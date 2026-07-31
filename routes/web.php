@@ -37,6 +37,30 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
 
     Route::auto('/user', 'UsersController', ['name' => 'user']);
 
+    // WMS Master Data
+    Route::auto('/wms/gudang', 'Wms\GudangController', ['name' => 'wms-gudang']);
+    Route::auto('/wms/lokasi', 'Wms\LokasiController', ['name' => 'wms-lokasi']);
+    Route::auto('/wms/product', 'Wms\ProductController', ['name' => 'wms-product']);
+
+    // WMS Inventory
+    Route::auto('/wms/stock', 'Wms\StockController', ['name' => 'wms-stock']);
+
+    // WMS Procurement
+    Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
+    Route::auto('/wms/po-detail', 'Wms\PoDetailController', ['name' => 'wms-po-detail']);
+
+    // WMS Inbound
+    Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
+    Route::auto('/wms/masuk-realisasi', 'Wms\MasukRealisasiController', ['name' => 'wms-masuk-realisasi']);
+
+    // WMS Outbound
+    Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);
+    Route::auto('/wms/keluar-detail', 'Wms\KeluarDetailController', ['name' => 'wms-keluar-detail']);
+    Route::auto('/wms/keluar-realisasi', 'Wms\KeluarRealisasiController', ['name' => 'wms-keluar-realisasi']);
+
+    // WMS Split
+    Route::auto('/wms/split', 'Wms\SplitController', ['name' => 'wms-split']);
+
     // CMS Routes
     Route::auto('/cms/type', 'Cms\TypeController', ['name' => 'cms-type']);
     Route::auto('/cms/field', 'Cms\FieldController', ['name' => 'field']);
