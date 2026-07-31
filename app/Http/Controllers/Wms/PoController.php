@@ -22,9 +22,10 @@ class PoController extends Controller
     protected function share($data = [])
     {
         return array_merge([
-            'model'          => $this->model,
-            'productOptions' => Product::pluck('product_nama', 'product_id'),
-            'statusOptions'  => Po::statusOptions(),
+            'model'           => $this->model,
+            'productOptions'  => Product::pluck('product_nama', 'product_id'),
+            'supplierOptions' => Po::supplierOptions(),
+            'statusOptions'   => Po::statusOptions(),
         ], $data);
     }
 

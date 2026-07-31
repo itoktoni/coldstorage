@@ -1,0 +1,11 @@
+{
+    "id": 113,
+    "name": "subtitle",
+    "label": "Subtitle",
+    "type": "text",
+    "is_required": false,
+    "sort_order": 0,
+    "mode": "multiple",
+    "created_at": "2026-07-31T02:00:48.000000Z",
+    "updated_at": "2026-07-31T02:00:48.000000Z"
+}

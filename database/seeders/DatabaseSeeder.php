@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ContainerFieldSeeder::class);
         $this->call(MenuSeeder::class);
         $this->call(\Database\Seeders\Tables\MenusSeeder::class);
+        $this->call(WmsSeeder::class);
     }
 }

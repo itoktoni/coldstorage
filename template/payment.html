@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pembayaran - Panganan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#281900",
+                    "on-primary": "#ffffff",
+                    "surface-variant": "#e5e2e1",
+                    "success-green": "#40916C",
+                    "secondary-fixed": "#ffdead",
+                    "outline": "#707973",
+                    "surface-container-high": "#eae7e7",
+                    "surface-tint": "#2c694e",
+                    "on-secondary-container": "#6d4a00",
+                    "background": "#fcf9f8",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#dcd9d9",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#bfc9c1",
+                    "inverse-on-surface": "#f3f0ef",
+                    "primary": "#0f5238",
+                    "on-background": "#1b1b1b",
+                    "secondary-container": "#ffb628",
+                    "primary-container": "#2d6a4f",
+                    "on-surface-variant": "#404943",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "flash-sale-orange": "#FF5400",
+                    "on-primary-fixed": "#002114",
+                    "on-surface": "#1b1b1b",
+                    "surface-container-low": "#f6f3f2",
+                    "on-tertiary-container": "#9cee8a",
+                    "on-tertiary-fixed": "#002201",
+                    "tertiary-fixed": "#a4f792",
+                    "surface-container": "#f0eded",
+                    "on-tertiary-fixed-variant": "#005303",
+                    "on-secondary-fixed-variant": "#604100",
+                    "secondary-fixed-dim": "#ffba3b",
+                    "surface-bright": "#fcf9f8",
+                    "primary-fixed-dim": "#95d4b3",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#313030",
+                    "secondary": "#7f5700",
+                    "primary-fixed": "#b1f0ce",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#95d4b3",
+                    "tertiary-container": "#206e1b",
+                    "surface": "#fcf9f8",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-highest": "#e5e2e1",
+                    "error-red": "#E63946",
+                    "background-subtle": "#F9FBF9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "1rem",
+                    "stack-sm": "0.5rem",
+                    "container-max": "1200px",
+                    "stack-lg": "2rem",
+                    "margin-mobile": "1.25rem",
+                    "gutter": "1rem"
+            },
+            "fontFamily": {
+                    "price-display": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-sm": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "label-lg": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "body-lg": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "price-display": ["22px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-lg": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-accordion-content {
+            max-height: 1000px;
+            opacity: 1;
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
+        }
+        .inactive-accordion-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .custom-shadow-soft {
+            box-shadow: 0 4px 20px -2px rgba(15, 82, 56, 0.08);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-32">
+<!-- Top AppBar (Back Action Context) -->
+<header class="bg-surface shadow-sm fixed top-0 w-full z-50">
+<div class="flex justify-between items-center px-gutter h-16 w-full max-w-container-max mx-auto">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform p-1 -ml-1" onclick="history.back()">
+<span class="material-symbols-outlined text-primary text-2xl">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Pembayaran</h1>
+</div>
+<div class="w-10"></div> <!-- Spacer for centering title if needed -->
+</div>
+</header>
+<main class="pt-20 px-gutter max-w-md mx-auto space-y-6">
+<!-- Total Amount Card -->
+<section class="bg-primary rounded-xl p-6 text-on-primary custom-shadow-soft relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-on-primary/10 rounded-full blur-2xl"></div>
+<p class="font-label-lg text-label-lg opacity-90 mb-1 uppercase tracking-wider">Total yang Harus Dibayar</p>
+<div class="flex items-baseline gap-2">
+<span class="font-body-md text-body-md opacity-80 font-medium">Rp</span>
+<span class="font-price-display text-4xl">64.500</span>
+</div>
+<div class="mt-4 pt-4 border-t border-on-primary/20 flex justify-between items-center">
+<span class="font-body-sm text-body-sm opacity-80 italic">ID Transaksi: #PNG-202405021</span>
+<span class="material-symbols-outlined opacity-80 text-lg">content_copy</span>
+</div>
+</section>
+<!-- Payment Methods Section -->
+<section class="space-y-4">
+<h2 class="font-headline-md text-headline-md text-on-surface px-1">Metode Pembayaran</h2>
+<!-- QRIS Accordion (Default Open) -->
+<div class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow-soft overflow-hidden transition-all duration-300">
+<button class="w-full px-5 py-4 flex justify-between items-center bg-surface-container-low hover:bg-surface-container transition-colors" onclick="toggleAccordion('qris-content', 'qris-icon')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+<span class="font-label-lg text-label-lg text-on-surface">QRIS</span>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300 rotate-180" id="qris-icon">expand_more</span>
+</button>
+<div class="active-accordion-content px-5" id="qris-content">
+<div class="flex flex-col items-center gap-4">
+<div class="bg-white p-4 rounded-xl border-2 border-primary/10 shadow-inner">
+<img class="w-48 h-48 object-contain" data-alt="A high-resolution QRIS payment code displayed on a clean white background, surrounded by a subtle green border that matches a fresh harvest theme. The QR code is sharp and clear, intended for digital scanning. Below it, small logos of major Indonesian e-wallets like Gopay, OVO, and Dana are visible, conveying a sense of reliability and professional modern fintech aesthetics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKWQHP4FSWpCSQDSCl4U9kGjpNE_LHm16_np64B1jFrwdAnwZ0QX3m4np4e-BZiQwQjrGy_rUNqlmMhaNQFkJZE64l4uLzrlQNZwDovZIpIHRow-MzTAeVEf841dUNitoKhq8hGmSB7ZcWPQdRfbNfQu4CmdVvZDqz5YbiHRUWbqgCUP_OGdQYkuCrOz2bRDXtF3aM1_Q7ahckO6wqd9JjuJOHNMerjZrWxqoghIYNh8DBpk1zMXjgFA"/>
+</div>
+<div class="bg-secondary-container/10 border border-secondary-container/30 rounded-lg p-3 w-full flex items-center justify-center gap-3">
+<span class="material-symbols-outlined text-secondary animate-pulse">timer</span>
+<span class="font-price-display text-secondary" id="timer">10:00</span>
+</div>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                            Scan QR Code ini melalui aplikasi pembayaran Anda <span class="font-semibold text-primary">(Gopay, OVO, Dana, LinkAja, atau Mobile Banking)</span>.
+                        </p>
+</div>
+</div>
+</div>
+<!-- Bank Transfer Accordion -->
+<div class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow-soft overflow-hidden transition-all duration-300">
+<button class="w-full px-5 py-4 flex justify-between items-center hover:bg-surface-container transition-colors" onclick="toggleAccordion('bank-content', 'bank-icon')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">account_balance</span>
+<span class="font-label-lg text-label-lg text-on-surface">Transfer Bank</span>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300" id="bank-icon">expand_more</span>
+</button>
+<div class="inactive-accordion-content px-5" id="bank-content">
+<div class="bg-surface-container-low rounded-lg p-4 space-y-3">
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Bank</span>
+<span class="font-label-lg text-label-lg text-on-surface">Mandiri</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Nomor Rekening</span>
+<div class="flex items-center gap-2">
+<span class="font-label-lg text-label-lg text-primary">1234567890</span>
+<button class="text-primary hover:opacity-70 transition-opacity"><span class="material-symbols-outlined text-base">content_copy</span></button>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Atas Nama</span>
+<span class="font-label-lg text-label-lg text-on-surface">Panganan Segar</span>
+</div>
+</div>
+</div>
+</div>
+<!-- E-Wallet Accordion -->
+<div class="bg-surface rounded-xl border border-outline-variant/30 custom-shadow-soft overflow-hidden transition-all duration-300">
+<button class="w-full px-5 py-4 flex justify-between items-center hover:bg-surface-container transition-colors" onclick="toggleAccordion('ewallet-content', 'ewallet-icon')">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">wallet</span>
+<span class="font-label-lg text-label-lg text-on-surface">E-Wallet (OVO/Dana)</span>
+</div>
+<span class="material-symbols-outlined transition-transform duration-300" id="ewallet-icon">expand_more</span>
+</button>
+<div class="inactive-accordion-content px-5" id="ewallet-content">
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant ml-1" for="phone">Nomor HP Terdaftar</label>
+<input class="w-full h-12 px-4 rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-body-md font-body-md" id="phone" placeholder="0812xxxxxxx" type="tel"/>
+</div>
+<p class="font-body-sm text-body-sm text-outline italic">Pastikan notifikasi aplikasi aktif untuk menyetujui pembayaran.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Instructions Footnote -->
+<section class="bg-surface-container-lowest border border-primary/5 p-4 rounded-xl">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-primary">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Setelah melakukan pembayaran, mohon klik tombol konfirmasi di bawah agar pesanan segera diproses untuk pengiriman besok pagi.
+                </p>
+</div>
+</section>
+</main>
+<!-- Fixed Bottom Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest dark:bg-surface-dim shadow-[0_-4px_12px_rgba(0,0,0,0.05)] px-gutter py-4 z-50">
+<div class="max-w-md mx-auto">
+<button class="w-full bg-primary text-on-primary h-14 rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-all hover:opacity-95 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">check_circle</span>
+                Sudah Bayar
+            </button>
+</div>
+</div>
+<script>
+        // Accordion Logic
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId);
+            const icon = document.getElementById(iconId);
+            const allContents = document.querySelectorAll('[id$="-content"]');
+            const allIcons = document.querySelectorAll('[id$="-icon"]');
+
+            allContents.forEach(c => {
+                if (c.id !== contentId) {
+                    c.classList.add('inactive-accordion-content');
+                    c.classList.remove('active-accordion-content');
+                    c.parentElement.classList.remove('bg-primary-container/5');
+                }
+            });
+            allIcons.forEach(i => {
+                if (i.id !== iconId) {
+                    i.classList.remove('rotate-180');
+                }
+            });
+
+            if (content.classList.contains('active-accordion-content')) {
+                content.classList.remove('active-accordion-content');
+                content.classList.add('inactive-accordion-content');
+                icon.classList.remove('rotate-180');
+            } else {
+                content.classList.remove('inactive-accordion-content');
+                content.classList.add('active-accordion-content');
+                icon.classList.add('rotate-180');
+            }
+        }
+
+        // Countdown Timer Logic
+        let timeLeft = 600; // 10 minutes in seconds
+        const timerElement = document.getElementById('timer');
+
+        const countdown = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+
+            timerElement.textContent = `${minutes}:${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.textContent = "EXPIRED";
+                timerElement.classList.add('text-error-red');
+            } else {
+                timeLeft--;
+            }
+        }, 1000);
+
+        // Simple input formatting for phone number
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+    </script>
+</body></html>

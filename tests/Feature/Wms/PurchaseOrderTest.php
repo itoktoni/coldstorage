@@ -3,12 +3,29 @@
 use App\Models\Po;
 use App\Models\PoDetail;
 use App\Models\Product;
+use App\Models\Supplier;
+
+function poSupplier(string $nama): string
+{
+    Supplier::create(['supplier_id' => random_int(1, 999999), 'supplier_nama' => $nama]);
+
+    return $nama;
+}
+
+it('auto generates po_code when omitted', function () {
+    $po = Po::create([
+        'po_tanggal'  => '2026-07-31',
+        'po_supplier' => poSupplier('Supplier Auto'),
+    ]);
+
+    expect($po->po_code)->toMatch('/^PO-\d{8}-\d{4}$/');
+});
 
 it('defaults po_status to Pending', function () {
     $po = Po::create([
         'po_tanggal'    => '2026-07-31',
         'po_code'       => 'PO-TEST-001',
-        'po_supplier'   => 'Supplier A',
+        'po_supplier'   => poSupplier('Supplier A'),
         'po_keterangan' => null,
     ]);
 
@@ -21,7 +38,7 @@ it('persists po with details and product relation', function () {
     $po = Po::create([
         'po_tanggal'  => '2026-07-31',
         'po_code'     => 'PO-TEST-002',
-        'po_supplier' => 'Supplier B',
+        'po_supplier' => poSupplier('Supplier B'),
         'po_status'   => Po::STATUS_ORDERED,
     ]);
 
@@ -44,7 +61,7 @@ it('cascades delete from po to detail_po', function () {
     $po = Po::create([
         'po_tanggal'  => '2026-07-31',
         'po_code'     => 'PO-TEST-003',
-        'po_supplier' => 'Supplier C',
+        'po_supplier' => poSupplier('Supplier C'),
     ]);
 
     PoDetail::create([
@@ -72,9 +89,8 @@ it('creates po with nested details via form post', function () {
     $p2 = Product::create(['product_nama' => 'PO-Nest-B', 'product_harga' => 20]);
 
     $response = $this->post('/wms/po/create', [
-        'po_code'     => 'PO-NEST-001',
         'po_tanggal'  => '2026-07-31',
-        'po_supplier' => 'Supplier Nest',
+        'po_supplier' => poSupplier('Supplier Nest'),
         'po_status'   => Po::STATUS_ORDERED,
         'po_keterangan' => 'nested form',
         'details' => [
@@ -85,9 +101,10 @@ it('creates po with nested details via form post', function () {
 
     $response->assertSessionDoesntHaveErrors();
 
-    $po = Po::where('po_code', 'PO-NEST-001')->first();
+    $po = Po::latest('po_id')->first();
     expect($po)->not->toBeNull();
+    expect($po->po_code)->toMatch('/^PO-\d{8}-\d{4}$/');
     expect($po->details)->toHaveCount(2);
     expect($po->details->pluck('po_detail_qty')->sort()->values()->all())->toBe([3, 7]);
-    expect($po->details->pluck('po_detail_code')->all())->toContain('PO-NEST-001-001', 'PO-NEST-001-002');
+    expect($po->details->pluck('po_detail_code')->all())->toContain($po->po_code.'-001', $po->po_code.'-002');
 });

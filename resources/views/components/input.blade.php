@@ -4,6 +4,9 @@
     $label = $label ?? formatLabel($name);
     $m = $model ?? $activeBladeModel ?? null;
     $bound = $value ?? ($m ? old($name, data_get($m, $name, '')) : old($name, ''));
+    if ($type === 'date' && $bound) {
+        $bound = \Illuminate\Support\Carbon::parse($bound)->format('Y-m-d');
+    }
     $hasError = $errors->has($name);
 @endphp
 <div class="col-span-12 md:col-span-{{ $col }}">

@@ -1,0 +1,9 @@
+{
+    "id": 65,
+    "name": "Post",
+    "slug": "post",
+    "type": "custom",
+    "is_active": true,
+    "created_at": "2026-07-31T05:31:19.000000Z",
+    "updated_at": "2026-07-31T05:31:19.000000Z"
+}

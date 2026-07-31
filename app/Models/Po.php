@@ -37,6 +37,29 @@ class Po extends BaseModel
         return $this->hasMany(PoDetail::class, 'po_detail_id_po', 'po_id');
     }
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $po) {
+            if (empty($po->po_code)) {
+                $po->po_code = self::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        do {
+            $code = 'PO-'.now()->format('Ymd').'-'.unic_number(4);
+        } while (self::where('po_code', $code)->exists());
+
+        return $code;
+    }
+
+    public static function supplierOptions(): array
+    {
+        return Supplier::pluck('supplier_nama', 'supplier_nama')->all();
+    }
+
     public static function statusOptions(): array
     {
         return [
@@ -50,9 +73,9 @@ class Po extends BaseModel
     public function rules(): array
     {
         return [
-            'po_code'       => ['required', 'string', 'max:50'],
-            'po_tanggal'    => ['required', 'date'],
-            'po_supplier'   => ['required', 'string', 'max:200'],
+            'po_code'       => ['nullable', 'string', 'max:50'],
+            'po_tanggal'    => ['required'],
+            'po_supplier'   => ['required', 'string', 'max:200', 'exists:supplier,supplier_nama'],
             'po_status'     => ['nullable', 'string', 'in:Pending,Ordered,Partial,Closed'],
             'po_keterangan' => ['nullable', 'string'],
             'details'                         => ['required', 'array', 'min:1'],

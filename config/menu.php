@@ -46,6 +46,8 @@ return [
         [
             'label' => 'Master Data',
             'items' => [
+                ['route' => 'wms-supplier.getTable', 'icon' => 'business', 'label' => 'Supplier'],
+                ['route' => 'wms-customer.getTable', 'icon' => 'groups', 'label' => 'Customer'],
                 ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
                 ['route' => 'wms-lokasi.getTable', 'icon' => 'place', 'label' => 'Lokasi'],
                 ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
@@ -57,6 +59,12 @@ return [
             'items' => [
                 ['route' => 'wms-po.getTable', 'icon' => 'shopping_cart', 'label' => 'Purchase Order'],
                 ['route' => 'wms-po-detail.getTable', 'icon' => 'list_alt', 'label' => 'PO Detail'],
+            ],
+        ],
+        [
+            'label' => 'Sales',
+            'items' => [
+                ['route' => 'wms-so.getTable', 'icon' => 'point_of_sale', 'label' => 'Sales Order'],
             ],
         ],
         [

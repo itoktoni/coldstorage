@@ -1,0 +1,351 @@
+<!DOCTYPE html><html class="light" lang="id" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Checkout - Panganan</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Configuration based on {{DATA:DESIGN_SYSTEM:DESIGN_SYSTEM_2}} -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-container": "#a8e7c5",
+                    "on-surface": "#1b1b1b",
+                    "on-background": "#1b1b1b",
+                    "secondary-fixed-dim": "#ffba3b",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#002114",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface-container-high": "#eae7e7",
+                    "inverse-surface": "#313030",
+                    "outline": "#707973",
+                    "tertiary-fixed": "#a4f792",
+                    "on-secondary-fixed": "#281900",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-container": "#9cee8a",
+                    "on-secondary-fixed-variant": "#604100",
+                    "primary-fixed": "#b1f0ce",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-variant": "#e5e2e1",
+                    "on-secondary": "#ffffff",
+                    "secondary-container": "#ffb628",
+                    "primary-fixed-dim": "#95d4b3",
+                    "background": "#fcf9f8",
+                    "flash-sale-orange": "#FF5400",
+                    "surface-bright": "#fcf9f8",
+                    "on-error-container": "#93000a",
+                    "error-red": "#E63946",
+                    "on-tertiary-fixed": "#002201",
+                    "background-subtle": "#F9FBF9",
+                    "tertiary-container": "#206e1b",
+                    "primary": "#2d6a4f",
+                    "surface-dim": "#dcd9d9",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-surface-variant": "#404943",
+                    "outline-variant": "#bfc9c1",
+                    "surface-tint": "#2c694e",
+                    "tertiary": "#005503",
+                    "inverse-primary": "#95d4b3",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed-variant": "#0e5138",
+                    "tertiary-fixed-dim": "#89da79",
+                    "success-green": "#40916C",
+                    "secondary": "#7f5700",
+                    "on-tertiary-fixed-variant": "#005303",
+                    "secondary-fixed": "#ffdead",
+                    "primary-container": "#2d6a4f",
+                    "surface-container": "#f0eded",
+                    "surface": "#fcf9f8",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#6d4a00",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "0.5rem",
+                    "gutter": "1rem",
+                    "stack-lg": "2rem",
+                    "container-max": "1200px",
+                    "margin-mobile": "1.25rem",
+                    "stack-md": "1rem"
+            },
+            "fontFamily": {
+                    "label-lg": ["Be Vietnam Pro"],
+                    "price-display": ["Plus Jakarta Sans"],
+                    "body-sm": ["Be Vietnam Pro"],
+                    "body-md": ["Be Vietnam Pro"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Be Vietnam Pro"]
+            },
+            "fontSize": {
+                    "label-lg": ["14px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "price-display": ["22px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fcf9f8;
+            color: #1b1b1b;
+        }
+        .focused-shadow:focus-within {
+            box-shadow: 0 0 0 2px #2d6a4f;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .delivery-option-card.active {
+            border-color: #2d6a4f;
+            background-color: rgba(45, 106, 79, 0.05);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-x-hidden">
+<!-- Header -->
+<header class="fixed top-0 w-full z-50 bg-surface shadow-sm h-16 flex items-center px-gutter max-w-container-max mx-auto">
+<button class="mr-4 active:scale-95 transition-transform text-primary">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">Checkout</h1>
+</header>
+<main class="pt-20 pb-32 max-w-container-max mx-auto px-gutter space-y-8">
+<!-- Section 2: Item Belanja (Cart Items) -->
+<section class="space-y-4">
+<h2 class="font-headline-md text-headline-md text-on-surface">Item Belanja</h2>
+<div class="space-y-3"><!-- Item 1 -->
+<div class="flex items-center justify-between py-4 border-b border-outline-variant/30">
+<div class="flex flex-col">
+<div class="flex items-baseline gap-2">
+<h3 class="font-headline-md text-body-md font-bold text-on-surface">Brokoli Segar Super</h3>
+<span class="text-[12px] text-on-surface-variant opacity-70">500g / pack</span>
+</div>
+<span class="font-price-display text-body-md font-bold text-primary mt-1">Rp 18.500</span>
+</div>
+<div class="flex items-center border border-outline-variant/30 rounded-lg overflow-hidden">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-sm qty-display">1</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between py-4 border-b border-outline-variant/30">
+<div class="flex flex-col">
+<div class="flex items-baseline gap-2">
+<h3 class="font-headline-md text-body-md font-bold text-on-surface">Tomat Merah Pilihan</h3>
+<span class="text-[12px] text-on-surface-variant opacity-70">1kg</span>
+</div>
+<span class="font-price-display text-body-md font-bold text-primary mt-1">Rp 22.000</span>
+</div>
+<div class="flex items-center border border-outline-variant/30 rounded-lg overflow-hidden">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="updateQty(this, -1)">
+<span class="material-symbols-outlined text-sm">remove</span>
+</button>
+<span class="w-8 text-center font-bold text-sm qty-display">2</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" onclick="updateQty(this, 1)">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div></div>
+</section>
+<!-- Section 3: Data Penerima (Receiver Data) -->
+<section class="rounded-lg p-6 shadow-sm border border-outline-variant/10 bg-primary/10">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Data Penerima</h2>
+</div>
+<form class="space-y-5" id="orderForm">
+<div class="space-y-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant" for="fullName">Nama Lengkap</label>
+<div class="relative flex items-center focused-shadow rounded-lg overflow-hidden">
+<span class="material-symbols-outlined absolute left-4 text-outline">badge</span>
+<input class="w-full bg-surface-container-lowest border-outline-variant/30 rounded-lg py-4 pl-12 pr-4 focus:ring-0 focus:border-primary transition-all outline-none" id="fullName" placeholder="Masukkan nama Anda" required="" type="text">
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant" for="waNumber">Nomor WhatsApp</label>
+<div class="relative flex items-center focused-shadow rounded-lg overflow-hidden">
+<span class="material-symbols-outlined absolute left-4 text-outline">call</span>
+<input class="w-full bg-surface-container-lowest border-outline-variant/30 rounded-lg py-4 pl-12 pr-4 focus:ring-0 focus:border-primary transition-all outline-none" id="waNumber" placeholder="Contoh: 081234567890" required="" type="tel">
+</div>
+</div>
+</form>
+</section>
+<!-- Section 4: Metode Pengiriman (Shipping Method) -->
+<section class="space-y-6">
+<h2 class="font-headline-md text-headline-md text-on-surface">Metode Pengiriman</h2>
+<!-- Tabs -->
+<div class="bg-surface-container-low p-1.5 rounded-lg flex items-center shadow-sm">
+<button class="flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all bg-primary text-on-primary shadow-sm" id="tab-cod" onclick="switchMethod('cod')">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+<span class="font-label-lg text-label-lg">AMBIL COD</span>
+</button>
+<button class="flex-1 py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all text-on-surface-variant" id="tab-delivery" onclick="switchMethod('delivery')">
+<span class="material-symbols-outlined text-[20px]">local_shipping</span>
+<span class="font-label-lg text-label-lg">ANTAR KE RUMAH</span>
+</button>
+</div>
+<!-- COD Content -->
+<div class="space-y-4" id="section-cod">
+<p class="font-body-sm text-body-sm text-on-surface-variant px-1">Pilih titik temu terdekat dengan Anda. Tanpa biaya kirim.</p>
+<div class="space-y-3">
+<!-- Location 1 -->
+<div class="delivery-option-card active border-2 border-primary bg-primary/5 p-4 rounded-lg cursor-pointer" onclick="selectCard(this)">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<h3 class="font-label-lg text-label-lg text-primary">Pasar Potorono</h3>
+</div>
+<span class="material-symbols-outlined text-primary check-icon">check_circle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Jl. Potorono No.12, Banguntapan. Titik temu di depan ATM Center.</p>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar">
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[12px] font-medium whitespace-nowrap">Besok, 06:00 - 08:00</span>
+</div>
+</div>
+<!-- Location 2 -->
+<div class="delivery-option-card border-2 border-outline-variant/30 bg-surface p-4 rounded-lg cursor-pointer" onclick="selectCard(this)">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">location_on</span>
+<h3 class="font-label-lg text-label-lg text-on-surface">Lapangan Karang</h3>
+</div>
+<span class="material-symbols-outlined text-primary check-icon opacity-0">check_circle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-3">Kotagede, Yogyakarta. Titik temu di pintu masuk sisi selatan.</p>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar">
+<span class="bg-surface-container text-on-surface-variant px-3 py-1 rounded-full text-[12px] font-medium whitespace-nowrap">Besok, 07:00 - 09:00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Content (Hidden by Default) -->
+<div class="hidden space-y-4" id="section-delivery">
+<p class="font-body-sm text-body-sm text-on-surface-variant px-1">Atur pin lokasi untuk kalkulasi biaya antar otomatis.</p>
+<div class="relative w-full aspect-video rounded-lg overflow-hidden border border-outline-variant">
+<div class="absolute inset-0 bg-surface-container-high flex flex-col items-center justify-center p-6 text-center">
+<span class="material-symbols-outlined text-primary text-5xl mb-2" style="font-variation-settings: 'FILL' 1;">location_on</span>
+<p class="font-label-lg text-primary">Tentukan Lokasi di Peta</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<label class="font-label-lg text-label-lg text-on-surface-variant ml-1">Alamat Lengkap</label>
+<textarea class="w-full rounded-lg border-outline-variant/30 focus:border-primary focus:ring-0 p-4 bg-surface-container-lowest text-body-md transition-all outline-none" placeholder="Masukkan nama jalan, nomor rumah, dan patokan..." rows="3"></textarea>
+</div>
+<div class="bg-primary/5 p-4 rounded-lg border border-primary/20 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-primary-container p-2 rounded-lg">
+<span class="material-symbols-outlined text-on-primary-container text-xl">delivery_dining</span>
+</div>
+<div>
+<p class="text-[12px] text-on-surface-variant font-medium">Ongkos Kirim</p>
+<p class="font-price-display text-primary">Rp 8.000</p>
+</div>
+</div>
+<span class="text-[10px] bg-primary/10 text-primary px-2 py-1 rounded font-bold uppercase tracking-wider">Estimasi</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 5: Ringkasan Pembayaran (Payment Summary) -->
+</main>
+<!-- Section 6: Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant/30 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] z-50 px-gutter py-4">
+  <div class="max-w-container-max mx-auto flex gap-6 flex-col"><div class="w-full space-y-2 mb-4"><div class="flex justify-between items-center"><span class="text-on-surface-variant text-body-sm">Subtotal Belanja</span><span class="text-on-surface font-medium">Rp 64.500</span></div><div class="flex justify-between items-center"><span class="text-on-surface-variant text-body-sm">Ongkos Kirim (+3km)</span><span class="text-on-surface font-medium">Rp 8.000</span></div><div class="border-t border-outline-variant/30 pt-2 flex justify-between items-center"><span class="text-on-surface font-bold">Total Pembayaran</span><span class="font-price-display text-headline-md text-primary" id="total-display">Rp 72.500</span></div></div><button class="w-full bg-primary text-on-primary font-label-lg text-label-lg h-14 rounded-xl shadow-sm active:scale-[0.98] transition-all flex items-center justify-center gap-2" form="orderForm" type="submit"><span class="">Konfirmasi &amp; Bayar</span><span class="material-symbols-outlined text-[20px]">arrow_forward</span></button></div>
+</div>
+<script>
+        function switchMethod(method) {
+            const codTab = document.getElementById('tab-cod');
+            const deliveryTab = document.getElementById('tab-delivery');
+            const codSection = document.getElementById('section-cod');
+            const deliverySection = document.getElementById('section-delivery');
+            const shippingRow = document.getElementById('row-shipping');
+            const totalDisplay = document.getElementById('total-display');
+
+            if (method === 'cod') {
+                codTab.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+                codTab.classList.remove('text-on-surface-variant');
+                deliveryTab.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+                deliveryTab.classList.add('text-on-surface-variant');
+                codSection.classList.remove('hidden');
+                deliverySection.classList.add('hidden');
+                shippingRow.style.display = 'none';
+                totalDisplay.textContent = 'Rp 64.500';
+            } else {
+                deliveryTab.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+                deliveryTab.classList.remove('text-on-surface-variant');
+                codTab.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+                codTab.classList.add('text-on-surface-variant');
+                deliverySection.classList.remove('hidden');
+                codSection.classList.add('hidden');
+                shippingRow.style.display = 'flex';
+                totalDisplay.textContent = 'Rp 72.500';
+            }
+        }
+
+        function selectCard(element) {
+            document.querySelectorAll('.delivery-option-card').forEach(card => {
+                card.classList.remove('active', 'border-primary', 'bg-primary/5');
+                card.classList.add('border-outline-variant/30', 'bg-surface');
+                card.querySelector('.check-icon').classList.add('opacity-0');
+                card.querySelector('h3').classList.remove('text-primary');
+                card.querySelector('h3').classList.add('text-on-surface');
+            });
+            element.classList.add('active', 'border-primary', 'bg-primary/5');
+            element.classList.remove('border-outline-variant/30', 'bg-surface');
+            element.querySelector('.check-icon').classList.remove('opacity-0');
+            element.querySelector('h3').classList.add('text-primary');
+            element.querySelector('h3').classList.remove('text-on-surface');
+        }
+
+        function updateQty(btn, delta) {
+            const display = btn.parentElement.querySelector('.qty-display');
+            let current = parseInt(display.textContent);
+            let newVal = current + delta;
+            if (newVal >= 1) {
+                display.textContent = newVal;
+            } else if (newVal === 0) {
+                if(confirm("Hapus item?")) {
+                    btn.closest('.bg-surface-container-lowest').remove();
+                }
+            }
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Memproses Pembayaran...');
+        });
+    </script>
+
+
+</body></html>

@@ -39,6 +39,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
 
     // WMS Master Data
     Route::auto('/wms/gudang', 'Wms\GudangController', ['name' => 'wms-gudang']);
+    Route::auto('/wms/supplier', 'SupplierController', ['name' => 'wms-supplier']);
+    Route::auto('/wms/customer', 'CustomerController', ['name' => 'wms-customer']);
     Route::auto('/wms/lokasi', 'Wms\LokasiController', ['name' => 'wms-lokasi']);
     Route::auto('/wms/product', 'Wms\ProductController', ['name' => 'wms-product']);
 
@@ -48,6 +50,9 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     // WMS Procurement
     Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
     Route::auto('/wms/po-detail', 'Wms\PoDetailController', ['name' => 'wms-po-detail']);
+
+    // WMS Sales
+    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so']);
 
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
