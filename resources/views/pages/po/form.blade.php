@@ -24,7 +24,7 @@
                     <x-input col="6" name="po_code" readonly />
                 @endif
                 <x-input :col="$isEdit ? 6 : 12" name="po_tanggal" type="date"  />
-                <x-select col="6" name="po_supplier" :options="$supplierOptions" class="search" />
+                <x-select col="6" name="po_id_supplier" :options="$supplierOptions" class="search" />
                 <x-select col="6" name="po_status" :options="$statusOptions" />
                 <x-textarea col="12" name="po_keterangan" />
             @endbind

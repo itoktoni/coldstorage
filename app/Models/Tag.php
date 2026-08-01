@@ -10,11 +10,13 @@ class Tag extends BaseModel
     use SoftDeletes;
 
     protected $table = 'tags';
+    public $primaryKey = 'slug';
+    public $keyType = 'string';
+    public $incrementing = false;
 
     protected $fillable = ['name', 'slug'];
 
     public static $sortColumns = ['name', 'slug'];
-
     public static $filterColumns = ['name', 'slug'];
 
     public static function field_name(): string
@@ -30,9 +32,11 @@ class Tag extends BaseModel
 
     public function rules(): array
     {
+        $excludeSlug = $this->exists ? $this->slug : '';
+
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:tags,slug,' . ($this->id ?? '')],
+            'name' => ['nullable', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:tags,slug,' . $excludeSlug],
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Validation\Rule;
+
 class Gudang extends BaseModel
 {
     protected $table = 'gudang';
@@ -18,5 +20,20 @@ class Gudang extends BaseModel
     public function lokasi()
     {
         return $this->hasMany(Lokasi::class, 'lokasi_id_gudang', 'gudang_id');
+    }
+
+    public static function field_name()
+    {
+        return 'gudang_nama';
+    }
+
+    public function rules(): array
+    {
+        return [
+            'gudang_nama' => [
+                'required', 'string', 'max:100',
+                Rule::unique('gudang', 'gudang_nama')->ignore($this->exists ? $this->gudang_id : null, 'gudang_id'),
+            ],
+        ];
     }
 }

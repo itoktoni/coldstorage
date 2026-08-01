@@ -43,20 +43,31 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/wms/customer', 'CustomerController', ['name' => 'wms-customer']);
     Route::auto('/wms/lokasi', 'Wms\LokasiController', ['name' => 'wms-lokasi']);
     Route::auto('/wms/product', 'Wms\ProductController', ['name' => 'wms-product']);
+    Route::get('/wms/product/{id}/qrcode', [\App\Http\Controllers\Wms\ProductController::class, 'getQrcode'])->name('wms-product.getQrcode');
+    Route::post('/wms/product/{id}/qrcode', [\App\Http\Controllers\Wms\ProductController::class, 'postQrcode'])->name('wms-product.postQrcode');
 
     // WMS Inventory
     Route::auto('/wms/stock', 'Wms\StockController', ['name' => 'wms-stock']);
 
     // WMS Procurement
     Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
+    Route::get('/wms/po/{id}/cetak', [\App\Http\Controllers\Wms\PoController::class, 'cetak'])->name('wms-po.cetak');
     Route::auto('/wms/po-detail', 'Wms\PoDetailController', ['name' => 'wms-po-detail']);
+    Route::get('/wms/po-detail/{id}/convert-to-masuk', [\App\Http\Controllers\Wms\PoDetailController::class, 'convertToMasuk'])->name('wms-po-detail-convert');
 
     // WMS Sales
     Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so']);
+    Route::get('/wms/so/{id}/cetak', [\App\Http\Controllers\Wms\SoController::class, 'cetak'])->name('wms-so.cetak');
 
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
+    Route::get('/wms/masuk-detail/{id}/realisasikan', [\App\Http\Controllers\Wms\MasukDetailController::class, 'getRealisasikan'])->name('wms-masuk-detail.realisasikan');
+    Route::post('/wms/masuk-detail/{id}/realisasikan', [\App\Http\Controllers\Wms\MasukDetailController::class, 'postRealisasikan'])->name('wms-masuk-detail.postRealisasikan');
     Route::auto('/wms/masuk-realisasi', 'Wms\MasukRealisasiController', ['name' => 'wms-masuk-realisasi']);
+
+    // WMS Forklift
+    Route::get('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'index'])->name('wms-forklift.index');
+    Route::post('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'store'])->name('wms-forklift.store');
 
     // WMS Outbound
     Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);
@@ -65,6 +76,11 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
 
     // WMS Split
     Route::auto('/wms/split', 'Wms\SplitController', ['name' => 'wms-split']);
+
+    // WMS Barcode
+    Route::get('/wms/barcode/generate', [\App\Http\Controllers\Wms\BarcodeController::class, 'generate'])->name('wms-barcode.generate');
+    Route::post('/wms/barcode/generate', [\App\Http\Controllers\Wms\BarcodeController::class, 'postGenerate'])->name('wms-barcode.postGenerate');
+    Route::post('/wms/barcode/pdf', [\App\Http\Controllers\Wms\BarcodeController::class, 'getPdf'])->name('wms-barcode.pdf');
 
     // CMS Routes
     Route::auto('/cms/type', 'Cms\TypeController', ['name' => 'cms-type']);

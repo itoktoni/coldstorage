@@ -10,6 +10,7 @@
                 <x-input col="6" name="in_realisasi_code" />
                 <x-select col="6" name="in_realisasi_id_product" :options="$productOptions" />
                 <x-input col="6" name="in_realisasi_qty" type="number" />
+                <x-select col="6" name="in_realisasi_id_lokasi" :options="$lokasiOptions" />
             @endbind
         </x-card>
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Validation\Rule;
+
 class Stock extends BaseModel
 {
     protected $table = 'stock';
@@ -23,8 +25,46 @@ class Stock extends BaseModel
 
     protected $casts = [
         'stock_expired_date' => 'date',
-        'stock_qty'          => 'integer',
+        'stock_qty'          => 'double',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $stock) {
+            if (empty($stock->stock_code)) {
+                $stock->stock_code = self::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        do {
+            $code = 'STK-'.now()->format('Ymd').'-'.unic_number(4);
+        } while (self::where('stock_code', $code)->exists());
+
+        return $code;
+    }
+
+    public function rules(): array
+    {
+        $id = $this->exists ? $this->stock_id : null;
+
+        return [
+            'stock_code'         => ['nullable', 'string', 'max:100', Rule::unique('stock', 'stock_code')->ignore($id, 'stock_id')],
+            'stock_id_product'   => ['required', 'exists:product,product_id'],
+            'stock_id_lokasi'    => ['required', 'exists:lokasi,lokasi_id'],
+            'stock_qty'          => ['required', 'numeric', 'min:0'],
+            'stock_expired_date' => ['nullable', 'date'],
+            'stock_reff'         => ['nullable', 'string', 'max:100'],
+            'stock_type'         => ['required', 'in:IN,OUT'],
+        ];
+    }
+
+    public static function typeOptions(): array
+    {
+        return ['IN' => 'IN', 'OUT' => 'OUT'];
+    }
 
     public function product()
     {
@@ -67,7 +107,7 @@ class Stock extends BaseModel
      *
      * @throws \RuntimeException when available stock is insufficient
      */
-    public static function consume(int $productId, int $qty): void
+    public static function consume(int $productId, float $qty): void
     {
         if ($qty <= 0) {
             return;
@@ -86,7 +126,7 @@ class Stock extends BaseModel
 
         $left = $qty;
         foreach ($rows as $row) {
-            $take = min($left, (int) $row->stock_qty);
+            $take = min($left, (float) $row->stock_qty);
             $row->decrement('stock_qty', $take);
             $left -= $take;
 
@@ -102,7 +142,7 @@ class Stock extends BaseModel
      * ponytail: returns to the product's first IN row, not the exact lot taken.
      * Add a so_realisasi pivot (like keluar_realisasi) if per-lokasi accuracy matters.
      */
-    public static function release(int $productId, int $qty): void
+    public static function release(int $productId, float $qty): void
     {
         if ($qty <= 0) {
             return;

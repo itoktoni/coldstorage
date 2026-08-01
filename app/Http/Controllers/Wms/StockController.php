@@ -19,7 +19,12 @@ class StockController extends Controller
 
     protected function share($data = [])
     {
-        return array_merge(['model' => $this->model, 'productOptions' => Product::pluck('product_nama', 'product_id'), 'lokasiOptions' => Lokasi::pluck('lokasi_nama', 'lokasi_id')], $data);
+        return array_merge([
+            'model'          => $this->model,
+            'productOptions' => Product::pluck('product_nama', 'product_id'),
+            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_id'),
+            'typeOptions'    => Stock::typeOptions(),
+        ], $data);
     }
 
     protected function getData()

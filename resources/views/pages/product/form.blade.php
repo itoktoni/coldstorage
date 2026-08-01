@@ -6,8 +6,9 @@
     <x-form :model="$model">
         <x-card :label="ucfirst(module())">
             @bind($model ?? null)
-                <x-input col="6" name="product_nama" />
-                <x-input col="6" name="product_harga" type="number" />
+                <x-select col="4" name="product_category" :options="$categoryOptions ?? []" placeholder="Pilih kategori..." />
+                <x-input col="4" name="product_nama" />
+                <x-input col="4" name="product_harga" type="number" />
             @endbind
         </x-card>
 

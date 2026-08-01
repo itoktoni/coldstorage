@@ -23,18 +23,27 @@
             <x-slot:head>
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
-                @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
-                @endforeach
+                <x-table-sort field="po_code" label="{{ formatLabel('po_code', 'Po Code') }}" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="po_tanggal" label="{{ formatLabel('po_tanggal', 'Tanggal') }}" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="supplier_name" label="{{ formatLabel('supplier_name', 'Supplier') }}" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="po_status" label="{{ formatLabel('po_status', 'Status') }}" :sortField="$sortField" :sortDir="$sortDir" />
+
             </x-slot:head>
             <x-slot:body>
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
-                    @foreach ($model::$sortColumns as $column)
-                    <td>{{ $table->$column }}</td>
-                    @endforeach
+                    <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           title="Cetak PO">
+                            <span class="material-symbols-outlined text-lg">print</span>
+                        </a>
+                    </x-table-action>
+                    <td>{{ $table->po_code }}</td>
+                    <td>{{ formatDate($table->po_tanggal) }}</td>
+                    <td>{{ $table->supplier->supplier_nama ?? 'N/A' }}</td>
+                    <td>{{ $table->po_status }}</td>
                 </tr>
                 @empty
                 <tr>
@@ -52,7 +61,13 @@
                         <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
                         @endforeach
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
+                            <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           title="Cetak PO">
+                            <span class="material-symbols-outlined text-lg">print</span>
+                        </a>
+                    </x-table-action>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty
@@ -68,7 +83,7 @@
         <x-action :model="$model" :action="['create', 'delete']"/>
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
     <script src="/js/table.js"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

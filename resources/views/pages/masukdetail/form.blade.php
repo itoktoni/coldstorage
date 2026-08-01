@@ -6,7 +6,6 @@
     <x-form :model="$model">
         <x-card :label="ucfirst(module())">
             @bind($model ?? null)
-                <x-input col="6" name="in_detail_code" />
                 <x-input col="6" name="in_detail_tanggal" type="date" />
                 <x-select col="6" name="in_detail_id_product" :options="$productOptions" />
                 <x-input col="6" name="in_detail_qty" type="number" />

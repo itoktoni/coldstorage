@@ -88,7 +88,7 @@ class SoController extends Controller
             DB::transaction(function () use ($id) {
                 $so = So::with('details')->findOrFail($id);
                 foreach ($so->details as $detail) {
-                    Stock::release((int) $detail->so_detail_id_product, (int) $detail->so_detail_qty);
+                    Stock::release((int) $detail->so_detail_id_product, (float) $detail->so_detail_qty);
                 }
                 $so->delete();
             });
@@ -162,5 +162,12 @@ class SoController extends Controller
         }
 
         return $code;
+    }
+
+    public function cetak(string $id)
+    {
+        $so = $this->model->with(['details.product', 'customer'])->findOrFail($id);
+
+        return view('pages.so.cetak', ['so' => $so]);
     }
 }

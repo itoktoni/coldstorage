@@ -67,7 +67,7 @@
 
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
     <script src="/js/table.js"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

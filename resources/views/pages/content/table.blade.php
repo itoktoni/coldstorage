@@ -1,4 +1,4 @@
-﻿<?php /** @var App\Models\Content $table */ ?>
+<?php /** @var App\Models\Content $table */ ?>
 
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
@@ -71,7 +71,7 @@
         <x-action :model="$model" :action="['create', 'delete']"/>
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
     <script src="/js/table.js"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

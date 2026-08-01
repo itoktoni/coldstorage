@@ -114,10 +114,10 @@ function deleteSelected() {
     const desktopIds = [...document.querySelectorAll('tbody input[type="checkbox"]:checked')].map(c => c.value);
     const ids = desktopIds.length ? desktopIds : [...mSelected];
     if (!ids.length) return alert('No items selected');
-    if (!confirm(`Delete ${ids.length} product(s)?`)) return;
+    if (!confirm(`Delete ${ids.length} item(s)?`)) return;
     const form = document.createElement('form');
     const module = document.querySelector('input.module').value;
-    form.method = 'POST'; form.action = '/' + module + '/delete-bulk';
+    form.method = 'POST'; form.action = '/' + module + '/delete';
     form.innerHTML = document.querySelector('meta[name="csrf-token"]').content ? `<input type="hidden" name="_token" value="${document.querySelector('meta[name=csrf-token]').content}">` : '';
     ids.forEach(id => { form.innerHTML += `<input type="hidden" name="ids[]" value="${id}">`; });
     document.body.appendChild(form); form.submit();

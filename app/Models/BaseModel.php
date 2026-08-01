@@ -41,11 +41,15 @@ class BaseModel extends Model
         return $this->getAttribute($this->getKeyName());
     }
 
+    /**
+     * Validation rules. Models override this.
+     *
+     * ponytail: returns [] on purpose — a guessed default (field_name + 'name')
+     * produced errors keyed to columns absent from the form, so nothing rendered
+     * and the submit looked like a silent no-op.
+     */
     public function rules(): array
     {
-        return [
-            $this->field_name() => ['required', 'string', 'max:255'],
-            'name' => ['required', 'string', 'max:255'],
-        ];
+        return [];
     }
 }

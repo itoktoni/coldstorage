@@ -28,29 +28,15 @@ return [
             ],
         ],
         [
-            'label' => 'CMS',
-            'items' => [
-                ['route' => 'cms-type.getTable', 'icon' => 'category', 'label' => 'Types'],
-                // ['route' => 'content-type.getTable', 'icon' => 'article', 'label' => 'Content Types'],
-                ['route' => 'field.getTable', 'icon' => 'account_tree', 'label' => 'Fields'],
-                // ['route' => 'custom-field.getTable', 'icon' => 'text_fields', 'label' => 'Custom Fields'],
-                // ['route' => 'field-group.getTable', 'icon' => 'view_agenda', 'label' => 'Field Groups'],
-                ['route' => 'section.getTable', 'icon' => 'view_module', 'label' => 'Sections'],
-                ['route' => 'content.getTable', 'icon' => 'library_books', 'label' => 'Content'],
-                // ['route' => 'content-entry.getTable', 'icon' => 'edit_note', 'label' => 'Entries'],
-                ['route' => 'category.getTable', 'icon' => 'category', 'label' => 'Categories'],
-                ['route' => 'tag.getTable', 'icon' => 'label', 'label' => 'Tags'],
-                ['route' => 'menu.getTable', 'icon' => 'menu', 'label' => 'Menus'],
-            ],
-        ],
-        [
             'label' => 'Master Data',
             'items' => [
-                ['route' => 'wms-supplier.getTable', 'icon' => 'business', 'label' => 'Supplier'],
+                ['route' => 'category.getTable', 'icon' => 'category', 'label' => 'Categories'],
+                ['route' => 'tag.getTable', 'icon' => 'label', 'label' => 'Tags'],
                 ['route' => 'wms-customer.getTable', 'icon' => 'groups', 'label' => 'Customer'],
-                ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
+                // ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
                 ['route' => 'wms-lokasi.getTable', 'icon' => 'place', 'label' => 'Lokasi'],
                 ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
+                ['route' => 'wms-barcode.generate', 'icon' => 'qr_code', 'label' => 'Generate Barcode'],
                 ['route' => 'wms-stock.getTable', 'icon' => 'store', 'label' => 'Stock'],
             ],
         ],
@@ -72,6 +58,7 @@ return [
             'items' => [
                 ['route' => 'wms-masuk-detail.getTable', 'icon' => 'input', 'label' => 'Masuk Detail'],
                 ['route' => 'wms-masuk-realisasi.getTable', 'icon' => 'check_circle', 'label' => 'Masuk Realisasi'],
+                ['route' => 'wms-forklift.index', 'icon' => 'local_shipping', 'label' => 'Forklift'],
             ],
         ],
         [

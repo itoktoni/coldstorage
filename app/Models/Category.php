@@ -11,11 +11,13 @@ class Category extends BaseModel
     use SoftDeletes;
 
     protected $table = 'categories';
+    public $primaryKey = 'slug';
+    public $keyType = 'string';
+    public $incrementing = false;
 
-    protected $fillable = ['name', 'slug', 'description', 'parent_id', 'sort_order'];
+    protected $fillable = ['name', 'slug', 'description', 'sort_order'];
 
     public static $sortColumns = ['name', 'slug', 'sort_order'];
-
     public static $filterColumns = ['name', 'slug'];
 
     public static function field_name(): string
@@ -25,12 +27,12 @@ class Category extends BaseModel
 
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'parent_id');
+        return $this->belongsTo(Category::class, 'parent_id', 'slug');
     }
 
     public function children()
     {
-        return $this->hasMany(Category::class, 'parent_id');
+        return $this->hasMany(Category::class, 'parent_id', 'slug');
     }
 
     // ponytail: ContentEntry model deleted — using Content with the shared pivot table.
@@ -41,11 +43,13 @@ class Category extends BaseModel
 
     public function rules(): array
     {
+        $excludeSlug = $this->exists ? $this->slug : '';
+
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:categories,slug,' . ($this->id ?? '')],
+            'slug' => ['required', 'string', 'max:255', 'unique:categories,slug,' . $excludeSlug],
             'description' => ['nullable', 'string'],
-            'parent_id' => ['nullable', 'exists:categories,id'],
+            'parent_id' => ['nullable', 'string', 'exists:categories,slug'],
             'sort_order' => ['nullable', 'integer'],
         ];
     }

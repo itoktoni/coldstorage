@@ -27,7 +27,6 @@
                 <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
                 @endforeach
                 <th class="text-end">Qty</th>
-                <th class="text-end">Tanggal</th>
             </x-slot:head>
             <x-slot:body>
                 @foreach($data as $table)
@@ -38,7 +37,6 @@
                     <td>{{ $table->$column }}</td>
                     @endforeach
                     <td class="text-end">{{ number_format($table->qty, 0, ',', '.') }}</td>
-                    <td class="text-end">{{ $table->tanggal ?? '-' }}</td>
                 </tr>
                 @endforeach
             </x-slot:body>
@@ -52,7 +50,12 @@
                         <x-table-mobile-text label="Qty" value="{{ number_format($table->qty, 0, ',', '.') }}" />
                         <x-table-mobile-text label="Tanggal" value="{{ $table->tanggal ?? '-' }}" />
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
+                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    <a href="{{ route('wms-product.getQrcode', $table->product_id) }}"
+                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                       title="QR Code">
+                        <span class="material-symbols-outlined text-lg">qr_code</span>
+                    </a>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @endforeach
@@ -64,7 +67,7 @@
         <x-action :model="$model" :action="['create', 'delete']"/>
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
     <script src="/js/table.js"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

@@ -19,7 +19,7 @@ class KeluarDetail extends BaseModel
     ];
 
     protected $casts = [
-        'out_detail_qty' => 'integer',
+        'out_detail_qty' => 'double',
     ];
 
     public function keluar()

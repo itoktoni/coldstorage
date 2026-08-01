@@ -31,7 +31,13 @@
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-so.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           title="Cetak SO">
+                            <span class="material-symbols-outlined text-lg">print</span>
+                        </a>
+                    </x-table-action>
                     @foreach ($model::$sortColumns as $column)
                     <td>{{ $table->$column }}</td>
                     @endforeach
@@ -52,7 +58,13 @@
                         <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
                         @endforeach
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
+                            <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-so.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           title="Cetak SO">
+                            <span class="material-symbols-outlined text-lg">print</span>
+                        </a>
+                    </x-table-action>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty
@@ -68,7 +80,7 @@
         <x-action :model="$model" :action="['create', 'delete']"/>
     </div>
 
-    <input type="hidden" class="module" value="{{ module() }}">
+    <input type="hidden" class="module" value="{{ Str::beforeLast(request()->route()->uri(), '/') }}">
     <script src="/js/table.js"></script>
     <script>initTable('{{ $sortField }}', '{{ $sortDir }}');</script>
 </x-layouts::app>

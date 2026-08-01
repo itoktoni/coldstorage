@@ -52,6 +52,8 @@
   --color-on-surface-variant: #444653;
   --color-surface-container-lowest: #ffffff;
   --color-on-error-container: #93000a;
+  --color-success: #16a34a;
+  --color-on-success: #ffffff;
   --color-background: #f7f9fb;
 
   /* Font Families */

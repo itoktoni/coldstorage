@@ -31,7 +31,7 @@ class PoController extends Controller
 
     protected function getData()
     {
-        return $this->model->with('details.product')->filter()->sort();
+        return $this->model->with('details.product', 'supplier')->filter()->sort();
     }
 
     public function getUpdate(GeneralRequest $request, $id)
@@ -121,5 +121,12 @@ class PoController extends Controller
         }
 
         return $code;
+    }
+
+    public function cetak(string $id)
+    {
+        $po = $this->model->with(['details.product', 'supplier'])->findOrFail($id);
+
+        return view('pages.po.cetak', ['po' => $po]);
     }
 }

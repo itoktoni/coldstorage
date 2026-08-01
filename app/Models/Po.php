@@ -13,13 +13,13 @@ class Po extends BaseModel
     const STATUS_PARTIAL = 'Partial';
     const STATUS_CLOSED  = 'Closed';
 
-    public static $filterColumns = ['po_code', 'po_supplier', 'po_tanggal', 'po_status'];
-    public static $sortColumns   = ['po_code', 'po_tanggal', 'po_supplier', 'po_status'];
+    public static $filterColumns = ['po_code', 'po_tanggal', 'po_status'];
+    public static $sortColumns   = ['po_code', 'po_tanggal', 'po_status'];
 
     protected $fillable = [
         'po_tanggal',
         'po_code',
-        'po_supplier',
+        'po_id_supplier',
         'po_status',
         'po_keterangan',
     ];
@@ -31,6 +31,11 @@ class Po extends BaseModel
     protected $casts = [
         'po_tanggal' => 'date',
     ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'po_id_supplier', 'supplier_id');
+    }
 
     public function details()
     {
@@ -57,7 +62,7 @@ class Po extends BaseModel
 
     public static function supplierOptions(): array
     {
-        return Supplier::pluck('supplier_nama', 'supplier_nama')->all();
+        return Supplier::pluck('supplier_nama', 'supplier_id')->all();
     }
 
     public static function statusOptions(): array
@@ -73,15 +78,20 @@ class Po extends BaseModel
     public function rules(): array
     {
         return [
-            'po_code'       => ['nullable', 'string', 'max:50'],
-            'po_tanggal'    => ['required'],
-            'po_supplier'   => ['required', 'string', 'max:200', 'exists:supplier,supplier_nama'],
-            'po_status'     => ['nullable', 'string', 'in:Pending,Ordered,Partial,Closed'],
-            'po_keterangan' => ['nullable', 'string'],
-            'details'                         => ['required', 'array', 'min:1'],
-            'details.*.po_detail_id'          => ['nullable', 'integer'],
-            'details.*.po_detail_id_product'  => ['required', 'integer', 'exists:product,product_id'],
-            'details.*.po_detail_qty'         => ['required', 'integer', 'min:1'],
+            'po_code'             => ['nullable', 'string', 'max:50'],
+            'po_tanggal'          => ['required'],
+            'po_id_supplier'      => ['required', 'integer', 'exists:supplier,supplier_id'],
+            'po_status'           => ['nullable', 'string', 'in:Pending,Ordered,Partial,Closed'],
+            'po_keterangan'       => ['nullable', 'string'],
+            'details'                          => ['required', 'array', 'min:1'],
+            'details.*.po_detail_id'           => ['nullable', 'integer'],
+            'details.*.po_detail_id_product'   => ['required', 'integer', 'exists:product,product_id'],
+            'details.*.po_detail_qty'          => ['required', 'integer', 'min:1'],
         ];
+    }
+
+    public function getSupplierNamaAttribute(): string
+    {
+        return $this->relationLoaded('supplier') ? ($this->supplier->supplier_nama ?? '-') : '-';
     }
 }
