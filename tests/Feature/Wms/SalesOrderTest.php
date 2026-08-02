@@ -24,13 +24,17 @@ function soActor(): User
 
 function soStock(Product $product, int $qty, ?string $expired = null): Stock
 {
-    $gudang = \App\Models\Gudang::create(['gudang_nama' => 'G-'.uniqid()]);
-    $lokasi = Lokasi::create(['lokasi_nama' => 'L-'.uniqid(), 'lokasi_id_gudang' => $gudang->gudang_id]);
+    $gudang = \App\Models\Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'G-'.uniqid()]);
+    $lokasi = Lokasi::create([
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'L-'.uniqid(),
+        'lokasi_code_gudang' => $gudang->gudang_code,
+    ]);
 
     return Stock::create([
         'stock_code'         => 'STK-'.uniqid(),
         'stock_id_product'   => $product->product_id,
-        'stock_id_lokasi'    => $lokasi->lokasi_id,
+        'stock_code_lokasi'  => $lokasi->lokasi_code,
         'stock_qty'          => $qty,
         'stock_expired_date' => $expired,
         'stock_type'         => 'IN',

@@ -9,15 +9,19 @@ use App\Models\Product;
 use App\Models\Stock;
 
 it('persists keluar_realisasi with string FK to keluar', function () {
-    $gudang = Gudang::create(['gudang_nama' => 'WH-F']);
-    $lokasi = Lokasi::create(['lokasi_nama' => 'Rak-06', 'lokasi_id_gudang' => $gudang->gudang_id]);
+    $gudang = Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'WH-F']);
+    $lokasi = Lokasi::create([
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'Rak-06',
+        'lokasi_code_gudang' => $gudang->gudang_code,
+    ]);
     $product = Product::create(['product_nama' => 'Item-5', 'product_harga' => 300]);
     $stock = Stock::create([
-        'stock_code'       => 'STK-OUT-001',
-        'stock_id_product' => $product->product_id,
-        'stock_id_lokasi'  => $lokasi->lokasi_id,
-        'stock_qty'        => 50,
-        'stock_type'       => 'IN',
+        'stock_code'        => 'STK-OUT-001',
+        'stock_id_product'  => $product->product_id,
+        'stock_code_lokasi' => $lokasi->lokasi_code,
+        'stock_qty'         => 50,
+        'stock_type'        => 'IN',
     ]);
 
     $keluar = Keluar::create([
@@ -46,15 +50,19 @@ it('persists keluar_realisasi with string FK to keluar', function () {
 });
 
 it('cascades from keluar to keluar_detail and keluar_realisasi', function () {
-    $gudang = Gudang::create(['gudang_nama' => 'WH-G']);
-    $lokasi = Lokasi::create(['lokasi_nama' => 'Rak-07', 'lokasi_id_gudang' => $gudang->gudang_id]);
+    $gudang = Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'WH-G']);
+    $lokasi = Lokasi::create([
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'Rak-07',
+        'lokasi_code_gudang' => $gudang->gudang_code,
+    ]);
     $product = Product::create(['product_nama' => 'Item-6', 'product_harga' => 900]);
     $stock = Stock::create([
-        'stock_code'       => 'STK-OUT-002',
-        'stock_id_product' => $product->product_id,
-        'stock_id_lokasi'  => $lokasi->lokasi_id,
-        'stock_qty'        => 25,
-        'stock_type'       => 'IN',
+        'stock_code'        => 'STK-OUT-002',
+        'stock_id_product'  => $product->product_id,
+        'stock_code_lokasi' => $lokasi->lokasi_code,
+        'stock_qty'         => 25,
+        'stock_type'        => 'IN',
     ]);
 
     $keluar = Keluar::create([

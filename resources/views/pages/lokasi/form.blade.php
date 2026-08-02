@@ -6,7 +6,8 @@
     <x-form :model="$model">
         <x-card :label="ucfirst(module())">
             @bind($model ?? null)
-            <x-select col="6" name="lokasi_id_gudang" :options="$gudangOptions" />
+            <x-input col="6" name="lokasi_code" />
+            <x-select col="6" name="lokasi_code_gudang" :options="$gudangOptions" />
             <x-select col="6" name="lokasi_category" :options="$categoryOptions" />
             <x-input col="6" name="lokasi_nama" />
                 <x-input col="6" name="lokasi_max_qty" type="number" step="1" min="0" label="Max Qty" placeholder="Kosong = tanpa batas" />

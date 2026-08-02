@@ -10,7 +10,8 @@ function initTable(sortField, sortDir) {
 function buildUrl() {
     const params = new URLSearchParams();
     const q = document.getElementById('searchInput').value.trim();
-    const field = document.getElementById('filterField').value;
+    const fieldEl = document.getElementById('filterField');
+    const field = fieldEl ? fieldEl.value : '';
     const perPage = document.getElementById('perPage').value;
 
     // Build URL from main search

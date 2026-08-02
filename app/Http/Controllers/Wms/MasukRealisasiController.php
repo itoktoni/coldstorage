@@ -22,12 +22,19 @@ class MasukRealisasiController extends Controller
         return array_merge([
             'model'          => $this->model,
             'productOptions' => Product::pluck('product_nama', 'product_id'),
-            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_id'),
+            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_code'),
+            'statusOptions'  => MasukRealisasi::statusOptions(),
         ], $data);
     }
 
     protected function getData()
     {
-        return $this->model->with('product', 'lokasi')->filter()->sort();
+        return $this->model->addSelect([
+            'masuk_realisasi.*',
+            'in_detail_status',
+        ])->leftJoin('masuk_detail', 'masuk_realisasi.in_realisasi_masuk_code', '=', 'masuk_detail.in_detail_code')
+          ->with('product', 'lokasi')
+          ->filter()
+          ->sort();
     }
 }

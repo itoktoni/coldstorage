@@ -10,7 +10,7 @@
                     <x-input col="6" name="stock_code" readonly />
                 @endif
                 <x-select col="6" name="stock_id_product" :options="$productOptions" />
-                <x-select col="6" name="stock_id_lokasi" :options="$lokasiOptions" />
+                <x-select col="6" name="stock_code_lokasi" :options="$lokasiOptions" />
                 <x-input col="2" name="stock_qty" type="number" />
                 <x-input col="4" name="stock_expired_date" type="date" />
                 <x-select col="6" name="stock_type" :options="$typeOptions" />

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
 use App\Models\Product;
@@ -72,7 +73,7 @@ class MasukRealisasiScanner extends Component
             'in_realisasi_masuk_code' => $this->masukDetail->in_detail_code,
             'in_realisasi_id_product' => $product->product_id,
             'in_realisasi_qty' => $parsed['qty'],
-            'in_realisasi_id_lokasi' => 1, // Staging location
+            'in_realisasi_code_lokasi' => $this->stagingLokasiCode(),
             'in_realisasi_barcode' => $barcodeContent,
         ]);
 
@@ -88,6 +89,7 @@ class MasukRealisasiScanner extends Component
         if ($totalRealisasi >= $this->masukDetail->in_detail_qty && $this->masukDetail->in_detail_status === MasukStatusEnum::PROCESS) {
             $this->masukDetail->update(['in_detail_status' => MasukStatusEnum::READY]);
             $this->masukDetail->refresh();
+            $this->generateGroupForDetail($this->masukDetail->in_detail_code);
         }
 
         $this->success = 'Barcode berhasil di-scan';
@@ -117,6 +119,11 @@ class MasukRealisasiScanner extends Component
 
         $this->masukDetail->update(['in_detail_status' => $enum]);
         $this->masukDetail->refresh();
+
+        if ($enum === MasukStatusEnum::READY) {
+            $this->generateGroupForDetail($this->masukDetail->in_detail_code);
+        }
+
         $this->success = 'Status diubah ke '.$enum->description();
     }
 
@@ -165,6 +172,19 @@ class MasukRealisasiScanner extends Component
     {
         $this->selectedProductId = null;
         $this->scans = null;
+    }
+
+    protected function stagingLokasiCode(): string
+    {
+        return Lokasi::query()->orderBy('lokasi_code')->value('lokasi_code') ?? '';
+    }
+
+    protected function generateGroupForDetail(string $detailCode): void
+    {
+        $existing = MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->whereNotNull('in_realisasi_group')->value('in_realisasi_group');
+        $group = $existing ?: MasukRealisasi::generateGroupCode();
+
+        MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->update(['in_realisasi_group' => $group]);
     }
 
     public function render()

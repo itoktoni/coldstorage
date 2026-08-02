@@ -96,16 +96,13 @@ trait ControllerTrait
         $fields = [];
         if (property_exists($this->model, 'filterColumns') && ! empty($this->model::$filterColumns)) {
             foreach ($this->model::$filterColumns as $key => $value) {
-                // If value is false/null/empty, skip (for advanced filters only)
-                if ($value === false || $value === null || $value === '' || is_int($key)) {
+                if ($value === false || $value === null || $value === '') {
                     continue;
                 }
 
-                // If key is numeric (array value only), use value as both key and column
                 if (is_numeric($key)) {
                     $fields[$value] = ucwords(str_replace('_', ' ', $value));
                 } else {
-                    // If key is string, use it as label and value as column name
                     $fields[$key] = $value;
                 }
             }

@@ -27,7 +27,7 @@ class MasukDetailController extends Controller
         return array_merge([
             'model'          => $this->model,
             'productOptions' => Product::pluck('product_nama', 'product_id'),
-            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_id'),
+            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_code'),
         ], $data);
     }
 
@@ -49,7 +49,7 @@ class MasukDetailController extends Controller
 
         $data = $request->validate([
             'realisasi_qty'   => ['required', 'numeric', 'min:0.001', 'lte:'.$masukDetail->in_detail_qty],
-            'realisasi_lokasi' => ['required', 'integer', 'exists:lokasi,lokasi_id'],
+            'realisasi_lokasi' => ['required', 'string', 'exists:lokasi,lokasi_code'],
         ]);
 
         try {
@@ -58,7 +58,7 @@ class MasukDetailController extends Controller
                     'in_realisasi_masuk_code' => $masukDetail->in_detail_code,
                     'in_realisasi_id_product' => $masukDetail->in_detail_id_product,
                     'in_realisasi_qty'        => $data['realisasi_qty'],
-                    'in_realisasi_id_lokasi'  => $data['realisasi_lokasi'],
+                    'in_realisasi_code_lokasi' => $data['realisasi_lokasi'],
                 ]);
 
                 // Hitung total yang sudah direalisasi
@@ -74,7 +74,7 @@ class MasukDetailController extends Controller
                 // Tambah stok
                 Stock::create([
                     'stock_id_product'   => $masukDetail->in_detail_id_product,
-                    'stock_id_lokasi'    => $data['realisasi_lokasi'],
+                    'stock_code_lokasi'  => $data['realisasi_lokasi'],
                     'stock_qty'          => $data['realisasi_qty'],
                     'stock_type'         => 'IN',
                     'stock_expired_date' => now()->addDays(30),

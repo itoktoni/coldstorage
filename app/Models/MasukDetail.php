@@ -12,7 +12,7 @@ class MasukDetail extends BaseModel
     protected $primaryKey = 'in_detail_code';
     public $keyType = 'string';
     public $incrementing = false;
-    public $timestamps = true;
+    public $timestamps = false;
 
     const CREATED_BY = 'in_detail_created_by';
     const UPDATED_BY = 'in_detail_updated_by';
@@ -30,6 +30,7 @@ class MasukDetail extends BaseModel
         'in_detail_created_by',
         'in_detail_updated_by',
         'in_detail_id_product',
+        'in_detail_id_lokasi',
         'in_detail_qty',
     ];
 
@@ -43,6 +44,11 @@ class MasukDetail extends BaseModel
     public function product()
     {
         return $this->belongsTo(Product::class, 'in_detail_id_product', 'product_id');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'in_detail_id_lokasi', 'lokasi_code');
     }
 
     public function poDetail()

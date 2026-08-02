@@ -31,7 +31,11 @@
                 @foreach($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-lokasi.printQr', ['code' => $table->field_primary]) }}" target="_blank" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors" title="Print QR Code">
+                            <span class="material-symbols-outlined text-lg">qr_code_2</span>
+                        </a>
+                    </x-table-action>
                     @foreach ($model::$sortColumns as $column)
                     <td>{{ $table->$column }}</td>
                     @endforeach

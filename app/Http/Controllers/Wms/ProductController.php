@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Wms;
 
 use App\Concerns\ControllerTrait;
 use App\Http\Controllers\Controller;
-use App\Models\Category;
+use App\Models\Lokasi;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,15 +21,22 @@ class ProductController extends Controller
 
     protected function share($data = [])
     {
+        $categories = Lokasi::whereNotNull('lokasi_category')
+            ->distinct()
+            ->pluck('lokasi_category')
+            ->sort()
+            ->mapWithKeys(fn ($c) => [$c => ucfirst($c)])
+            ->toArray();
+
         return array_merge([
-            'model'             => $this->model,
-            'categoryOptions'   => Category::getOptions(),
+            'model'           => $this->model,
+            'categoryOptions' => $categories,
         ], $data);
     }
 
     protected function getData()
     {
-        return $this->model->with('stock', 'category')->filter()->sort();
+        return $this->model->with('stock')->filter()->sort();
     }
 
     public function getQrcode(Request $request, int $id)

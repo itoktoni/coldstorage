@@ -52,7 +52,7 @@ class Product extends BaseModel
             'product_code'        => ['nullable', 'string', 'max:11', 'unique:product,product_code'],
             'product_nama'        => ['required', 'string', 'max:200'],
             'product_harga'       => ['required', 'numeric', 'min:0'],
-            'product_category' => ['nullable', 'string', 'max:50', 'exists:categories,slug'],
+            'product_category' => ['nullable', 'string', 'max:50'],
         ];
     }
 

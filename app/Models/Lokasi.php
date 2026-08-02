@@ -5,15 +5,18 @@ namespace App\Models;
 class Lokasi extends BaseModel
 {
     protected $table = 'lokasi';
-    protected $primaryKey = 'lokasi_id';
+    protected $primaryKey = 'lokasi_code';
     public $timestamps = true;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
-    public static $filterColumns = ['lokasi_nama', 'lokasi_id_gudang', 'lokasi_category'];
-    public static $sortColumns   = ['gudang_nama', 'lokasi_nama', 'lokasi_category'];
+    public static $filterColumns = ['lokasi_code', 'lokasi_nama', 'lokasi_code_gudang', 'lokasi_category'];
+    public static $sortColumns   = ['lokasi_code', 'lokasi_category', 'gudang_nama', 'lokasi_nama', 'lokasi_max_qty'];
 
     protected $fillable = [
+        'lokasi_code',
         'lokasi_nama',
-        'lokasi_id_gudang',
+        'lokasi_code_gudang',
         'lokasi_max_qty',
         'lokasi_category',
     ];
@@ -24,7 +27,7 @@ class Lokasi extends BaseModel
 
     public function gudang()
     {
-        return $this->belongsTo(Gudang::class, 'lokasi_id_gudang', 'gudang_id');
+        return $this->belongsTo(Gudang::class, 'lokasi_code_gudang', 'gudang_code');
     }
 
     public function getGudangNamaAttribute()
@@ -34,7 +37,7 @@ class Lokasi extends BaseModel
 
     public function stock()
     {
-        return $this->hasMany(Stock::class, 'stock_id_lokasi', 'lokasi_id');
+        return $this->hasMany(Stock::class, 'stock_code_lokasi', 'lokasi_code');
     }
 
     public static function field_name()
@@ -85,10 +88,11 @@ class Lokasi extends BaseModel
     public function rules(): array
     {
         return [
-            'lokasi_nama'      => ['required', 'string', 'max:100'],
-            'lokasi_id_gudang' => ['required', 'exists:gudang,gudang_id'],
-            'lokasi_max_qty'   => ['nullable', 'numeric', 'min:0'],
-            'lokasi_category'  => ['nullable', 'string', 'max:50'],
+            'lokasi_code'        => ['required', 'string', 'max:50'],
+            'lokasi_nama'        => ['required', 'string', 'max:100'],
+            'lokasi_code_gudang' => ['required', 'exists:gudang,gudang_code'],
+            'lokasi_max_qty'     => ['nullable', 'numeric', 'min:0'],
+            'lokasi_category'    => ['nullable', 'string', 'max:50'],
         ];
     }
 }

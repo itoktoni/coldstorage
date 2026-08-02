@@ -5,9 +5,11 @@ namespace App\Providers;
 use App\Events\NotificationSent;
 use App\Listeners\SendNotificationViaCentrifugo;
 use App\Models\Menu;
+use App\Wms\MasukStatusEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -118,5 +120,8 @@ class AppServiceProvider extends ServiceProvider
                 ->uncompromised()
             : null,
         );
+
+        $loader = AliasLoader::getInstance();
+        $loader->alias('MasukStatus', MasukStatusEnum::class);
     }
 }

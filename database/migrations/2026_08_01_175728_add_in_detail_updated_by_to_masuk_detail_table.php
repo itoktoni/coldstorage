@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('masuk_detail', function (Blueprint $table) {
-            $table->unsignedInteger('in_detail_updated_by')->nullable()->after('in_detail_created_by');
-        });
+        if (!Schema::hasColumn('masuk_detail', 'in_detail_updated_by')) {
+            Schema::table('masuk_detail', function (Blueprint $table) {
+                $table->unsignedInteger('in_detail_updated_by')->nullable()->after('in_detail_created_by');
+            });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('masuk_detail', function (Blueprint $table) {
-            $table->dropColumn('in_detail_updated_by');
-        });
+        if (Schema::hasColumn('masuk_detail', 'in_detail_updated_by')) {
+            Schema::table('masuk_detail', function (Blueprint $table) {
+                $table->dropColumn('in_detail_updated_by');
+            });
+        }
     }
 };

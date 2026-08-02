@@ -6,6 +6,7 @@
     <x-form :model="$model">
         <x-card :label="ucfirst(module())">
             @bind($model ?? null)
+                <x-input col="6" name="gudang_code" />
                 <x-input col="6" name="gudang_nama" />
             @endbind
         </x-card>

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 
 class Stock extends BaseModel
@@ -10,13 +11,13 @@ class Stock extends BaseModel
     protected $primaryKey = 'stock_id';
     public $timestamps = true;
 
-    public static $filterColumns = ['stock_code', 'stock_id_product', 'stock_id_lokasi', 'stock_type'];
-    public static $sortColumns   = ['product_nama', 'lokasi_nama', 'stock_qty', 'stock_expired_date'];
+    public static $filterColumns = ['stock_code', 'product_nama', 'stock_code_lokasi', 'stock_type'];
+    public static $sortColumns   = ['stock_code', 'stock_id_product', 'stock_code_lokasi', 'stock_type', 'stock_qty'];
 
     protected $fillable = [
         'stock_code',
         'stock_id_product',
-        'stock_id_lokasi',
+        'stock_code_lokasi',
         'stock_qty',
         'stock_expired_date',
         'stock_reff',
@@ -53,12 +54,17 @@ class Stock extends BaseModel
         return [
             'stock_code'         => ['nullable', 'string', 'max:100', Rule::unique('stock', 'stock_code')->ignore($id, 'stock_id')],
             'stock_id_product'   => ['required', 'exists:product,product_id'],
-            'stock_id_lokasi'    => ['required', 'exists:lokasi,lokasi_id'],
+            'stock_code_lokasi'  => ['required', 'exists:lokasi,lokasi_code'],
             'stock_qty'          => ['required', 'numeric', 'min:0'],
             'stock_expired_date' => ['nullable', 'date'],
             'stock_reff'         => ['nullable', 'string', 'max:100'],
             'stock_type'         => ['required', 'in:IN,OUT'],
         ];
+    }
+
+    public static function field_name(): string
+    {
+        return 'product_nama';
     }
 
     public static function typeOptions(): array
@@ -73,7 +79,7 @@ class Stock extends BaseModel
 
     public function lokasi()
     {
-        return $this->belongsTo(Lokasi::class, 'stock_id_lokasi', 'lokasi_id');
+        return $this->belongsTo(Lokasi::class, 'stock_code_lokasi', 'lokasi_code');
     }
 
     public function keluarRealisasi()
@@ -90,6 +96,47 @@ class Stock extends BaseModel
     public function scopeAvailable($query)
     {
         return $query->where('stock_type', 'IN')->where('stock_qty', '>', 0);
+    }
+
+    public function scopeFilter(Builder $query, array|null $params = null): Builder
+    {
+        if (!isset($params)) {
+            $params = request()->query('filters', []);
+        }
+
+        $virtualColumns = ['product_nama', 'lokasi_nama'];
+        $virtualFilters = [];
+
+        foreach ($virtualColumns as $field) {
+            if (isset($params[$field])) {
+                $virtualFilters[$field] = $params[$field];
+                unset($params[$field]);
+            }
+        }
+
+        // Delegate to Purity for stock table columns (bootFilter runs here)
+        $query = parent::scopeFilter($query, $params);
+
+        // Apply virtual column filters as plain WHERE (already joined by getData)
+        foreach ($virtualFilters as $field => $operators) {
+            foreach ($operators as $operator => $value) {
+                $sqlOperator = match ($operator) {
+                    '$eq' => '=',
+                    '$contains' => 'LIKE',
+                    '$ne' => '!=',
+                    '$gt' => '>',
+                    '$gte' => '>=',
+                    '$lt' => '<',
+                    '$lte' => '<=',
+                    default => 'LIKE',
+                };
+
+                $sqlValue = $sqlOperator === 'LIKE' ? '%'.$value.'%' : $value;
+                $query->where($field, $sqlOperator, $sqlValue);
+            }
+        }
+
+        return $query;
     }
 
     public function getProductNamaAttribute()

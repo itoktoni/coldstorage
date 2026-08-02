@@ -99,6 +99,34 @@
             </div>
         </div>
 
+        {{-- Pallet Barcode (when READY) --}}
+        @php
+            $palletCode = \App\Models\MasukRealisasi::where('in_realisasi_masuk_code', $masukDetail->in_detail_code)
+                ->whereNotNull('in_realisasi_group')
+                ->value('in_realisasi_group');
+        @endphp
+        @if($palletCode)
+        <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
+            <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">qr_code_2</span>
+                Barcode Pallet / Group
+            </h3>
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div>
+                    <div class="text-xs text-on-surface-variant uppercase tracking-widest">Kode Pallet</div>
+                    <div class="text-2xl font-bold text-on-surface font-mono">{{ $palletCode }}</div>
+                    <div class="text-sm text-on-surface-variant mt-1">
+                        1 barcode ini mewakili seluruh realisasi pada {{ $masukDetail->in_detail_code }}.
+                    </div>
+                </div>
+                <a href="{{ route('wms-forklift.printQr', ['groupCode' => $palletCode]) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                    <span class="material-symbols-outlined text-lg mr-1">picture_as_pdf</span>
+                    Print PDF Pallet
+                </a>
+            </div>
+        </div>
+        @endif
+
         {{-- Summary Table --}}
         <div wire:key="summary-card" class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
             <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">

@@ -19,30 +19,35 @@ it('creates the wms tables', function () {
     expect(Schema::hasTable('split'))->toBeTrue();
 });
 
-it('relates gudang to lokasi via gudang_id', function () {
-    $gudang = Gudang::create(['gudang_nama' => 'WH-A']);
+it('relates gudang to lokasi via gudang_code', function () {
+    $gudang = Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'WH-A']);
     $lokasi = Lokasi::create([
-        'lokasi_nama'      => 'Rak-01',
-        'lokasi_id_gudang' => $gudang->gudang_id,
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'Rak-01',
+        'lokasi_code_gudang' => $gudang->gudang_code,
     ]);
 
     expect($lokasi->gudang)->toBeInstanceOf(Gudang::class);
-    expect($lokasi->gudang->gudang_id)->toBe($gudang->gudang_id);
+    expect($lokasi->gudang->gudang_code)->toBe($gudang->gudang_code);
     expect($gudang->lokasi)->toHaveCount(1);
-    expect($gudang->lokasi->first()->lokasi_id)->toBe($lokasi->lokasi_id);
+    expect($gudang->lokasi->first()->lokasi_code)->toBe($lokasi->lokasi_code);
 });
 
 it('relates lokasi to stock and stock to product', function () {
-    $gudang = Gudang::create(['gudang_nama' => 'WH-B']);
-    $lokasi = Lokasi::create(['lokasi_nama' => 'Rak-02', 'lokasi_id_gudang' => $gudang->gudang_id]);
+    $gudang = Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'WH-B']);
+    $lokasi = Lokasi::create([
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'Rak-02',
+        'lokasi_code_gudang' => $gudang->gudang_code,
+    ]);
     $product = Product::create(['product_nama' => 'Item-1', 'product_harga' => 1000]);
 
     $stock = Stock::create([
-        'stock_code'       => 'STK-001',
-        'stock_id_product' => $product->product_id,
-        'stock_id_lokasi'  => $lokasi->lokasi_id,
-        'stock_qty'        => 10,
-        'stock_type'       => 'IN',
+        'stock_code'         => 'STK-001',
+        'stock_id_product'   => $product->product_id,
+        'stock_code_lokasi'  => $lokasi->lokasi_code,
+        'stock_qty'          => 10,
+        'stock_type'         => 'IN',
     ]);
 
     expect($stock->product)->toBeInstanceOf(Product::class);
@@ -51,13 +56,17 @@ it('relates lokasi to stock and stock to product', function () {
 });
 
 it('scopes available stock to stock_type IN and positive qty', function () {
-    $gudang = Gudang::create(['gudang_nama' => 'WH-C']);
-    $lokasi = Lokasi::create(['lokasi_nama' => 'Rak-03', 'lokasi_id_gudang' => $gudang->gudang_id]);
+    $gudang = Gudang::create(['gudang_code' => 'GD-'.uniqid(), 'gudang_nama' => 'WH-C']);
+    $lokasi = Lokasi::create([
+        'lokasi_code'        => 'LOC-'.uniqid(),
+        'lokasi_nama'        => 'Rak-03',
+        'lokasi_code_gudang' => $gudang->gudang_code,
+    ]);
     $product = Product::create(['product_nama' => 'Item-2', 'product_harga' => 2000]);
 
-    Stock::create(['stock_code' => 'S1', 'stock_id_product' => $product->product_id, 'stock_id_lokasi' => $lokasi->lokasi_id, 'stock_qty' => 5, 'stock_type' => 'IN']);
-    Stock::create(['stock_code' => 'S2', 'stock_id_product' => $product->product_id, 'stock_id_lokasi' => $lokasi->lokasi_id, 'stock_qty' => 0, 'stock_type' => 'IN']);
-    Stock::create(['stock_code' => 'S3', 'stock_id_product' => $product->product_id, 'stock_id_lokasi' => $lokasi->lokasi_id, 'stock_qty' => 3, 'stock_type' => 'OUT']);
+    Stock::create(['stock_code' => 'S1', 'stock_id_product' => $product->product_id, 'stock_code_lokasi' => $lokasi->lokasi_code, 'stock_qty' => 5, 'stock_type' => 'IN']);
+    Stock::create(['stock_code' => 'S2', 'stock_id_product' => $product->product_id, 'stock_code_lokasi' => $lokasi->lokasi_code, 'stock_qty' => 0, 'stock_type' => 'IN']);
+    Stock::create(['stock_code' => 'S3', 'stock_id_product' => $product->product_id, 'stock_code_lokasi' => $lokasi->lokasi_code, 'stock_qty' => 3, 'stock_type' => 'OUT']);
 
     expect(Stock::available()->count())->toBe(1);
 });

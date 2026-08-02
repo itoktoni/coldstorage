@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/wms/supplier', 'SupplierController', ['name' => 'wms-supplier']);
     Route::auto('/wms/customer', 'CustomerController', ['name' => 'wms-customer']);
     Route::auto('/wms/lokasi', 'Wms\LokasiController', ['name' => 'wms-lokasi']);
+    Route::get('/wms/lokasi/{code}/print-qr', [\App\Http\Controllers\Wms\LokasiController::class, 'printQrPdf'])->name('wms-lokasi.printQr');
     Route::auto('/wms/product', 'Wms\ProductController', ['name' => 'wms-product']);
     Route::get('/wms/product/{id}/qrcode', [\App\Http\Controllers\Wms\ProductController::class, 'getQrcode'])->name('wms-product.getQrcode');
     Route::post('/wms/product/{id}/qrcode', [\App\Http\Controllers\Wms\ProductController::class, 'postQrcode'])->name('wms-product.postQrcode');
@@ -53,7 +54,9 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
     Route::get('/wms/po/{id}/cetak', [\App\Http\Controllers\Wms\PoController::class, 'cetak'])->name('wms-po.cetak');
     Route::auto('/wms/po-detail', 'Wms\PoDetailController', ['name' => 'wms-po-detail']);
-    Route::get('/wms/po-detail/{id}/convert-to-masuk', [\App\Http\Controllers\Wms\PoDetailController::class, 'convertToMasuk'])->name('wms-po-detail-convert');
+    Route::get('/wms/po-detail/{id}/convert-to-masuk', [\App\Http\Controllers\Wms\PoDetailController::class, 'getConvertToMasuk'])->name('wms-po-detail-convert');
+    Route::post('/wms/po-detail/{id}/convert-to-masuk', [\App\Http\Controllers\Wms\PoDetailController::class, 'postConvertToMasuk'])->name('wms-po-detail.convertToMasuk');
+    Route::post('/wms/po-detail/{id}/convert-single', [\App\Http\Controllers\Wms\PoDetailController::class, 'postConvertSingleRow'])->name('wms-po-detail.convertSingle');
 
     // WMS Sales
     Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so']);
@@ -68,6 +71,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     // WMS Forklift
     Route::get('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'index'])->name('wms-forklift.index');
     Route::post('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'store'])->name('wms-forklift.store');
+    Route::get('/wms/forklift/{groupCode}/print-qr', [\App\Http\Controllers\Wms\ForkliftController::class, 'printGroupQr'])->name('wms-forklift.printQr');
+    Route::post('/wms/forklift/relokasi', [\App\Http\Controllers\Wms\ForkliftController::class, 'relokasi'])->name('wms-forklift.relokasi');
 
     // WMS Outbound
     Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);

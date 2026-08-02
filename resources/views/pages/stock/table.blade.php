@@ -23,18 +23,22 @@
             <x-slot:head>
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
-                @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
-                @endforeach
+                <x-table-sort field="stock_code" label="Stock Code" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="product_nama" label="Product" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="stock_code_lokasi" label="Lokasi" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="stock_type" label="Type" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="stock_qty" label="Qty" :sortField="$sortField" :sortDir="$sortDir" />
             </x-slot:head>
             <x-slot:body>
                 @forelse($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary" />
-                    @foreach ($model::$sortColumns as $column)
-                    <td>{{ $table->$column }}</td>
-                    @endforeach
+                    <td>{{ $table->stock_code }}</td>
+                    <td>{{ $table->product->product_nama ?? $table->stock_id_product }}</td>
+                    <td>{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}</td>
+                    <td>{{ $table->stock_type }}</td>
+                    <td>{{ $table->stock_qty }}</td>
                 </tr>
                 @empty
                 <tr>
@@ -50,9 +54,11 @@
                     @forelse($data as $table)
                     <x-table-mobile-item :id="$table->field_primary">
                         <x-table-mobile-header title="{{ $table->product_nama ?? $table->stock_code }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text label="{{ formatLabel($column) }}" value="{{ $table->$column }}" />
-                        @endforeach
+                        <x-table-mobile-text label="Stock Code" value="{{ $table->stock_code }}" />
+                        <x-table-mobile-text label="Product" value="{{ $table->product_nama ?? $table->stock_id_product }}" />
+                        <x-table-mobile-text label="Lokasi" value="{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}" />
+                        <x-table-mobile-text label="Type" value="{{ $table->stock_type }}" />
+                        <x-table-mobile-text label="Qty" value="{{ $table->stock_qty }}" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary" />
                         </x-table-mobile-footer>
