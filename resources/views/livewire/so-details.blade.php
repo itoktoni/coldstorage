@@ -6,11 +6,13 @@ new class extends Component {
     public array $rows = [];
     public array $options = [];
     public array $prices = [];
+    public array $availableStock = [];
 
-    public function mount(array $rows = [], array $options = [], array $prices = []): void
+    public function mount(array $rows = [], array $options = [], array $prices = [], array $availableStock = []): void
     {
         $this->options = $options;
         $this->prices = $prices;
+        $this->availableStock = $availableStock;
         $this->rows = $rows ?: [$this->blank()];
     }
 
@@ -62,6 +64,23 @@ new class extends Component {
             ->all();
     }
 
+    /** Available qty for product at row $i, minus qty used in other rows. */
+    public function availableQty(int $i): int
+    {
+        $product = $this->rows[$i]['so_detail_id_product'] ?? '';
+        if ($product === '' || $product === null) {
+            return 0;
+        }
+
+        $base = $this->availableStock[$product] ?? 0;
+        $usedElsewhere = collect($this->rows)
+            ->except($i)
+            ->where('so_detail_id_product', $product)
+            ->sum('so_detail_qty');
+
+        return max(0, $base - (int) $usedElsewhere);
+    }
+
     public function priceOf(int $i): float
     {
         $product = $this->rows[$i]['so_detail_id_product'] ?? '';
@@ -100,9 +119,12 @@ new class extends Component {
                         required>
                         <option value="">-- Silahkan Pilih --</option>
                         @foreach($options as $id => $nama)
+                            @php $avail = $availableStock[$id] ?? 0; @endphp
+                            @if($avail > 0)
                             <option value="{{ $id }}"
                                 @selected((string) $row['so_detail_id_product'] === (string) $id)
-                                @disabled(in_array((string) $id, $this->takenBy($i), true))>{{ $nama }}</option>
+                                @disabled(in_array((string) $id, $this->takenBy($i), true))>{{ $nama }} ({{ $avail }})</option>
+                            @endif
                         @endforeach
                     </select>
                     @error("rows.$i.so_detail_id_product")
@@ -110,8 +132,13 @@ new class extends Component {
                     @enderror
                 </div>
                 <div class="col-span-6 md:col-span-2">
-                    <label class="font-body-sm text-body-sm font-bold text-on-surface-variant block mb-1">Qty</label>
-                    <input type="number" min="1" name="details[{{ $i }}][so_detail_qty]"
+                    <label class="font-body-sm text-body-sm font-bold text-on-surface-variant block mb-1">
+                        Qty
+                        @if($row['so_detail_id_product'])
+                            <span class="text-on-surface-variant font-normal">/ {{ $this->availableQty($i) }}</span>
+                        @endif
+                    </label>
+                    <input type="number" min="1" max="{{ $this->availableQty($i) }}" name="details[{{ $i }}][so_detail_qty]"
                         wire:model.live="rows.{{ $i }}.so_detail_qty"
                         class="w-full h-12 px-4 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none"
                         required />

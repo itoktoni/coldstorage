@@ -38,6 +38,8 @@ return [
                 ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
                 ['route' => 'wms-barcode.generate', 'icon' => 'qr_code', 'label' => 'Generate Barcode'],
                 ['route' => 'wms-stock.getTable', 'icon' => 'store', 'label' => 'Stock'],
+                ['route' => 'wms-stock-flow.index', 'icon' => 'swap_horiz', 'label' => 'Stock Flow'],
+                ['route' => 'wms-stock-sales.index', 'icon' => 'storefront', 'label' => 'Stock Sales'],
             ],
         ],
         [

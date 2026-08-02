@@ -16,6 +16,7 @@ class KeluarDetail extends BaseModel
         'out_detail_id_product',
         'out_detail_code',
         'out_detail_qty',
+        'out_detail_reff',
     ];
 
     protected $casts = [

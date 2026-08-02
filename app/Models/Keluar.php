@@ -32,6 +32,24 @@ class Keluar extends BaseModel
         'out_created_at' => 'datetime',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (self $keluar) {
+            if (empty($keluar->out_code)) {
+                $keluar->out_code = self::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        do {
+            $code = 'OUT-'.now()->format('Ymd').'-'.unic_number(4);
+        } while (self::where('out_code', $code)->exists());
+
+        return $code;
+    }
+
     public function details()
     {
         return $this->hasMany(KeluarDetail::class, 'out_detail_code_keluar', 'out_code');

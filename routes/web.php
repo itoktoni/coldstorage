@@ -49,6 +49,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
 
     // WMS Inventory
     Route::auto('/wms/stock', 'Wms\StockController', ['name' => 'wms-stock']);
+    Route::get('/wms/stock-flow', [\App\Http\Controllers\Wms\StockFlowController::class, 'index'])->name('wms-stock-flow.index');
+    Route::get('/wms/stock-sales', [\App\Http\Controllers\Wms\StockSalesController::class, 'index'])->name('wms-stock-sales.index');
 
     // WMS Procurement
     Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
@@ -59,8 +61,10 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/po-detail/{id}/convert-single', [\App\Http\Controllers\Wms\PoDetailController::class, 'postConvertSingleRow'])->name('wms-po-detail.convertSingle');
 
     // WMS Sales
-    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so']);
+    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so', 'except' => ['getPrepare', 'postPrepare', 'cetak']]);
     Route::get('/wms/so/{id}/cetak', [\App\Http\Controllers\Wms\SoController::class, 'cetak'])->name('wms-so.cetak');
+    Route::get('/wms/so/prepare', [\App\Http\Controllers\Wms\SoController::class, 'getPrepare'])->name('wms-so.prepare');
+    Route::post('/wms/so/prepare', [\App\Http\Controllers\Wms\SoController::class, 'postPrepare'])->name('wms-so.postPrepare');
 
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);

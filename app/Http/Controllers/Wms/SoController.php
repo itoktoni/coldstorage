@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\So;
 use App\Models\SoDetail;
 use App\Models\Stock;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SoController extends Controller
@@ -22,18 +23,37 @@ class SoController extends Controller
 
     protected function share($data = [])
     {
+        $physicalStock = DB::table('stock')
+            ->select('stock_id_product', DB::raw('SUM(stock_qty) as total'))
+            ->where('stock_type', 'IN')
+            ->groupBy('stock_id_product')
+            ->pluck('total', 'stock_id_product');
+
+        $reserved = DB::table('detail_so')
+            ->select('so_detail_id_product', DB::raw('SUM(so_detail_qty) as total'))
+            ->groupBy('so_detail_id_product')
+            ->pluck('total', 'so_detail_id_product');
+
+        $availableStock = $physicalStock->map(function ($qty, $id) use ($reserved) {
+            return max(0, $qty - ($reserved->get($id, 0)));
+        });
+
         return array_merge([
             'model'           => $this->model,
             'productOptions'  => Product::pluck('product_nama', 'product_id'),
             'productPrices'   => Product::pluck('product_harga', 'product_id'),
             'customerOptions' => So::customerOptions(),
             'statusOptions'   => So::statusOptions(),
+            'availableStock'  => $availableStock,
         ], $data);
     }
 
     protected function getData()
     {
-        return $this->model->with(['customer', 'details.product'])->filter()->sort();
+        return $this->model->addSelect([
+            'so.*',
+            'customer_nama',
+        ])->leftJoinRelationship('customer')->filter()->sort();
     }
 
     public function getUpdate(GeneralRequest $request, $id)
@@ -50,6 +70,8 @@ class SoController extends Controller
         $data = $request->validate((new So)->rules());
 
         try {
+            $this->validateAvailableStock($data['details']);
+
             $so = DB::transaction(function () use ($data) {
                 $so = So::create(collect($data)->except('details')->toArray());
                 $this->syncDetails($so, $data['details']);
@@ -58,6 +80,8 @@ class SoController extends Controller
             });
 
             return $this->response($this->payload(TOAST_SUCCESS, $so));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Throwable $th) {
             return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
         }
@@ -68,6 +92,8 @@ class SoController extends Controller
         $data = $request->validate((new So)->rules());
 
         try {
+            $this->validateAvailableStock($data['details'], (int) $id);
+
             $so = DB::transaction(function () use ($data, $id) {
                 $so = So::findOrFail($id);
                 $so->update(collect($data)->except('details')->toArray());
@@ -77,6 +103,8 @@ class SoController extends Controller
             });
 
             return $this->response($this->payload(TOAST_SUCCESS, $so));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
         } catch (\Throwable $th) {
             return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
         }
@@ -153,6 +181,37 @@ class SoController extends Controller
         }
     }
 
+    private function validateAvailableStock(array $details, ?int $excludeSoId = null): void
+    {
+        $physicalStock = DB::table('stock')
+            ->select('stock_id_product', DB::raw('SUM(stock_qty) as total'))
+            ->where('stock_type', 'IN')
+            ->groupBy('stock_id_product')
+            ->pluck('total', 'stock_id_product');
+
+        $reserved = DB::table('detail_so')
+            ->select('so_detail_id_product', DB::raw('SUM(so_detail_qty) as total'))
+            ->when($excludeSoId, fn ($q) => $q->where('so_detail_id_so', '!=', $excludeSoId))
+            ->groupBy('so_detail_id_product')
+            ->pluck('total', 'so_detail_id_product');
+
+        $grouped = collect($details)->groupBy('so_detail_id_product')
+            ->map(fn ($rows) => $rows->sum('so_detail_qty'));
+
+        foreach ($grouped as $productId => $qty) {
+            $stock = (float) ($physicalStock[$productId] ?? 0);
+            $reservedQty = (float) ($reserved[$productId] ?? 0);
+            $available = $stock - $reservedQty;
+
+            if ($qty > $available) {
+                $name = Product::where('product_id', $productId)->value('product_nama') ?? $productId;
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'details' => "Stok product \"{$name}\" tidak mencukupi. Tersedia: {$available}, diminta: {$qty}.",
+                ]);
+            }
+        }
+    }
+
     private function nextDetailCode(string $soCode, int $seq): string
     {
         $code = sprintf('%s-%03d', $soCode, $seq);
@@ -162,6 +221,87 @@ class SoController extends Controller
         }
 
         return $code;
+    }
+
+    public function getPrepare(Request $request)
+    {
+        $soIds = $request->query('so_ids', []);
+        if (empty($soIds)) {
+            return redirect()->route('wms-so.getTable')->with('error', 'Pilih minimal 1 SO terlebih dahulu.');
+        }
+
+        $sos = So::with(['details.product', 'customer'])
+            ->whereIn('so_id', $soIds)
+            ->get();
+
+        $grouped = [];
+        foreach ($sos as $so) {
+            foreach ($so->details as $detail) {
+                $productId = $detail->so_detail_id_product;
+                if (!isset($grouped[$productId])) {
+                    $grouped[$productId] = [
+                        'product_id'   => $productId,
+                        'product_nama' => $detail->product->product_nama ?? '-',
+                        'qty'          => 0,
+                        'so_codes'     => [],
+                    ];
+                }
+                $grouped[$productId]['qty'] += $detail->so_detail_qty;
+                $grouped[$productId]['so_codes'][] = $so->so_code;
+            }
+        }
+
+        return view('pages.so.prepare', [
+            'sos'       => $sos,
+            'grouped'   => array_values($grouped),
+            'soIds'     => $soIds,
+        ]);
+    }
+
+    public function postPrepare(GeneralRequest $request)
+    {
+        $data = $request->validate([
+            'details'                      => ['required', 'array', 'min:1'],
+            'details.*.product_id'         => ['required', 'integer', 'exists:product,product_id'],
+            'details.*.qty'                => ['required', 'numeric', 'min:1'],
+            'details.*.reff'               => ['nullable', 'string'],
+            'so_ids'                       => ['required', 'array', 'min:1'],
+        ]);
+
+        try {
+            $keluar = DB::transaction(function () use ($data) {
+                $keluar = \App\Models\Keluar::create([
+                    'out_tanggal'  => now()->toDateString(),
+                    'out_status'   => 'Pending',
+                    'out_reff'     => 'Prepare SO',
+                    'out_catatan'  => 'Digabung dari SO: '.implode(', ', $data['so_ids']),
+                ]);
+
+                $seq = 1;
+                foreach ($data['details'] as $row) {
+                    \App\Models\KeluarDetail::create([
+                        'out_detail_code_keluar' => $keluar->out_code,
+                        'out_detail_id_product'  => $row['product_id'],
+                        'out_detail_code'        => sprintf('%s-%03d', $keluar->out_code, $seq),
+                        'out_detail_qty'         => $row['qty'],
+                        'out_detail_reff'        => $row['reff'] ?? null,
+                    ]);
+                    $seq++;
+                }
+
+                So::whereIn('so_id', $data['so_ids'])
+                    ->where('so_status', '!=', 'Prepare')
+                    ->update(['so_status' => 'Prepare']);
+
+                return $keluar;
+            });
+
+            flash()->success('Prepare SO berhasil. Keluar code: '.$keluar->out_code);
+            return redirect()->route('wms-so.getTable');
+        } catch (\Throwable $th) {
+            flash()->error($th->getMessage());
+            return back()->withInput();
+        }
     }
 
     public function cetak(string $id)

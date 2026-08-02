@@ -30,7 +30,7 @@
         </x-card>
 
         <x-card label="Detail Product" icon="inventory_2" class="mt-5" :noGrid="true">
-            <livewire:so-details :rows="$existingDetails" :options="$productOptions->all()" :prices="$productPrices->all()" />
+            <livewire:so-details :rows="$existingDetails" :options="$productOptions->all()" :prices="$productPrices->all()" :available-stock="$availableStock->all()" />
             @error('details')
                 <p class="font-label-caps text-label-caps text-error mt-2">{{ $message }}</p>
             @enderror

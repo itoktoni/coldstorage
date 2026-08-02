@@ -12,15 +12,17 @@ class So extends BaseModel
 
     const STATUS_PENDING = 'Pending';
 
+    const STATUS_PREPARE = 'Prepare';
+
     const STATUS_CONFIRMED = 'Confirmed';
 
     const STATUS_SHIPPED = 'Shipped';
 
     const STATUS_CLOSED = 'Closed';
 
-    public static $filterColumns = ['so_code', 'so_id_customer', 'so_tanggal', 'so_status'];
+    public static $filterColumns = ['so_code', 'customer_nama', 'so_tanggal', 'so_status'];
 
-    public static $sortColumns = ['so_code', 'so_tanggal', 'so_status'];
+    public static $sortColumns = ['so_code','customer_nama', 'so_tanggal',  'so_status'];
 
     protected $fillable = [
         'so_tanggal',
@@ -75,6 +77,7 @@ class So extends BaseModel
     {
         return [
             self::STATUS_PENDING   => self::STATUS_PENDING,
+            self::STATUS_PREPARE   => self::STATUS_PREPARE,
             self::STATUS_CONFIRMED => self::STATUS_CONFIRMED,
             self::STATUS_SHIPPED   => self::STATUS_SHIPPED,
             self::STATUS_CLOSED    => self::STATUS_CLOSED,
@@ -94,7 +97,7 @@ class So extends BaseModel
             'so_code'       => ['nullable', 'string', 'max:50'],
             'so_tanggal'    => ['required', 'date'],
             'so_id_customer' => ['required', 'integer', 'exists:customer,customer_id'],
-            'so_status'     => ['nullable', 'string', 'in:Pending,Confirmed,Shipped,Closed'],
+            'so_status'     => ['nullable', 'string', 'in:Pending,Prepare,Confirmed,Shipped,Closed'],
             'so_keterangan' => ['nullable', 'string'],
             'details'                        => ['required', 'array', 'min:1'],
             'details.*.so_detail_id'         => ['nullable', 'integer'],
