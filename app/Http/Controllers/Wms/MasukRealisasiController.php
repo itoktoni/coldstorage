@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Lokasi;
 use App\Models\MasukRealisasi;
 use App\Models\Product;
+use App\Models\Stock;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MasukRealisasiController extends Controller
 {
@@ -36,5 +39,23 @@ class MasukRealisasiController extends Controller
           ->with('product', 'lokasi')
           ->filter()
           ->sort();
+    }
+
+    public function getDelete(Request $request, string $id)
+    {
+        $realisasi = $this->model->findOrFail($id);
+
+        DB::transaction(function () use ($realisasi) {
+            // Hapus stock yang terkait (stock_reff = in_realisasi_group)
+            if ($realisasi->in_realisasi_group) {
+                Stock::where('stock_reff', $realisasi->in_realisasi_group)->delete();
+            }
+
+            $realisasi->delete();
+        });
+
+        flash()->success('Masuk realisasi dan stock terkait berhasil dihapus.');
+
+        return redirect()->route('wms-masuk-realisasi.getTable');
     }
 }

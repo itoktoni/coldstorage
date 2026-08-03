@@ -23,34 +23,56 @@
             <x-slot:head>
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
-                @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
-                @endforeach
+                <x-table-sort field="out_code" label="Kode Keluar" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="out_tanggal" label="Tanggal" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="out_reff" label="Reff" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="out_qty" label="Total Qty" :sortField="$sortField" :sortDir="$sortDir" />
+                <th class="text-center">Detail</th>
+                <x-table-sort field="out_status" label="Status" :sortField="$sortField" :sortDir="$sortDir" />
             </x-slot:head>
             <x-slot:body>
-                @forelse ($data as $table)
+                @forelse($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary" />
-                    @foreach ($model::$sortColumns as $column)
-                    <td>{{ $table->$column }}</td>
-                    @endforeach
+                    <td class="font-mono text-sm">{{ $table->out_code }}</td>
+                    <td>{{ $table->out_tanggal?->format('d M Y') ?? '-' }}</td>
+                    <td>{{ $table->out_reff ?? '-' }}</td>
+                    <td class="text-right font-medium">{{ number_format($table->out_qty, 0) }}</td>
+                    <td class="text-center">{{ $table->detail_count }}</td>
+                    <td>
+                        @php
+                            $statusColors = [
+                                'Pending'     => 'bg-neutral/10 text-neutral',
+                                'In Progress' => 'bg-warning/10 text-warning',
+                                'Done'        => 'bg-success/10 text-success',
+                            ];
+                            $color = $statusColors[$table->out_status] ?? 'bg-neutral/10 text-neutral';
+                        @endphp
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium {{ $color }}">
+                            {{ $table->out_status }}
+                        </span>
+                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ count($model::$sortColumns) + 2 }}" class="text-center">No data available.</td>
+                    <td colspan="100">
+                        <div class="text-center p-4">No data available.</div>
+                    </td>
                 </tr>
                 @endforelse
             </x-slot:body>
             <x-slot:mobile>
-                <x-table-mobile-select :model="$model" :total="$data"/>
+                <x-table-mobile-select :model="$model" :total="$data" />
                 <x-table-mobile-list>
-                    @forelse ($data as $table)
+                    @forelse($data as $table)
                     <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->{head($model::$sortColumns)} }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
-                        @endforeach
+                        <x-table-mobile-header title="{{ $table->out_code }}" />
+                        <x-table-mobile-text label="Tanggal" :text="$table->out_tanggal?->format('d M Y') ?? '-'" />
+                        <x-table-mobile-text label="Reff" :text="$table->out_reff ?? '-'" />
+                        <x-table-mobile-text label="Total Qty" :text="number_format($table->out_qty, 0)" />
+                        <x-table-mobile-text label="Detail" :text="$table->detail_count . ' item'" />
+                        <x-table-mobile-text label="Status" :text="$table->out_status" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary" />
                         </x-table-mobile-footer>

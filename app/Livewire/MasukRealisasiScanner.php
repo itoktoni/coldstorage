@@ -214,7 +214,14 @@ class MasukRealisasiScanner extends Component
 
     public function deleteScan($realisasiId)
     {
-        MasukRealisasi::findOrFail($realisasiId)->delete();
+        $realisasi = MasukRealisasi::findOrFail($realisasiId);
+
+        // Hapus stock yang terkait (stock_code = barcode)
+        if ($realisasi->in_realisasi_barcode) {
+            Stock::where('stock_code', $realisasi->in_realisasi_barcode)->delete();
+        }
+
+        $realisasi->delete();
         $this->refreshSummary();
         if ($this->selectedProductId) {
             $this->getDetail($this->selectedProductId);
@@ -260,6 +267,7 @@ class MasukRealisasiScanner extends Component
                 'stock_type'         => Stock::TYPE_STAGING,
                 'stock_expired_date' => $this->expiredDateFromBarcode($realisasi->in_realisasi_barcode),
                 'stock_reff'         => $group,
+                'stock_pallet_code'  => $group,
             ]);
         });
     }

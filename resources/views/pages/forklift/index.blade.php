@@ -146,6 +146,37 @@
                     </div>
                 </div>
 
+                @if(isset($row['stock_sources']) && $row['stock_sources']->isNotEmpty())
+                <div class="mt-4 pt-4 border-t border-outline-variant">
+                    <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">location_on</span>
+                        Sumber Stok (Rack → Staging)
+                    </div>
+                    <div class="space-y-2">
+                        @foreach($row['stock_sources'] as $src)
+                        <div class="bg-surface-container rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-sm font-medium text-on-surface">{{ $src['product_nama'] }}</span>
+                                <span class="text-xs font-semibold text-primary">{{ $src['qty_remaining'] }} kg</span>
+                            </div>
+                            @if($src['stocks']->isNotEmpty())
+                            <div class="flex flex-wrap gap-1.5">
+                                @foreach($src['stocks'] as $stk)
+                                <span class="inline-flex items-center gap-1 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                                    <span class="material-symbols-outlined text-xs">place</span>
+                                    {{ $stk['lokasi_nama'] }} ({{ $stk['stock_qty'] }})
+                                </span>
+                                @endforeach
+                            </div>
+                            @else
+                            <span class="text-xs text-error">Stok tidak tersedia</span>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
                 <div class="mt-5">
                     <a href="{{ route('wms-forklift-pick.show', ['outCode' => $k->out_code]) }}"
                        class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors">

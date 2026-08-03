@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Wms\SoStatusEnum;
+
 class So extends BaseModel
 {
     protected $table = 'so';
@@ -38,6 +40,7 @@ class So extends BaseModel
 
     protected $casts = [
         'so_tanggal' => 'date',
+        'so_status'  => SoStatusEnum::class,
     ];
 
     public function details()
@@ -102,7 +105,7 @@ class So extends BaseModel
             'so_code'       => ['nullable', 'string', 'max:50'],
             'so_tanggal'    => ['required', 'date'],
             'so_id_customer' => ['required', 'integer', 'exists:customer,customer_id'],
-            'so_status'     => ['nullable', 'string', 'in:Pending,Prepare,Confirmed,Shipped,Closed'],
+            'so_status'     => ['nullable', 'string', 'in:'.implode(',', array_column(SoStatusEnum::cases(), 'value'))],
             'so_keterangan' => ['nullable', 'string'],
             'details'                        => ['required', 'array', 'min:1'],
             'details.*.so_detail_id'         => ['nullable', 'integer'],

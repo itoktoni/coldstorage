@@ -8,8 +8,8 @@ class KeluarRealisasi extends BaseModel
     protected $primaryKey = 'out_realisasi_id';
     public $timestamps = true;
 
-    public static $filterColumns = ['out_realisasi_id_detail', 'out_realisasi_id_stock'];
-    public static $sortColumns   = ['out_realisasi_id'];
+    public static $filterColumns = ['out_realisasi_code', 'out_realisasi_id_detail', 'out_realisasi_id_stock'];
+    public static $sortColumns   = ['out_realisasi_code', 'out_realisasi_id_detail', 'out_realisasi_qty', 'out_realisasi_id_stock'];
 
     protected $fillable = [
         'out_realisasi_id_detail',
@@ -48,5 +48,20 @@ class KeluarRealisasi extends BaseModel
     public function stock()
     {
         return $this->belongsTo(Stock::class, 'out_realisasi_id_stock', 'stock_id');
+    }
+
+    public function getDetailCodeAttribute(): ?string
+    {
+        return $this->relationLoaded('detail') ? ($this->detail->out_detail_code ?? null) : null;
+    }
+
+    public function getStockCodeAttribute(): ?string
+    {
+        return $this->relationLoaded('stock') ? ($this->stock->stock_code ?? null) : null;
+    }
+
+    public function getLokasiAttribute(): ?string
+    {
+        return $this->relationLoaded('stock') ? ($this->stock->stock_code_lokasi ?? null) : null;
     }
 }

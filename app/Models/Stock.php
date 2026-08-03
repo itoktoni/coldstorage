@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Events\StockCreated;
+use App\Events\StockDeleted;
+use App\Events\StockUpdated;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
 
@@ -21,6 +24,7 @@ class Stock extends BaseModel
 
     protected $fillable = [
         'stock_code',
+        'stock_pallet_code',
         'stock_id_product',
         'stock_code_lokasi',
         'stock_qty',
@@ -41,6 +45,18 @@ class Stock extends BaseModel
                 $stock->stock_code = self::generateCode();
             }
         });
+
+        static::created(function (self $stock) {
+            StockCreated::dispatch($stock);
+        });
+
+        static::updated(function (self $stock) {
+            StockUpdated::dispatch($stock, $stock->getOriginal());
+        });
+
+        static::deleted(function (self $stock) {
+            StockDeleted::dispatch($stock);
+        });
     }
 
     public static function generateCode(): string
@@ -58,6 +74,7 @@ class Stock extends BaseModel
 
         return [
             'stock_code'         => ['nullable', 'string', 'max:100', Rule::unique('stock', 'stock_code')->ignore($id, 'stock_id')],
+            'stock_pallet_code'  => ['nullable', 'string', 'max:100'],
             'stock_id_product'   => ['required', 'exists:product,product_id'],
             'stock_code_lokasi'  => ['nullable', 'exists:lokasi,lokasi_code'],
             'stock_qty'          => ['required', 'numeric', 'min:0'],
@@ -95,6 +112,11 @@ class Stock extends BaseModel
     public function splits()
     {
         return $this->hasMany(Split::class, 'split_id_stock', 'stock_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(StockAssignment::class, 'stock_assignment_id_stock');
     }
 
     /** Available (IN) stock for inventory queries */

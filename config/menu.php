@@ -46,6 +46,7 @@ return [
                 ['route' => 'wms-stock.getTable', 'icon' => 'store', 'label' => 'Stock'],
                 ['route' => 'wms-stock-flow.index', 'icon' => 'swap_horiz', 'label' => 'Stock Flow'],
                 ['route' => 'wms-stock-sales.index', 'icon' => 'storefront', 'label' => 'Stock Sales'],
+                ['route' => 'wms-stock-card.index', 'icon' => 'history', 'label' => 'Kartu Stock'],
             ],
         ],
         [

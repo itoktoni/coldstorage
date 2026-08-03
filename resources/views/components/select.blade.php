@@ -4,6 +4,10 @@
     $label = $label ?? formatLabel($name);
     $m = $model ?? $activeBladeModel ?? null;
     $selected = old($name, $default ?? ($m ? data_get($m, $name, '') : ''));
+    if ($selected instanceof \BackedEnum) {
+        $selected = $selected->value;
+    }
+    $selected = (string) $selected;
     $hasError = $errors->has($name);
     $isTomSelect = $attributes->get('class') && str_contains($attributes->get('class'), 'search');
     $extraClass = $attributes->get('class') ? $attributes->get('class') : '';
@@ -19,7 +23,7 @@
             <option value="">{{ $placeholder ?: '-- Silahkan Pilih --' }}</option>
             @endif
             @foreach($options as $key => $text)
-            <option value="{{ $key }}" @if($multiple) {{ is_array($selected) && in_array($key, $selected) ? 'selected' : '' }} @else {{ (string)$selected === (string)$key ? 'selected' : '' }} @endif>{{ $text }}</option>
+            <option value="{{ $key }}" @if($multiple) {{ is_array($selected) && in_array($key, $selected) ? 'selected' : '' }} @else {{ (string) $selected === (string) $key ? 'selected' : '' }} @endif>{{ $text }}</option>
             @endforeach
         </select>
         @if(!$isTomSelect)

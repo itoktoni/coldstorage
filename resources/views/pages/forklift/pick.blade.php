@@ -115,24 +115,47 @@
 
                 @if($row['suggested']->isNotEmpty())
                 <div class="mt-4">
-                    <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-2">Stok tersedia (referensi)</div>
+                    <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-2">{{ $row['suggested']->first()['is_assigned'] ?? false ? 'Stok yang harus diambil (Coordinator assign)' : 'Stok tersedia (FIFO — ambil dari atas)' }}</div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead>
                                 <tr class="border-b border-outline-variant">
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">#</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Barcode</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Rak</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Gudang</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Bisa Diambil</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Expired</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($row['suggested'] as $s)
-                                <tr class="border-b border-outline-variant/50">
+                                @foreach($row['suggested'] as $idx => $s)
+                                <tr class="border-b border-outline-variant/50 {{ ($s['is_assigned'] ?? false) ? 'bg-primary/5' : ($idx === 0 ? 'bg-primary/5' : '') }}">
+                                    <td class="py-2 px-3 font-body-sm text-on-surface-variant">
+                                        @if($idx === 0)
+                                            <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary text-white text-xs font-bold">1</span>
+                                        @else
+                                            {{ $idx + 1 }}
+                                        @endif
+                                    </td>
+                                    <td class="py-2 px-3 font-body-sm font-mono text-sm">{{ $s['stock_code'] }}</td>
                                     <td class="py-2 px-3 font-body-sm font-medium">{{ $s['lokasi_nama'] }}</td>
                                     <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ $s['gudang_nama'] }}</td>
-                                    <td class="py-2 px-3 font-body-sm text-right">{{ $s['stock_qty'] }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right">{{ number_format($s['stock_qty'], 0) }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right font-medium {{ $idx === 0 ? 'text-primary' : '' }}">{{ number_format($s['take_max'], 0) }}</td>
                                     <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ $s['expired'] ?? '-' }}</td>
+                                    <td class="py-2 px-3 font-body-sm">
+                                        @if($s['is_assigned'] ?? false)
+                                            <span class="inline-flex items-center gap-1 text-xs font-semibold text-primary">
+                                                <span class="material-symbols-outlined text-sm">assignment</span>
+                                                Assigned
+                                            </span>
+                                        @else
+                                            <span class="text-xs text-on-surface-variant">FIFO</span>
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

@@ -10,6 +10,7 @@ use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
 use App\Models\Stock;
+use App\Models\StockAssignment;
 use App\Wms\MasukStatusEnum;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -200,6 +201,7 @@ class ForkliftController extends Controller
                         ->update([
                             'stock_type'        => Stock::TYPE_IN,
                             'stock_code_lokasi' => $data['lokasi_code'],
+                            'stock_pallet_code' => $data['group_code'],
                         ]);
                 } else {
                     Stock::create([
@@ -209,6 +211,7 @@ class ForkliftController extends Controller
                         'stock_type'         => 'IN',
                         'stock_expired_date' => now()->addDays(30),
                         'stock_reff'         => $data['group_code'],
+                        'stock_pallet_code'  => $data['group_code'],
                     ]);
                 }
 
@@ -335,12 +338,47 @@ class ForkliftController extends Controller
                 $totalQty   = (int) $details->sum('out_detail_qty');
                 $progress   = $totalQty > 0 ? min(100, (int) round($pickedQty / $totalQty * 100)) : 0;
 
+                // Build stock source guide per detail
+                $stockSources = $details->map(function (KeluarDetail $detail) {
+                    $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                        ->sum('out_realisasi_qty');
+                    $remaining = max(0, (float) $detail->out_detail_qty - $alreadyPicked);
+
+                    if ($remaining <= 0) {
+                        return null;
+                    }
+
+                    $stocks = Stock::query()
+                        ->where('stock_type', 'IN')
+                        ->where('stock_id_product', $detail->out_detail_id_product)
+                        ->where('stock_qty', '>', 0)
+                        ->orderBy('stock_expired_date')
+                        ->orderBy('stock_id')
+                        ->with('lokasi.gudang')
+                        ->get()
+                        ->map(function (Stock $s) {
+                            return [
+                                'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
+                                'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
+                                'stock_qty'   => (float) $s->stock_qty,
+                                'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                            ];
+                        });
+
+                    return [
+                        'product_nama' => $detail->product->product_nama ?? '-',
+                        'qty_remaining' => $remaining,
+                        'stocks'       => $stocks,
+                    ];
+                })->filter()->values();
+
                 return [
-                    'keluar'      => $keluar,
-                    'total_qty'   => $totalQty,
-                    'picked_rows' => $pickedQty,
-                    'progress'    => $progress,
-                    'item_count'  => $details->count(),
+                    'keluar'        => $keluar,
+                    'total_qty'     => $totalQty,
+                    'picked_rows'   => $pickedQty,
+                    'progress'      => $progress,
+                    'item_count'    => $details->count(),
+                    'stock_sources' => $stockSources,
                 ];
             });
     }
@@ -352,36 +390,63 @@ class ForkliftController extends Controller
      */
     public function pick(string $outCode)
     {
-        $keluar = Keluar::with(['details.product'])->findOrFail($outCode);
+        $keluar = Keluar::with(['details.product', 'assignments.stock.lokasi.gudang'])->findOrFail($outCode);
 
-        $rows = $keluar->details->map(function (KeluarDetail $detail) {
+        $rows = $keluar->details->map(function (KeluarDetail $detail) use ($keluar) {
             $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
                 ->sum('out_realisasi_qty');
 
             $remaining = max(0, (float) $detail->out_detail_qty - $alreadyPicked);
 
-            // FIFO guide: stock IN untuk produk ini, oldest expired first.
-            $suggestedStocks = Stock::query()
-                ->where('stock_type', 'IN')
-                ->where('stock_id_product', $detail->out_detail_id_product)
-                ->where('stock_qty', '>', 0)
-                ->orderBy('stock_expired_date')
-                ->orderBy('stock_id')
-                ->with('lokasi.gudang')
-                ->get()
-                ->map(function (Stock $s) use ($remaining) {
+            $assignments = $keluar->assignments
+                ->where('stock_assignment_id_keluar_detail', $detail->out_detail_id)
+                ->where('stock_assignment_status', '!=', 'Override');
+
+            if ($assignments->isNotEmpty()) {
+                $suggestedStocks = $assignments->map(function (StockAssignment $a) {
+                    $stock = $a->stock;
+                    $alreadyPicked = KeluarRealisasi::where('out_realisasi_id_stock', $a->stock_assignment_id_stock)
+                        ->where('out_realisasi_id_detail', $a->stock_assignment_id_keluar_detail)
+                        ->sum('out_realisasi_qty');
+                    $pickRemaining = max(0, (float) $a->stock_assignment_qty - $alreadyPicked);
                     return [
-                        'stock_id'    => $s->stock_id,
-                        'lokasi_code' => $s->stock_code_lokasi,
-                        'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
-                        'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                        'stock_code'  => $s->stock_code,
-                        'stock_qty'   => (float) $s->stock_qty,
-                        'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
-                        'take_max'    => min((float) $s->stock_qty, $remaining),
+                        'stock_id'    => $stock->stock_id,
+                        'lokasi_code' => $stock->stock_code_lokasi,
+                        'lokasi_nama' => $stock->lokasi?->lokasi_nama ?? '-',
+                        'gudang_nama' => $stock->lokasi?->gudang?->gudang_nama ?? '-',
+                        'stock_code'  => $stock->stock_code,
+                        'stock_qty'   => (float) $stock->stock_qty,
+                        'expired'     => optional($stock->stock_expired_date)->format('Y-m-d'),
+                        'take_max'    => $pickRemaining,
+                        'is_assigned' => true,
+                        'assignment_id' => $a->stock_assignment_id,
                     ];
-                })
-                ->values();
+                })->values();
+            } else {
+                $suggestedStocks = Stock::query()
+                    ->where('stock_type', 'IN')
+                    ->where('stock_id_product', $detail->out_detail_id_product)
+                    ->where('stock_qty', '>', 0)
+                    ->orderBy('stock_expired_date')
+                    ->orderBy('stock_id')
+                    ->with('lokasi.gudang')
+                    ->get()
+                    ->map(function (Stock $s) use ($remaining) {
+                        return [
+                            'stock_id'    => $s->stock_id,
+                            'lokasi_code' => $s->stock_code_lokasi,
+                            'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
+                            'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
+                            'stock_code'  => $s->stock_code,
+                            'stock_qty'   => (float) $s->stock_qty,
+                            'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                            'take_max'    => min((float) $s->stock_qty, $remaining),
+                            'is_assigned' => false,
+                            'assignment_id' => null,
+                        ];
+                    })
+                    ->values();
+            }
 
             return [
                 'detail'         => $detail,
@@ -515,7 +580,8 @@ class ForkliftController extends Controller
                 ]);
 
                 // Fulfil SO reservation tied to this keluar detail
-                Stock::consumeReserve((string) ($detail->out_detail_reff ?? ''), $detail->out_detail_id_product, $fulfilled);
+                $soCode = $detail->soDetail?->so?->so_code ?? '';
+                Stock::consumeReserve($soCode, $detail->out_detail_id_product, $fulfilled);
 
                 // Recompute keluar status
                 $allDetails = KeluarDetail::where('out_detail_code_keluar', $keluar->out_code)->get();
@@ -554,6 +620,255 @@ class ForkliftController extends Controller
             }
             flash()->error($th->getMessage());
             return back();
+        }
+    }
+
+    /**
+     * Show scan-only pick UI for forklift operator.
+     */
+    public function pickScan(string $outCode)
+    {
+        $keluar = Keluar::with(['details.product', 'assignments.stock.lokasi.gudang'])->findOrFail($outCode);
+
+        $rows = $keluar->details->map(function (KeluarDetail $detail) use ($keluar) {
+            $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                ->sum('out_realisasi_qty');
+
+            $remaining = max(0, (float) $detail->out_detail_qty - $alreadyPicked);
+
+            $assignments = $keluar->assignments
+                ->where('stock_assignment_id_keluar_detail', $detail->out_detail_id)
+                ->where('stock_assignment_status', '!=', 'Override');
+
+            if ($assignments->isNotEmpty()) {
+                $suggestedStocks = $assignments->map(function (StockAssignment $a) {
+                    $stock = $a->stock;
+                    $alreadyPicked = KeluarRealisasi::where('out_realisasi_id_stock', $a->stock_assignment_id_stock)
+                        ->where('out_realisasi_id_detail', $a->stock_assignment_id_keluar_detail)
+                        ->sum('out_realisasi_qty');
+                    $pickRemaining = max(0, (float) $a->stock_assignment_qty - $alreadyPicked);
+                    return [
+                        'stock_id'    => $stock->stock_id,
+                        'lokasi_code' => $stock->stock_code_lokasi,
+                        'lokasi_nama' => $stock->lokasi?->lokasi_nama ?? '-',
+                        'gudang_nama' => $stock->lokasi?->gudang?->gudang_nama ?? '-',
+                        'stock_code'  => $stock->stock_code,
+                        'stock_qty'   => (float) $stock->stock_qty,
+                        'expired'     => optional($stock->stock_expired_date)->format('Y-m-d'),
+                        'take_max'    => $pickRemaining,
+                        'is_assigned' => true,
+                    ];
+                })->values();
+            } else {
+                $suggestedStocks = Stock::query()
+                    ->where('stock_type', 'IN')
+                    ->where('stock_id_product', $detail->out_detail_id_product)
+                    ->where('stock_qty', '>', 0)
+                    ->orderBy('stock_expired_date')
+                    ->orderBy('stock_id')
+                    ->with('lokasi.gudang')
+                    ->get()
+                    ->map(function (Stock $s) use ($remaining) {
+                        return [
+                            'stock_id'    => $s->stock_id,
+                            'lokasi_code' => $s->stock_code_lokasi,
+                            'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
+                            'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
+                            'stock_code'  => $s->stock_code,
+                            'stock_qty'   => (float) $s->stock_qty,
+                            'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                            'take_max'    => min((float) $s->stock_qty, $remaining),
+                            'is_assigned' => false,
+                        ];
+                    })
+                    ->values();
+            }
+
+            return [
+                'detail'         => $detail,
+                'product_nama'   => $detail->product->product_nama ?? '-',
+                'qty_requested'  => (float) $detail->out_detail_qty,
+                'qty_picked'     => (float) $alreadyPicked,
+                'qty_remaining'  => $remaining,
+                'suggested'      => $suggestedStocks,
+            ];
+        });
+
+        $totalQty = (float) $rows->sum('qty_requested');
+        $totalPicked = (float) $rows->sum('qty_picked');
+        $currentPick = $rows->first(fn ($r) => $r['qty_remaining'] > 0);
+
+        return view('pages.forklift.pick-scan', [
+            'keluar'     => $keluar,
+            'rows'       => $rows,
+            'current'    => $currentPick,
+            'summary'    => [
+                'total_qty'    => $totalQty,
+                'total_picked' => $totalPicked,
+                'progress'     => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
+                'total_items'  => $rows->count(),
+                'done_items'   => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
+            ],
+        ]);
+    }
+
+    /**
+     * Process scan input from forklift operator (JSON response).
+     */
+    public function pickScanProcess(Request $request, string $outCode)
+    {
+        $data = $request->validate([
+            'scan_code' => ['required', 'string', 'max:100'],
+            'detail_id' => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
+        ]);
+
+        $keluar = Keluar::findOrFail($outCode);
+        $detail = KeluarDetail::where('out_detail_id', $data['detail_id'])
+            ->where('out_detail_code_keluar', $keluar->out_code)
+            ->firstOrFail();
+
+        try {
+            $result = DB::transaction(function () use ($keluar, $detail, $data) {
+                $scanCode = $data['scan_code'];
+                $prefix = config('scan.prefix');
+
+                // 1. Detect mode and find stocks
+                if (str_starts_with($scanCode, $prefix['pallet'])) {
+                    $mode = 'pallet';
+                    $code = substr($scanCode, strlen($prefix['pallet']));
+                    $stocks = Stock::where('stock_pallet_code', $code)
+                        ->where('stock_type', Stock::TYPE_IN)
+                        ->where('stock_qty', '>', 0)
+                        ->orderBy('stock_expired_date')
+                        ->lockForUpdate()
+                        ->get();
+                } elseif (str_starts_with($scanCode, $prefix['location'])) {
+                    $mode = 'location';
+                    $code = substr($scanCode, strlen($prefix['location']));
+                    $stocks = Stock::where('stock_code_lokasi', $code)
+                        ->where('stock_id_product', $detail->out_detail_id_product)
+                        ->where('stock_type', Stock::TYPE_IN)
+                        ->where('stock_qty', '>', 0)
+                        ->orderBy('stock_expired_date')
+                        ->lockForUpdate()
+                        ->get();
+                } else {
+                    $mode = 'barcode';
+                    $code = str_starts_with($scanCode, $prefix['barcode'])
+                        ? substr($scanCode, strlen($prefix['barcode']))
+                        : $scanCode;
+                    $stocks = Stock::where('stock_code', $code)
+                        ->where('stock_type', Stock::TYPE_IN)
+                        ->where('stock_qty', '>', 0)
+                        ->lockForUpdate()
+                        ->get();
+                }
+
+                // 2. Validate
+                if ($stocks->isEmpty()) {
+                    throw new \RuntimeException('Code tidak dikenali atau stock tidak tersedia.');
+                }
+
+                // Check product match (for pallet/location mode)
+                if ($mode !== 'barcode') {
+                    $wrongProduct = $stocks->first(fn ($s) => $s->stock_id_product != $detail->out_detail_id_product);
+                    if ($wrongProduct) {
+                        throw new \RuntimeException('Barcode ini untuk produk lain.');
+                    }
+                }
+
+                $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                    ->sum('out_realisasi_qty');
+                $remaining = (float) $detail->out_detail_qty - $alreadyPicked;
+
+                if ($remaining <= 0) {
+                    throw new \RuntimeException('Item ini sudah terpenuhi.');
+                }
+
+                // 3. Process pick per barcode
+                $pickedItems = [];
+                $left = $remaining;
+                $expiredDates = [];
+
+                foreach ($stocks as $stock) {
+                    if ($left <= 0) break;
+
+                    $take = min((float) $stock->stock_qty, $left);
+                    $stock->decrement('stock_qty', $take);
+
+                    if ($stock->stock_expired_date) {
+                        $expiredDates[] = $stock->stock_expired_date;
+                    }
+
+                    // Create KeluarRealisasi per barcode
+                    KeluarRealisasi::create([
+                        'out_realisasi_id_detail' => $detail->out_detail_id,
+                        'out_realisasi_id_stock'  => $stock->stock_id,
+                        'out_realisasi_code'      => KeluarRealisasi::generateCode(),
+                        'out_realisasi_qty'       => $take,
+                    ]);
+
+                    $pickedItems[] = [
+                        'stock_code' => $stock->stock_code,
+                        'qty'        => $take,
+                    ];
+
+                    $left -= $take;
+                }
+
+                $fulfilled = $remaining - $left;
+
+                // Create STAGING stock
+                Stock::create([
+                    'stock_id_product'   => $detail->out_detail_id_product,
+                    'stock_code_lokasi'  => 'STAGING',
+                    'stock_qty'          => $fulfilled,
+                    'stock_type'         => Stock::TYPE_STAGING,
+                    'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
+                    'stock_reff'         => $keluar->out_code,
+                ]);
+
+                // Consume RESERVE
+                $soCode = $detail->soDetail?->so?->so_code ?? '';
+                Stock::consumeReserve($soCode, $detail->out_detail_id_product, $fulfilled);
+
+                // Recompute keluar status
+                $allDetails = KeluarDetail::where('out_detail_code_keluar', $keluar->out_code)->get();
+                $totalPicked = 0;
+                foreach ($allDetails as $d) {
+                    $totalPicked += (float) KeluarRealisasi::where('out_realisasi_id_detail', $d->out_detail_id)
+                        ->sum('out_realisasi_qty');
+                }
+                $totalQty = (float) $allDetails->sum('out_detail_qty');
+
+                if ($totalPicked + 1e-9 >= $totalQty) {
+                    $keluar->update(['out_status' => Keluar::STATUS_DONE]);
+                } elseif ($totalPicked > 0) {
+                    $keluar->update(['out_status' => 'In Progress']);
+                }
+
+                // Get next pick
+                $nextPickDetail = $allDetails->first(function ($d) use ($detail) {
+                    $picked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $d->out_detail_id)
+                        ->sum('out_realisasi_qty');
+                    return $d->out_detail_id !== $detail->out_detail_id && $picked < (float) $d->out_detail_qty;
+                });
+
+                return [
+                    'ok'            => true,
+                    'picked_items'  => $pickedItems,
+                    'fulfilled'     => $fulfilled,
+                    'remaining'     => max(0, $left),
+                    'done'          => max(0, $left) <= 0,
+                    'total_picked'  => $totalPicked,
+                    'total_qty'     => $totalQty,
+                    'next_detail_id' => $nextPickDetail?->out_detail_id,
+                ];
+            });
+
+            return response()->json($result);
+        } catch (\Throwable $th) {
+            return response()->json(['ok' => false, 'message' => $th->getMessage()], 422);
         }
     }
 }

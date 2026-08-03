@@ -23,34 +23,44 @@
             <x-slot:head>
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
-                @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
-                @endforeach
+                <x-table-sort field="out_realisasi_code" label="Kode Realisasi" :sortField="$sortField" :sortDir="$sortDir" />
+                <th>Kode Detail</th>
+                <th>Keluar</th>
+                <x-table-sort field="out_realisasi_qty" label="Qty" :sortField="$sortField" :sortDir="$sortDir" />
+                <th>Stock</th>
+                <th>Lokasi</th>
             </x-slot:head>
             <x-slot:body>
-                @forelse ($data as $table)
+                @forelse($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary" />
-                    @foreach ($model::$sortColumns as $column)
-                    <td>{{ $table->$column }}</td>
-                    @endforeach
+                    <td class="font-mono text-sm">{{ $table->out_realisasi_code }}</td>
+                    <td class="font-mono text-sm">{{ $table->detail_code ?? '-' }}</td>
+                    <td class="font-mono text-sm">{{ $table->detail?->out_detail_code_keluar ?? '-' }}</td>
+                    <td class="text-right font-medium">{{ number_format($table->out_realisasi_qty, 0) }}</td>
+                    <td class="font-mono text-sm">{{ $table->stock_code ?? '-' }}</td>
+                    <td>{{ $table->lokasi ?? '-' }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ count($model::$sortColumns) + 2 }}" class="text-center">No data available.</td>
+                    <td colspan="100">
+                        <div class="text-center p-4">No data available.</div>
+                    </td>
                 </tr>
                 @endforelse
             </x-slot:body>
             <x-slot:mobile>
-                <x-table-mobile-select :model="$model" :total="$data"/>
+                <x-table-mobile-select :model="$model" :total="$data" />
                 <x-table-mobile-list>
-                    @forelse ($data as $table)
+                    @forelse($data as $table)
                     <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->{head($model::$sortColumns)} }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
-                        @endforeach
+                        <x-table-mobile-header title="{{ $table->out_realisasi_code }}" />
+                        <x-table-mobile-text label="Detail" :text="$table->detail_code ?? '-'" />
+                        <x-table-mobile-text label="Keluar" :text="$table->detail?->out_detail_code_keluar ?? '-'" />
+                        <x-table-mobile-text label="Qty" :text="number_format($table->out_realisasi_qty, 0)" />
+                        <x-table-mobile-text label="Stock" :text="$table->stock_code ?? '-'" />
+                        <x-table-mobile-text label="Lokasi" :text="$table->lokasi ?? '-'" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary" />
                         </x-table-mobile-footer>

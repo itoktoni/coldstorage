@@ -13,6 +13,8 @@ use App\Models\So;
 use App\Models\SoDetail;
 use App\Models\SoPrepare;
 use App\Models\SoPrepareDetail;
+use App\Models\StockAssignment;
+use App\Wms\SoStatusEnum;
 use App\Models\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -253,27 +255,23 @@ class SoController extends Controller
             ->whereIn('so_id', $soIds)
             ->get();
 
-        $grouped = [];
+        $detailRows = [];
         foreach ($sos as $so) {
             foreach ($so->details as $detail) {
-                $productId = $detail->so_detail_id_product;
-                if (!isset($grouped[$productId])) {
-                    $grouped[$productId] = [
-                        'product_id'   => $productId,
-                        'product_nama' => $detail->product->product_nama ?? '-',
-                        'qty'          => 0,
-                        'so_codes'     => [],
-                    ];
-                }
-                $grouped[$productId]['qty'] += $detail->so_detail_qty;
-                $grouped[$productId]['so_codes'][] = $so->so_code;
+                $detailRows[] = [
+                    'so_detail_id' => $detail->so_detail_id,
+                    'so_code'      => $so->so_code,
+                    'product_id'   => $detail->so_detail_id_product,
+                    'product_nama' => $detail->product->product_nama ?? '-',
+                    'qty'          => $detail->so_detail_qty,
+                ];
             }
         }
 
         return view('pages.so.prepare', [
-            'sos'       => $sos,
-            'grouped'   => array_values($grouped),
-            'soIds'     => $soIds,
+            'sos'        => $sos,
+            'detailRows' => $detailRows,
+            'soIds'      => $soIds,
         ]);
     }
 
@@ -281,42 +279,167 @@ class SoController extends Controller
     {
         $data = $request->validate([
             'details'                      => ['required', 'array', 'min:1'],
+            'details.*.so_detail_id'       => ['required', 'integer', 'exists:detail_so,so_detail_id'],
             'details.*.product_id'         => ['required', 'integer', 'exists:product,product_id'],
             'details.*.qty'                => ['required', 'numeric', 'min:1'],
-            'details.*.reff'               => ['nullable', 'string'],
             'so_ids'                       => ['required', 'array', 'min:1'],
         ]);
 
         try {
             $keluar = DB::transaction(function () use ($data) {
+                $totalQty = collect($data['details'])->sum('qty');
+
                 $keluar = \App\Models\Keluar::create([
                     'out_tanggal'  => now()->toDateString(),
                     'out_status'   => 'Pending',
                     'out_reff'     => 'Prepare SO',
+                    'out_qty'      => $totalQty,
                     'out_catatan'  => 'Digabung dari SO: '.implode(', ', $data['so_ids']),
                 ]);
 
                 $seq = 1;
                 foreach ($data['details'] as $row) {
                     \App\Models\KeluarDetail::create([
-                        'out_detail_code_keluar' => $keluar->out_code,
-                        'out_detail_id_product'  => $row['product_id'],
-                        'out_detail_code'        => sprintf('%s-%03d', $keluar->out_code, $seq),
-                        'out_detail_qty'         => $row['qty'],
-                        'out_detail_reff'        => $row['reff'] ?? null,
+                        'out_detail_code_keluar'    => $keluar->out_code,
+                        'out_detail_id_product'     => $row['product_id'],
+                        'out_detail_id_so_detail'   => $row['so_detail_id'],
+                        'out_detail_code'           => sprintf('%s-%03d', $keluar->out_code, $seq),
+                        'out_detail_qty'            => $row['qty'],
+                        'out_detail_reff'           => SoDetail::find($row['so_detail_id'])?->so_detail_code,
                     ]);
                     $seq++;
                 }
 
                 So::whereIn('so_id', $data['so_ids'])
-                    ->where('so_status', '!=', 'Prepare')
-                    ->update(['so_status' => 'Prepare']);
+                    ->where('so_status', '!=', SoStatusEnum::PREPARE)
+                    ->update(['so_status' => SoStatusEnum::PREPARE]);
 
                 return $keluar;
             });
 
             flash()->success('Prepare SO berhasil. Keluar code: '.$keluar->out_code);
             return redirect()->route('wms-so.getTable');
+        } catch (\Throwable $th) {
+            flash()->error($th->getMessage());
+            return back()->withInput();
+        }
+    }
+
+    public function getAssign(Request $request, string $soId)
+    {
+        $so = So::with(['customer', 'details.product'])->findOrFail($soId);
+
+        $keluarCode = $this->keluarCodeForSo($so);
+        if (!$keluarCode) {
+            flash()->error('SO ini belum memiliki Keluar.');
+            return redirect()->route('wms-so-prepare.index');
+        }
+
+        $keluar = Keluar::with(['details.product', 'assignments.stock.lokasi.gudang'])
+            ->where('out_code', $keluarCode)
+            ->firstOrFail();
+
+        $availableStock = Stock::where('stock_type', Stock::TYPE_IN)
+            ->where('stock_qty', '>', 0)
+            ->with('lokasi.gudang')
+            ->get()
+            ->groupBy('stock_id_product')
+            ->map(function ($stocks) {
+                return $stocks->map(function ($s) {
+                    $assignedQty = $s->assignments()
+                        ->whereIn('stock_assignment_status', ['Pending', 'Picked'])
+                        ->sum('stock_assignment_qty');
+                    $remaining = max(0, (float) $s->stock_qty - $assignedQty);
+                    return [
+                        'stock_id'    => $s->stock_id,
+                        'stock_code'  => $s->stock_code,
+                        'lokasi_code' => $s->stock_code_lokasi,
+                        'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
+                        'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
+                        'stock_qty'   => (float) $s->stock_qty,
+                        'remaining'   => $remaining,
+                        'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                    ];
+                });
+            });
+
+        $existingAssignments = $keluar->details->mapWithKeys(function ($detail) {
+            $assignments = $detail->assignments
+                ->map(fn ($a) => [
+                    'assignment_id' => $a->stock_assignment_id,
+                    'stock_id'      => $a->stock_assignment_id_stock,
+                    'qty'           => $a->stock_assignment_qty,
+                ]);
+            return [$detail->out_detail_id => $assignments];
+        });
+
+        return view('pages.so.assign', [
+            'so'                    => $so,
+            'keluar'                => $keluar,
+            'availableStock'        => $availableStock,
+            'existingAssignments'   => $existingAssignments,
+        ]);
+    }
+
+    public function postAssign(Request $request, string $soId)
+    {
+        $data = $request->validate([
+            'assignments'                        => ['required', 'array', 'min:1'],
+            'assignments.*.keluar_detail_id'     => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
+            'assignments.*.stock_id'             => ['required', 'integer', 'exists:stock,stock_id'],
+            'assignments.*.qty'                  => ['required', 'numeric', 'min:0.001'],
+            'assignments.*.so_detail_id'         => ['required', 'integer', 'exists:detail_so,so_detail_id'],
+        ]);
+
+        try {
+            DB::transaction(function () use ($data, $soId) {
+                $so = So::findOrFail($soId);
+                $keluarCode = $this->keluarCodeForSo($so);
+                if (!$keluarCode) {
+                    throw new \Exception('SO ini belum memiliki Keluar.');
+                }
+
+                StockAssignment::where('stock_assignment_id_keluar', $keluarCode)->delete();
+
+                foreach ($data['assignments'] as $row) {
+                    $stock = Stock::where('stock_id', $row['stock_id'])
+                        ->where('stock_type', Stock::TYPE_IN)
+                        ->first();
+                    if (!$stock) {
+                        throw new \Exception("Stock ID {$row['stock_id']} tidak tersedia.");
+                    }
+
+                    $detail = KeluarDetail::findOrFail($row['keluar_detail_id']);
+                    $alreadyAssigned = StockAssignment::where('stock_assignment_id_keluar_detail', $row['keluar_detail_id'])
+                        ->sum('stock_assignment_qty');
+                    $remaining = (float) $detail->out_detail_qty - $alreadyAssigned;
+                    if ((float) $row['qty'] > $remaining + 0.001) {
+                        throw new \Exception("Qty assign melebihi sisa kebutuhan. Sisa: {$remaining}");
+                    }
+
+                    $stockAssigned = StockAssignment::where('stock_assignment_id_stock', $row['stock_id'])
+                        ->whereIn('stock_assignment_status', ['Pending', 'Picked'])
+                        ->sum('stock_assignment_qty');
+                    $stockRemaining = (float) $stock->stock_qty - $stockAssigned;
+                    if ((float) $row['qty'] > $stockRemaining + 0.001) {
+                        throw new \Exception("Stock {$stock->stock_code} tidak cukup. Tersisa: {$stockRemaining}");
+                    }
+
+                    StockAssignment::create([
+                        'stock_assignment_id_keluar'         => $keluarCode,
+                        'stock_assignment_id_stock'          => $row['stock_id'],
+                        'stock_assignment_id_keluar_detail'  => $row['keluar_detail_id'],
+                        'stock_assignment_id_so_detail'      => $row['so_detail_id'],
+                        'stock_assignment_qty'               => $row['qty'],
+                        'stock_assignment_status'            => 'Pending',
+                    ]);
+                }
+
+                Keluar::where('out_code', $keluarCode)->update(['out_assigned' => true]);
+            });
+
+            flash()->success('Stock assignment berhasil disimpan.');
+            return redirect()->route('wms-so-prepare.assign', ['soId' => $soId]);
         } catch (\Throwable $th) {
             flash()->error($th->getMessage());
             return back()->withInput();
@@ -337,7 +460,7 @@ class SoController extends Controller
     public function getPrepareList()
     {
         $sos = So::with(['customer', 'details.product', 'prepare'])
-            ->where('so_status', So::STATUS_PREPARE)
+            ->where('so_status', SoStatusEnum::PREPARE)
             ->orderBy('so_tanggal')
             ->get()
             ->map(function (So $so) {
@@ -368,7 +491,7 @@ class SoController extends Controller
     {
         $so = So::with(['customer', 'details.product'])->findOrFail($soId);
 
-        if ($so->so_status !== So::STATUS_PREPARE) {
+        if ($so->so_status !== SoStatusEnum::PREPARE) {
             flash()->error('SO ini tidak berstatus Prepare.');
             return redirect()->route('wms-so-prepare.index');
         }
@@ -420,7 +543,7 @@ class SoController extends Controller
 
         $so = So::with('details')->findOrFail($soId);
 
-        if ($so->so_status !== So::STATUS_PREPARE) {
+        if ($so->so_status !== SoStatusEnum::PREPARE) {
             flash()->error('SO ini tidak berstatus Prepare.');
             return redirect()->route('wms-so-prepare.index');
         }
@@ -449,7 +572,7 @@ class SoController extends Controller
 
                 if ($this->soLinesFulfilled($so, $prepare)) {
                     $prepare->update(['so_prepare_status' => SoPrepare::STATUS_DONE]);
-                    $so->update(['so_status' => So::STATUS_CONFIRMED]);
+                    $so->update(['so_status' => SoStatusEnum::CONFIRMED]);
                 }
             });
 
@@ -467,13 +590,13 @@ class SoController extends Controller
 
     private function keluarCodeForSo(So $so): ?string
     {
-        return KeluarDetail::where('out_detail_reff', 'LIKE', '%'.$so->so_code.'%')
+        return KeluarDetail::whereHas('soDetail', fn ($q) => $q->where('so_detail_id_so', $so->so_id))
             ->value('out_detail_code_keluar');
     }
 
     private function keluarCodesForSo(So $so): array
     {
-        return KeluarDetail::where('out_detail_reff', 'LIKE', '%'.$so->so_code.'%')
+        return KeluarDetail::whereHas('soDetail', fn ($q) => $q->where('so_detail_id_so', $so->so_id))
             ->pluck('out_detail_code_keluar')
             ->unique()
             ->values()

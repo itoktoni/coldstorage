@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Wms\PoStatusEnum;
+
 class Po extends BaseModel
 {
     protected $table = 'po';
@@ -30,6 +32,7 @@ class Po extends BaseModel
 
     protected $casts = [
         'po_tanggal' => 'date',
+        'po_status'  => PoStatusEnum::class,
     ];
 
     public function supplier()
@@ -81,7 +84,7 @@ class Po extends BaseModel
             'po_code'             => ['nullable', 'string', 'max:50'],
             'po_tanggal'          => ['required'],
             'po_id_supplier'      => ['required', 'integer', 'exists:supplier,supplier_id'],
-            'po_status'           => ['nullable', 'string', 'in:Pending,Ordered,Partial,Closed'],
+            'po_status'           => ['nullable', 'string', 'in:'.implode(',', array_column(PoStatusEnum::cases(), 'value'))],
             'po_keterangan'       => ['nullable', 'string'],
             'details'                          => ['required', 'array', 'min:1'],
             'details.*.po_detail_id'           => ['nullable', 'integer'],

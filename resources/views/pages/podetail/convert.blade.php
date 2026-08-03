@@ -111,10 +111,10 @@
                                            step="0.001"
                                            name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][qty]"
                                            value="{{ $lokasi['suggested_qty'] ?? 0 }}"
-                                           max="{{ $lokasi['capacity_left'] ?? $totalQty }}"
+                                           max="{{ min($lokasi['capacity_left'] ?? $remainingQty, $remainingQty) }}"
                                            min="0"
                                            class="w-28 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-                                           data-remaining="{{ $lokasi['capacity_left'] ?? $totalQty }}"
+                                           data-remaining="{{ min($lokasi['capacity_left'] ?? $remainingQty, $remainingQty) }}"
                                            data-lokasi-code="{{ $lokasi['lokasi_code'] }}">
                                     <input type="hidden" name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][lokasi_code]" value="{{ $lokasi['lokasi_code'] }}">
                                     <button type="button"

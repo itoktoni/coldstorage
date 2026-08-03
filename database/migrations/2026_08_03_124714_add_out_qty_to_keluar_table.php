@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('stock', function (Blueprint $table) {
-            $table->string('stock_code', 100)->change();
+        Schema::table('keluar', function (Blueprint $table) {
+            $table->decimal('out_qty', 10, 3)->default(0)->after('out_status');
         });
     }
 
     public function down(): void
     {
-        Schema::table('stock', function (Blueprint $table) {
-            $table->string('stock_code', 50)->change();
+        Schema::table('keluar', function (Blueprint $table) {
+            $table->dropColumn('out_qty');
         });
     }
 };

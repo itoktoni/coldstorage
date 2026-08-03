@@ -1,5 +1,5 @@
 <?php /** @var array $sos */ ?>
-<?php /** @var array $grouped */ ?>
+<?php /** @var array $detailRows */ ?>
 
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => route('wms-so.getTable'), 'label' => 'Sales Order'], ['url' => '', 'label' => 'Prepare SO']]" />
@@ -58,11 +58,11 @@
             </div>
         </div>
 
-        {{-- Combined Items --}}
+        {{-- Detail per SO --}}
         <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
             <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-xl">inventory_2</span>
-                Item Digabung (per Product)
+                Detail per SO
             </h3>
             <div class="grid grid-cols-12 gap-5">
                 <div class="col-span-12">
@@ -71,24 +71,24 @@
                             <thead>
                                 <tr class="border-b border-outline-variant">
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">No</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Kode SO</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Product</th>
-                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Total</th>
-                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Dari SO</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty</th>
                                     <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Adjust</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($grouped as $i => $item)
+                                @foreach($detailRows as $i => $row)
                                 <tr class="border-b border-outline-variant/50">
                                     <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ $i + 1 }}</td>
-                                    <td class="py-2 px-3 font-body-sm font-medium">{{ $item['product_nama'] }}</td>
-                                    <td class="py-2 px-3 font-body-sm text-right font-medium">{{ $item['qty'] }}</td>
-                                    <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ implode(', ', $item['so_codes']) }}</td>
+                                    <td class="py-2 px-3 font-body-sm font-medium">{{ $row['so_code'] }}</td>
+                                    <td class="py-2 px-3 font-body-sm">{{ $row['product_nama'] }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right font-medium">{{ $row['qty'] }}</td>
                                     <td class="py-2 px-3 text-right">
-                                        <input type="number" name="details[{{ $i }}][qty]" value="{{ $item['qty'] }}" min="1"
+                                        <input type="number" name="details[{{ $i }}][qty]" value="{{ $row['qty'] }}" min="1"
                                             class="w-24 h-9 px-3 text-right bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-                                        <input type="hidden" name="details[{{ $i }}][product_id]" value="{{ $item['product_id'] }}" />
-                                        <input type="hidden" name="details[{{ $i }}][reff]" value="{{ implode(', ', $item['so_codes']) }}" />
+                                        <input type="hidden" name="details[{{ $i }}][so_detail_id]" value="{{ $row['so_detail_id'] }}" />
+                                        <input type="hidden" name="details[{{ $i }}][product_id]" value="{{ $row['product_id'] }}" />
                                     </td>
                                 </tr>
                                 @endforeach

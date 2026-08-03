@@ -16,6 +16,11 @@ class KeluarDetailController extends Controller
         $this->model = $model::getModel();
     }
 
+    protected function getData()
+    {
+        return $this->model->with(['product', 'soDetail.so', 'realisasi'])->filter()->sort();
+    }
+
     protected function share($data = [])
     {
         return array_merge(['model' => $this->model, 'productOptions' => Product::pluck('product_nama', 'product_id')], $data);

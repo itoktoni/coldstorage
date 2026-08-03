@@ -14,4 +14,9 @@ class KeluarController extends Controller
     {
         $this->model = $model::getModel();
     }
+
+    protected function getData()
+    {
+        return $this->model->with(['details.realisasi'])->filter()->sort();
+    }
 }

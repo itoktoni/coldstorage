@@ -8,15 +8,15 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('stock', function (Blueprint $table) {
-            $table->string('stock_code', 100)->change();
+        Schema::table('keluar', function (Blueprint $table) {
+            $table->boolean('out_assigned')->default(false)->after('out_catatan');
         });
     }
 
     public function down(): void
     {
-        Schema::table('stock', function (Blueprint $table) {
-            $table->string('stock_code', 50)->change();
+        Schema::table('keluar', function (Blueprint $table) {
+            $table->dropColumn('out_assigned');
         });
     }
 };

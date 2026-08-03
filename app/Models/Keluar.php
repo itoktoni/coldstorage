@@ -14,21 +14,24 @@ class Keluar extends BaseModel
     const STATUS_IN_PROGRESS = 'In Progress';
     const STATUS_DONE        = 'Done';
 
-    public static $filterColumns = ['out_code', 'out_status'];
-    public static $sortColumns   = ['out_tanggal', 'out_status'];
+    public static $filterColumns = ['out_code', 'out_reff', 'out_status'];
+    public static $sortColumns   = ['out_code', 'out_tanggal', 'out_reff', 'out_qty', 'out_status'];
 
     protected $fillable = [
         'out_code',
         'out_reff',
         'out_tanggal',
         'out_status',
+        'out_qty',
         'out_catatan',
+        'out_assigned',
         'out_created_at',
         'out_created_by',
     ];
 
     protected $casts = [
         'out_tanggal'    => 'date',
+        'out_qty'        => 'double',
         'out_created_at' => 'datetime',
     ];
 
@@ -53,5 +56,27 @@ class Keluar extends BaseModel
     public function details()
     {
         return $this->hasMany(KeluarDetail::class, 'out_detail_code_keluar', 'out_code');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(StockAssignment::class, 'stock_assignment_id_keluar', 'out_code');
+    }
+
+    public function getDetailCountAttribute(): int
+    {
+        return $this->relationLoaded('details') ? $this->details->count() : $this->details()->count();
+    }
+
+    public function getPickedQtyAttribute(): float
+    {
+        if (!$this->relationLoaded('details')) {
+            return (float) KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_code_keluar', $this->out_code))
+                ->sum('out_realisasi_qty');
+        }
+
+        return (float) $this->details->sum(function ($d) {
+            return $d->relationLoaded('realisasi') ? $d->realisasi->sum('out_realisasi_qty') : 0;
+        });
     }
 }

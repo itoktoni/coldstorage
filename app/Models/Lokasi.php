@@ -50,7 +50,7 @@ class Lokasi extends BaseModel
      */
     public function getCurrentQtyAttribute(): float
     {
-        return $this->stock()->where('stock_qty', '>', 0)->sum('stock_qty');
+        return $this->stock()->where('stock_type', 'IN')->where('stock_qty', '>', 0)->sum('stock_qty');
     }
 
     /**

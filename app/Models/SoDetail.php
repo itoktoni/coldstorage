@@ -36,4 +36,9 @@ class SoDetail extends BaseModel
     {
         return $this->belongsTo(Product::class, 'so_detail_id_product', 'product_id');
     }
+
+    public function assignments()
+    {
+        return $this->hasMany(StockAssignment::class, 'stock_assignment_id_so_detail');
+    }
 }

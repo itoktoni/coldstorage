@@ -7,6 +7,7 @@ use App\Models\So;
 use App\Models\SoDetail;
 use App\Models\Stock;
 use App\Models\User;
+use App\Wms\SoStatusEnum;
 
 function soActor(): User
 {
@@ -50,7 +51,7 @@ it('auto generates so_code and defaults status to Pending', function () {
     ]);
 
     expect($so->so_code)->toMatch('/^SO-\d{8}-\d{4}$/');
-    expect($so->fresh()->so_status)->toBe(So::STATUS_PENDING);
+    expect($so->fresh()->so_status)->toBe(SoStatusEnum::PENDING);
 });
 
 it('cascades delete from so to detail_so', function () {

@@ -162,10 +162,15 @@
         @endif
     </div>
 
-    <div class="mt-6 mb-12">
+    <div class="mt-6 mb-12 flex items-center gap-3">
         <a href="{{ route('wms-so-prepare.index') }}"
            class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-all">
             Kembali ke Daftar Prepare
+        </a>
+        <a href="{{ route('wms-so-prepare.assign', ['soId' => $so->so_id]) }}"
+           class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all">
+            <span class="material-symbols-outlined text-base">assignment</span>
+            Assign Stock
         </a>
     </div>
 </x-layouts::app>

@@ -51,6 +51,7 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/wms/stock', 'Wms\StockController', ['name' => 'wms-stock']);
     Route::get('/wms/stock-flow', [\App\Http\Controllers\Wms\StockFlowController::class, 'index'])->name('wms-stock-flow.index');
     Route::get('/wms/stock-sales', [\App\Http\Controllers\Wms\StockSalesController::class, 'index'])->name('wms-stock-sales.index');
+    Route::get('/wms/stock-card', [\App\Http\Controllers\Wms\StockCardController::class, 'index'])->name('wms-stock-card.index');
 
     // WMS Procurement
     Route::auto('/wms/po', 'Wms\PoController', ['name' => 'wms-po']);
@@ -70,6 +71,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/so-prepare', [\App\Http\Controllers\Wms\SoController::class, 'postPrepare'])->name('wms-so-prepare.store');
     Route::get('/wms/so-prepare/{soId}', [\App\Http\Controllers\Wms\SoController::class, 'getPrepareSo'])->name('wms-so-prepare.show');
     Route::post('/wms/so-prepare/{soId}', [\App\Http\Controllers\Wms\SoController::class, 'postPrepareSo'])->name('wms-so-prepare.update');
+    Route::get('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'getAssign'])->name('wms-so-prepare.assign');
+    Route::post('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'postAssign'])->name('wms-so-prepare.assignStore');
 
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
@@ -84,6 +87,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/forklift/relokasi', [\App\Http\Controllers\Wms\ForkliftController::class, 'relokasi'])->name('wms-forklift.relokasi');
     Route::get('/wms/forklift-pick/{outCode}', [\App\Http\Controllers\Wms\ForkliftController::class, 'pick'])->name('wms-forklift-pick.show');
     Route::post('/wms/forklift-pick/{outCode}', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickStore'])->name('wms-forklift-pick.update');
+    Route::get('/wms/forklift-pick/{outCode}/scan', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickScan'])->name('wms-forklift-pick.scan');
+    Route::post('/wms/forklift-pick/{outCode}/scan', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickScanProcess'])->name('wms-forklift-pick.scanProcess');
 
     // WMS Outbound
     Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);
