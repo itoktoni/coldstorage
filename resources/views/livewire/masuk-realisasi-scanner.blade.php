@@ -75,12 +75,35 @@
             </div>
             @endif
 
+            {{-- Existing Stock Barcode Warning --}}
+            @if(count($existingStockBarcodes) > 0)
+            @php
+                $totalScans = \App\Models\MasukRealisasi::where('in_realisasi_masuk_code', $masukDetail->in_detail_code)->count();
+            @endphp
+            <div class="bg-warning/10 border border-warning rounded-xl p-4 mb-4">
+                <p class="text-warning font-body-sm font-semibold flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">warning</span>
+                    {{ count($existingStockBarcodes) }} dari {{ $totalScans }} barcode sudah terdaftar di stock
+                </p>
+                <ul class="mt-2 text-sm text-on-surface-variant space-y-1">
+                    @foreach($existingStockBarcodes as $bc)
+                    <li class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm text-error">block</span>
+                        <code class="text-xs bg-error/10 px-2 py-0.5 rounded">{{ $bc }}</code>
+                    </li>
+                    @endforeach
+                </ul>
+                <p class="mt-2 text-xs text-on-surface-variant">Hapus barcode ini dari realisasi agar status bisa menjadi READY.</p>
+            </div>
+            @endif
+
+
             <div class="grid grid-cols-12 gap-4">
                 {{-- USB Scanner Input --}}
                 <div class="col-span-8">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Input (USB Scanner)</label>
-                    <input type="text" 
-                           wire:model="barcodeInput" 
+                    <input type="text"
+                           wire:model="barcodeInput"
                            x-on:keydown.enter.prevent="$wire.scan($el.value); $el.value = ''"
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
                            placeholder="Scan barcode di sini..."
@@ -89,7 +112,7 @@
 
                 {{-- Camera Scanner Button --}}
                 <div class="col-span-4 flex items-end">
-                    <button type="button" 
+                    <button type="button"
                             x-on:click="$dispatch('open-camera-scanner')"
                             class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
                         <span class="material-symbols-outlined text-lg mr-1">photo_camera</span>
@@ -149,7 +172,7 @@
                             <td class="px-4 py-3 font-medium">{{ $item->product->product_nama ?? '-' }}</td>
                             <td class="px-4 py-3">{{ (float) $item->total_qty }}</td>
                             <td class="px-4 py-3">
-                                <button wire:click="getDetail({{ $item->in_realisasi_id_product }})" 
+                                <button wire:click="getDetail({{ $item->in_realisasi_id_product }})"
                                         class="inline-flex items-center px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">
                                     <span class="material-symbols-outlined text-lg">visibility</span>
                                     Detail
@@ -173,13 +196,14 @@
                 <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant">
                     Detail Realisasi
                 </h3>
-                
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs text-on-surface-variant bg-gray-50">
                             <tr>
                                 <th class="px-4 py-3">Qty</th>
                                 <th class="px-4 py-3">Barcode</th>
+                                <th class="px-4 py-3">Lokasi</th>
                                 <th class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
@@ -188,8 +212,9 @@
                             <tr class="border-b">
                                 <td class="px-4 py-3">{{ (float) $scan->in_realisasi_qty }}</td>
                                 <td class="px-4 py-3 text-xs">{{ $scan->in_realisasi_barcode }}</td>
+                                <td class="px-4 py-3 text-xs">{{ $scan->in_realisasi_code_lokasi }}</td>
                                 <td class="px-4 py-3">
-                                    <button wire:click="deleteScan({{ $scan->in_realisasi_id }})" 
+                                    <button wire:click="deleteScan({{ $scan->in_realisasi_id }})"
                                             wire:confirm="Hapus scan ini?"
                                             class="inline-flex items-center px-3 py-1.5 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors text-sm">
                                         <span class="material-symbols-outlined text-lg">delete</span>
@@ -198,7 +223,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="3" class="px-4 py-3 text-center text-on-surface-variant">Tidak ada data</td>
+                                <td colspan="4" class="px-4 py-3 text-center text-on-surface-variant">Tidak ada data</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -206,7 +231,7 @@
                 </div>
 
                 <div class="mt-4 flex justify-end">
-                    <button wire:click="closeDetail" 
+                    <button wire:click="closeDetail"
                             class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                         Tutup
                     </button>
@@ -216,7 +241,7 @@
         @endif
 
         {{-- Camera Scanner Modal --}}
-        <div x-data="{ show: false }" 
+        <div x-data="{ show: false }"
              x-on:open-camera-scanner.window="show = true"
              x-on:close-camera-scanner.window="show = false"
              x-show="show"
@@ -228,7 +253,7 @@
                 </h3>
                 <div id="camera-scanner" class="w-full h-64 bg-gray-200 rounded-lg mb-4"></div>
                 <div class="flex justify-end">
-                    <button x-on:click="show = false; $dispatch('close-camera-scanner')" 
+                    <button x-on:click="show = false; $dispatch('close-camera-scanner')"
                             class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                         Tutup
                     </button>

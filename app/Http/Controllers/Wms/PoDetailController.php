@@ -35,7 +35,15 @@ class PoDetailController extends Controller
 
     protected function getData()
     {
-        return $this->model->with(['po', 'po.supplier', 'product'])->filter()->sort();
+        return $this->model
+            ->with(['po', 'po.supplier', 'product'])
+            ->addSelect([
+                'detail_po.*',
+                'prepare_qty' => MasukDetail::selectRaw('COALESCE(SUM(in_detail_qty), 0)')
+                    ->whereColumn('in_detail_reff', 'detail_po.po_detail_code'),
+            ])
+            ->filter()
+            ->sort();
     }
 
     public function getConvertToMasuk(Request $request, int $id)
@@ -43,6 +51,10 @@ class PoDetailController extends Controller
         $poDetail = $this->model->with(['po', 'product'])->findOrFail($id);
         $productCategory = $poDetail->product->product_category;
         $totalQty = (float) $poDetail->po_detail_qty;
+
+        $alreadyConverted = (float) MasukDetail::where('in_detail_reff', $poDetail->po_detail_code)
+            ->sum('in_detail_qty');
+        $remainingQty = max(0, $totalQty - $alreadyConverted);
 
         $allLokasi = Lokasi::with('gudang')->get();
 
@@ -69,20 +81,20 @@ class PoDetailController extends Controller
             ])
             ->values();
 
-        $remainingQty = $totalQty;
-        $lokasiData = $suitableLokasi->map(function ($row) use (&$remainingQty) {
+        $qtyLeft = $remainingQty;
+        $lokasiData = $suitableLokasi->map(function ($row) use (&$qtyLeft) {
             $lokasi = $row['model'];
             $currentQty = $row['current_qty'];
             $capacityLeft = $row['capacity_left'];
 
             $suggestedQty = 0;
-            if ($remainingQty > 0) {
+            if ($qtyLeft > 0) {
                 if (is_null($capacityLeft)) {
-                    $suggestedQty = $remainingQty;
+                    $suggestedQty = $qtyLeft;
                 } else {
-                    $suggestedQty = min($capacityLeft, $remainingQty);
+                    $suggestedQty = min($capacityLeft, $qtyLeft);
                 }
-                $remainingQty -= $suggestedQty;
+                $qtyLeft -= $suggestedQty;
             }
 
             return [
@@ -101,10 +113,11 @@ class PoDetailController extends Controller
             'poDetail' => $poDetail,
             'product' => $poDetail->product,
             'totalQty' => $totalQty,
+            'alreadyConverted' => $alreadyConverted,
+            'remainingQty' => $remainingQty,
             'productCategory' => $productCategory,
             'lokasiData' => $lokasiData,
             'suitableCount' => $suitableLokasi->count(),
-            'remainingQty' => $remainingQty,
         ]);
     }
 
@@ -122,10 +135,14 @@ class PoDetailController extends Controller
             return redirect()->back()->withErrors(['error' => 'Minimal satu alokasi lokasi harus diisi']);
         }
 
+        $alreadyConverted = (float) MasukDetail::where('in_detail_reff', $poDetail->po_detail_code)
+            ->sum('in_detail_qty');
+        $remainingQty = max(0, (float) $poDetail->po_detail_qty - $alreadyConverted);
+
         $totalAllocated = array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations));
 
-        if (abs($totalAllocated - (float) $poDetail->po_detail_qty) > 0.001) {
-            return redirect()->back()->withErrors(['error' => 'Total alokasi qty harus sama dengan qty PO Detail (' . $poDetail->po_detail_qty . ')']);
+        if (abs($totalAllocated - $remainingQty) > 0.001) {
+            return redirect()->back()->withErrors(['error' => 'Total alokasi qty harus sama dengan sisa qty (' . $remainingQty . ')']);
         }
 
         $validated = validator(['rows' => $allocations], [
@@ -141,7 +158,7 @@ class PoDetailController extends Controller
                     'in_detail_tanggal'    => now()->toDateString(),
                     'in_detail_status'     => MasukStatusEnum::PENDING,
                     'in_detail_id_product' => $poDetail->po_detail_id_product,
-                    'in_detail_qty'        => $poDetail->po_detail_qty,
+                    'in_detail_qty'        => array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations)),
                     'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
                 ]);
 
@@ -211,13 +228,13 @@ class PoDetailController extends Controller
                         'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
                     ]);
 
-                    MasukRealisasi::create([
-                        'in_realisasi_masuk_code' => $detail->in_detail_code,
-                        'in_realisasi_id_product' => $poDetail->po_detail_id_product,
-                        'in_realisasi_qty'        => $qty,
-                        'in_realisasi_code_lokasi' => $lokasi->lokasi_code,
-                        'in_realisasi_barcode'    => $this->generateBarcodeContent($poDetail, $qty),
-                    ]);
+                    // MasukRealisasi::create([
+                    //     'in_realisasi_masuk_code' => $detail->in_detail_code,
+                    //     'in_realisasi_id_product' => $poDetail->po_detail_id_product,
+                    //     'in_realisasi_qty'        => $qty,
+                    //     'in_realisasi_code_lokasi' => $lokasi->lokasi_code,
+                    //     'in_realisasi_barcode'    => $this->generateBarcodeContent($poDetail, $qty),
+                    // ]);
 
                     return $detail;
                 });

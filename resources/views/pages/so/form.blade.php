@@ -22,7 +22,7 @@
                 @if($isEdit)
                     <x-input col="6" name="so_code" readonly />
                 @endif
-                <x-input :col="$isEdit ? 6 : 12" name="so_tanggal" type="date" />
+                <x-input :col="$isEdit ? 6 : 12" name="so_tanggal" value="{{ $model->so_tanggal ?? date('Y-m-d') }}" type="date" />
                 <x-select col="6" name="so_id_customer" label="Customer" :options="$customerOptions" class="search" />
                 <x-select col="6" name="so_status" :options="$statusOptions" />
                 <x-input col="12" name="so_keterangan" type="textarea" />

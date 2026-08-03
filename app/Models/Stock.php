@@ -11,6 +11,11 @@ class Stock extends BaseModel
     protected $primaryKey = 'stock_id';
     public $timestamps = true;
 
+    public const TYPE_IN = 'IN';
+    public const TYPE_OUT = 'OUT';
+    public const TYPE_RESERVE = 'RESERVE';
+    public const TYPE_STAGING = 'STAGING';
+
     public static $filterColumns = ['stock_code', 'product_nama', 'stock_code_lokasi', 'stock_type'];
     public static $sortColumns   = ['stock_code', 'stock_id_product', 'stock_code_lokasi', 'stock_type', 'stock_qty'];
 
@@ -54,11 +59,11 @@ class Stock extends BaseModel
         return [
             'stock_code'         => ['nullable', 'string', 'max:100', Rule::unique('stock', 'stock_code')->ignore($id, 'stock_id')],
             'stock_id_product'   => ['required', 'exists:product,product_id'],
-            'stock_code_lokasi'  => ['required', 'exists:lokasi,lokasi_code'],
+            'stock_code_lokasi'  => ['nullable', 'exists:lokasi,lokasi_code'],
             'stock_qty'          => ['required', 'numeric', 'min:0'],
             'stock_expired_date' => ['nullable', 'date'],
             'stock_reff'         => ['nullable', 'string', 'max:100'],
-            'stock_type'         => ['required', 'in:IN,OUT'],
+            'stock_type'         => ['required', 'in:IN,OUT,RESERVE,STAGING'],
         ];
     }
 
@@ -69,7 +74,7 @@ class Stock extends BaseModel
 
     public static function typeOptions(): array
     {
-        return ['IN' => 'IN', 'OUT' => 'OUT'];
+        return ['IN' => 'IN', 'OUT' => 'OUT', 'RESERVE' => 'RESERVE', 'STAGING' => 'STAGING'];
     }
 
     public function product()
@@ -203,5 +208,43 @@ class Stock extends BaseModel
             ->first();
 
         $row?->increment('stock_qty', $qty);
+    }
+
+    /**
+     * Reduce RESERVE rows (identified by comma-separated SO codes in $soCodes)
+     * for a product once goods are actually picked from the rack.
+     * Returns the qty that could be consumed.
+     */
+    public static function consumeReserve(string $soCodes, int $productId, float $qty): float
+    {
+        if ($qty <= 0 || trim($soCodes) === '') {
+            return 0;
+        }
+
+        $codes = array_values(array_filter(array_map('trim', explode(',', $soCodes))));
+        if (empty($codes)) {
+            return 0;
+        }
+
+        $rows = self::query()
+            ->where('stock_type', self::TYPE_RESERVE)
+            ->whereIn('stock_reff', $codes)
+            ->where('stock_id_product', $productId)
+            ->where('stock_qty', '>', 0)
+            ->orderBy('stock_id')
+            ->lockForUpdate()
+            ->get();
+
+        $left = $qty;
+        foreach ($rows as $row) {
+            if ($left <= 0) {
+                break;
+            }
+            $take = min($left, (float) $row->stock_qty);
+            $row->decrement('stock_qty', $take);
+            $left -= $take;
+        }
+
+        return $qty - $left;
     }
 }

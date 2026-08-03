@@ -12,7 +12,8 @@ class StockFlowController extends Controller
     {
         $products = Product::orderBy('product_nama')->get();
 
-        $staging = $this->getMasukQty('pending');
+        $putawayStaging = $this->getMasukQty('pending');
+        $pickStaging = $this->getPickStagingQty();
         $prepare = $this->getMasukQty('process');
         $in = DB::table('masuk_detail')
             ->select('in_detail_id_product', DB::raw('SUM(in_detail_qty) as total'))
@@ -24,17 +25,14 @@ class StockFlowController extends Controller
         $road = $this->getKeluarQty('In Progress');
         $done = $this->getKeluarQty('Done');
 
-        $physicalStock = $this->getPhysicalStock();
-
-        $rows = $products->map(function ($product) use ($staging, $prepare, $in, $reserved, $road, $done, $physicalStock) {
+        $rows = $products->map(function ($product) use ($putawayStaging, $pickStaging, $prepare, $in, $reserved, $road, $done) {
             $id = $product->product_id;
-            $stagingQty = $staging->get($id, 0);
+            $stagingQty = $putawayStaging->get($id, 0) + $pickStaging->get($id, 0);
             $prepareQty = $prepare->get($id, 0);
             $inQty = $in->get($id, 0);
             $reservedQty = $reserved->get($id, 0);
             $roadQty = $road->get($id, 0);
             $doneQty = $done->get($id, 0);
-            $physical = $physicalStock->get($id, 0);
 
             return [
                 'product_id'   => $id,
@@ -45,11 +43,10 @@ class StockFlowController extends Controller
                 'reserved'     => $reservedQty,
                 'road'         => $roadQty,
                 'out'          => $doneQty,
-                'physical'     => $physical,
             ];
         })->filter(fn ($row) =>
             $row['staging'] > 0 || $row['prepare'] > 0 || $row['in'] > 0 ||
-            $row['reserved'] > 0 || $row['road'] > 0 || $row['out'] > 0 || $row['physical'] > 0
+            $row['reserved'] > 0 || $row['road'] > 0 || $row['out'] > 0
         )->values();
 
         return view('pages.stock-flow.index', ['rows' => $rows]);
@@ -62,6 +59,15 @@ class StockFlowController extends Controller
             ->where('in_detail_status', $status)
             ->groupBy('in_detail_id_product')
             ->pluck('total', 'in_detail_id_product');
+    }
+
+    private function getPickStagingQty()
+    {
+        return DB::table('stock')
+            ->select('stock_id_product', DB::raw('SUM(stock_qty) as total'))
+            ->where('stock_type', 'STAGING')
+            ->groupBy('stock_id_product')
+            ->pluck('total', 'stock_id_product');
     }
 
     private function getReservedQty()
@@ -80,14 +86,5 @@ class StockFlowController extends Controller
             ->where('keluar.out_status', $status)
             ->groupBy('out_detail_id_product')
             ->pluck('total', 'out_detail_id_product');
-    }
-
-    private function getPhysicalStock()
-    {
-        return DB::table('stock')
-            ->select('stock_id_product', DB::raw('SUM(stock_qty) as total'))
-            ->where('stock_type', 'IN')
-            ->groupBy('stock_id_product')
-            ->pluck('total', 'stock_id_product');
     }
 }

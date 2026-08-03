@@ -1,115 +1,165 @@
-<?php /** @var \Illuminate\Support\Collection $groups */ ?>
+<?php /** @var \Illuminate\Support\Collection $tasks */ ?>
+<?php /** @var array $details */ ?>
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => 'Forklift']]" />
 
     <div class="content mt-4 lg:mt-0">
-        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 form-card">
-            <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-xl">local_shipping</span>
-                Forklift - Pindahkan Barang ke Lokasi
-            </h3>
-            <p class="text-on-surface-variant text-sm">
-                Daftar pallet siap pindah. Pilih pallet lalu klik <strong>Scan</strong> untuk memindahkan ke rack tujuan.
-            </p>
-        </div>
+        @php $typeConfig = config('forklift.types'); @endphp
 
         @if(session('error'))
-        <div class="bg-error/10 border border-error rounded-xl p-4 mt-4">
+        <div class="bg-error/10 border border-error rounded-xl p-4 mt-5">
             <p class="text-error font-body-sm font-semibold">{{ session('error') }}</p>
         </div>
         @endif
 
-        @forelse($groups as $group)
+        @forelse($tasks as $task)
         @php
-            $suggested = $group['suitable_lokasi']->firstWhere('lokasi_code', $group['suggested_lokasi_code']);
-            $groupIndex = $loop->index;
+            $t = $task['type'];
+            $cfg = $typeConfig[$t] ?? ['label' => $t, 'icon' => 'local_shipping', 'color' => '#64748b'];
         @endphp
-        <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-5 form-card">
-            <div class="pb-4 mb-4 border-b border-outline-variant">
-                <div class="text-xs text-on-surface-variant uppercase tracking-widest">Pallet</div>
-                <div class="text-xl font-bold text-on-surface break-all">{{ $group['group_code'] }}</div>
-                <div class="text-sm mt-2 text-on-surface-variant truncate">
-                    <span class="text-lg">{{ $group['product']->product_nama ?? '-' }}</span>
+        <div class="bg-surface-container-lowest mt-5 border border-outline-variant border-l-4 rounded-xl p-5 form-card" style="border-left-color: {{ $cfg['color'] }}">
+            @if($t === 'putaway')
+                @php $group = $task['group']; $groupIndex = $task['group_index']; @endphp
+                <div class="pb-4 mb-4 border-b border-outline-variant flex items-start justify-between gap-3">
+                    <div>
+                        <div class="text-xs text-on-surface-variant uppercase tracking-widest flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm" style="color: {{ $cfg['color'] }}">{{ $cfg['icon'] }}</span>
+                            {{ $cfg['label'] }}
+                        </div>
+                        <div class="text-xl font-bold text-on-surface break-all mt-1">{{ $group['group_code'] }}</div>
+                    </div>
                     @if ($group['product_category'])
                     <span class="badge badge-warning">{{ $group['product_category'] }}</span>
                     @endif
                 </div>
-            </div>
 
-            {{-- Label-only info (no inputs) --}}
-            <div class="space-y-3">
-
-                <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm text-on-surface-variant">Qty</span>
-                    <span class="text-sm font-semibold text-on-surface">{{ number_format($group['total_qty'], 3) }}</span>
-                </div>
-                <div class="flex items-center justify-between gap-3">
-                    <span class="text-sm text-on-surface-variant">Lokasi Tujuan Rekomendasi</span>
-                    <span class="text-sm font-medium text-on-surface text-right" id="suggested-lokasi-{{ $loop->index }}">
-                        @if($suggested?->lokasi_code)
-                        {{ $suggested->lokasi_nama }}{{ $suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '' }}
-                        @else
-                        -
-                        @endif
-                    </span>
-                </div>
-
-
-            </div>
-
-            @if(!$group['completed'])
-            <div class="mt-5 grid grid-cols-2 gap-2">
-                <div class="relative">
-                    <button type="button"
-                            onclick="toggleRelokasiDropdown({{ $loop->index }})"
-                            class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20 transition-colors">
-                        <span class="material-symbols-outlined text-lg mr-2">edit_location_alt</span>
-                        ReLokasi
-                    </button>
-                    <div id="relokasi-dd-{{ $loop->index }}" class="hidden absolute z-30 left-0 right-0 mt-1 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg max-h-64 overflow-y-auto">
-                        @forelse($details[$groupIndex]['suitable_lokasi'] as $lokasi)
-                        <button type="button"
-                                onclick="selectRelokasi(this.dataset.group, {{ $loop->index }}, '{{ $lokasi['lokasi_code'] }}', this.dataset.label)"
-                                data-group="{{ $groupIndex }}"
-                                data-label="{{ $lokasi['label'] }}"
-                                class="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-outline-variant last:border-b-0 transition-colors">
-                            <div class="flex items-center justify-between gap-2">
-                                <span class="text-sm font-medium text-on-surface">{{ $lokasi['lokasi_nama'] }}</span>
-                                <span class="text-xs font-semibold {{ is_null($lokasi['capacity_left']) ? 'text-success' : (($lokasi['capacity_left'] ?? 0) < 10 ? 'text-error' : 'text-on-surface') }}">
-                                    {{ is_null($lokasi['capacity_left']) ? '∞' : number_format($lokasi['capacity_left'], 3) }}
-                                </span>
-                            </div>
-                            <div class="text-xs text-on-surface-variant">
-                                {{ $lokasi['gudang_nama'] ?? '-' }}
-                                @if($lokasi['lokasi_category'])
-                                &middot; <span class="badge badge-info text-xs">{{ $lokasi['lokasi_category'] }}</span>
-                                @endif
-                                &middot; <span class="font-mono">{{ number_format($lokasi['current_qty'], 3) }} / {{ is_null($lokasi['max_qty']) ? '∞' : number_format($lokasi['max_qty'], 3) }}</span>
-                            </div>
-                        </button>
-                        @empty
-                        <div class="px-4 py-3 text-sm text-on-surface-variant text-center">Tidak ada rack tersedia</div>
-                        @endforelse
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Produk</span>
+                        <span class="text-sm font-semibold text-on-surface text-right">{{ $group['product']->product_nama ?? '-' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Qty</span>
+                        <span class="text-sm font-semibold text-on-surface">{{ number_format($group['total_qty'], 3) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Lokasi Tujuan Rekomendasi</span>
+                        <span class="text-sm font-medium text-on-surface text-right" id="suggested-lokasi-{{ $groupIndex }}">
+                            @php $suggested = $group['suitable_lokasi']->firstWhere('lokasi_code', $group['suggested_lokasi_code']); @endphp
+                            @if($suggested?->lokasi_code)
+                            {{ $suggested->lokasi_nama }}{{ $suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '' }}
+                            @else
+                            -
+                            @endif
+                        </span>
                     </div>
                 </div>
-                <button type="button"
-                        onclick="openForkliftDetail({{ $loop->index }})"
-                        class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors">
-                    <span class="material-symbols-outlined text-lg mr-2">qr_code_scanner</span>
-                    Scan Pallet
-                </button>
-            </div>
+
+                @if(!$group['completed'])
+                <div class="mt-5 grid grid-cols-2 gap-2">
+                    <div class="relative">
+                        <button type="button"
+                                onclick="toggleRelokasiDropdown({{ $groupIndex }})"
+                                class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary/10 text-primary border border-primary/20 rounded-xl hover:bg-primary/20 transition-colors">
+                            <span class="material-symbols-outlined text-lg mr-2">edit_location_alt</span>
+                            ReLokasi
+                        </button>
+                        <div id="relokasi-dd-{{ $groupIndex }}" class="hidden absolute z-30 left-0 right-0 mt-1 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-lg max-h-64 overflow-y-auto">
+                            @forelse($details[$groupIndex]['suitable_lokasi'] as $lokasi)
+                            <button type="button"
+                                    onclick="selectRelokasi(this.dataset.group, {{ $groupIndex }}, '{{ $lokasi['lokasi_code'] }}', this.dataset.label)"
+                                    data-group="{{ $groupIndex }}"
+                                    data-label="{{ $lokasi['label'] }}"
+                                    class="w-full text-left px-4 py-2 hover:bg-primary/10 border-b border-outline-variant last:border-b-0 transition-colors">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-sm font-medium text-on-surface">{{ $lokasi['lokasi_nama'] }}</span>
+                                    <span class="text-xs font-semibold {{ is_null($lokasi['capacity_left']) ? 'text-success' : (($lokasi['capacity_left'] ?? 0) < 10 ? 'text-error' : 'text-on-surface') }}">
+                                        {{ is_null($lokasi['capacity_left']) ? '∞' : number_format($lokasi['capacity_left'], 3) }}
+                                    </span>
+                                </div>
+                                <div class="text-xs text-on-surface-variant">
+                                    {{ $lokasi['gudang_nama'] ?? '-' }}
+                                    @if($lokasi['lokasi_category'])
+                                    &middot; <span class="badge badge-info text-xs">{{ $lokasi['lokasi_category'] }}</span>
+                                    @endif
+                                    &middot; <span class="font-mono">{{ number_format($lokasi['current_qty'], 3) }} / {{ is_null($lokasi['max_qty']) ? '∞' : number_format($lokasi['max_qty'], 3) }}</span>
+                                </div>
+                            </button>
+                            @empty
+                            <div class="px-4 py-3 text-sm text-on-surface-variant text-center">Tidak ada rack tersedia</div>
+                            @endforelse
+                        </div>
+                    </div>
+                    <button type="button"
+                            onclick="openForkliftDetail({{ $groupIndex }})"
+                            class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-lg mr-2">qr_code_scanner</span>
+                        Scan Pallet
+                    </button>
+                </div>
+                @else
+                <div class="mt-4 p-3 bg-success/10 border border-success rounded-lg text-success text-sm">
+                    Pallet ini sudah selesai dipindahkan.
+                </div>
+                @endif
+
             @else
-            <div class="mt-4 p-3 bg-success/10 border border-success rounded-lg text-success text-sm">
-                Pallet ini sudah selesai dipindahkan.
-            </div>
+                @php $k = $task['pick']['keluar']; $row = $task['pick']; @endphp
+                <div class="pb-4 mb-4 border-b border-outline-variant flex items-start justify-between gap-3">
+                    <div>
+                        <div class="text-xs text-on-surface-variant uppercase tracking-widest flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm" style="color: {{ $cfg['color'] }}">{{ $cfg['icon'] }}</span>
+                            {{ $cfg['label'] }}
+                        </div>
+                        <div class="text-xl font-bold text-on-surface break-all mt-1">{{ $k->out_code }}</div>
+                    </div>
+                    @if($k->out_status === 'Done')
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">{{ $k->out_status }}</span>
+                    @elseif($k->out_status === 'In Progress')
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning">{{ $k->out_status }}</span>
+                    @else
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant">{{ $k->out_status }}</span>
+                    @endif
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Tanggal</span>
+                        <span class="text-sm font-medium text-on-surface">{{ $k->out_tanggal?->format('d M Y') ?? '-' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Reff (SO)</span>
+                        <span class="text-sm font-medium text-on-surface text-right break-all">{{ $k->out_reff ?? '-' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Item / Qty</span>
+                        <span class="text-sm font-medium text-on-surface">{{ $row['item_count'] }} item &middot; {{ $row['total_qty'] }} qty</span>
+                    </div>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="text-sm text-on-surface-variant">Progress</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-32 h-2 bg-outline-variant/40 rounded-full overflow-hidden">
+                                <div class="h-full bg-primary" style="width: {{ $row['progress'] }}%"></div>
+                            </div>
+                            <span class="text-xs font-semibold text-on-surface">{{ $row['progress'] }}%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5">
+                    <a href="{{ route('wms-forklift-pick.show', ['outCode' => $k->out_code]) }}"
+                       class="w-full inline-flex items-center justify-center px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-lg mr-2">inventory_2</span>
+                        Pick
+                    </a>
+                </div>
             @endif
         </div>
         @empty
         <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
             <div class="text-center py-8">
                 <span class="material-symbols-outlined text-6xl text-on-surface-variant">check_circle</span>
-                <p class="text-on-surface-variant mt-2">Tidak ada pallet yang perlu dipindahkan</p>
+                <p class="text-on-surface-variant mt-2">Tidak ada pekerjaan forklift.</p>
             </div>
         </div>
         @endforelse
@@ -170,7 +220,13 @@
                                 class="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                             Batal
                         </button>
+                        <button type="button" id="rack-override"
+                                onclick="submitForkliftDetail(true)"
+                                class="px-4 py-2 bg-warning/10 text-warning border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors text-sm font-medium">
+                            Override
+                        </button>
                         <button type="button" id="rack-confirm"
+                                onclick="submitForkliftDetail(false)"
                                 class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
                             Konfirmasi
                         </button>
@@ -287,9 +343,10 @@
             el.classList.remove('hidden');
         }
 
-        async function submitForkliftDetail() {
+        async function submitForkliftDetail(override = false) {
             const inputEl = document.getElementById('rack-input');
             const confirmBtn = document.getElementById('rack-confirm');
+            const overrideBtn = document.getElementById('rack-override');
             const code = inputEl.value.trim();
 
             if (!code) {
@@ -298,14 +355,40 @@
                 return;
             }
 
+            // Validate against suggested lokasi (skip if override)
+            if (!override) {
+                const form = document.getElementById('forklift-detail-form');
+                const groupCode = form.querySelector('input[name="group_code"]').value;
+                const d = detailData.find(dd => dd.group_code === groupCode);
+                if (d && d.suggested && code !== d.suggested) {
+                    showRackResult(false, 'Lokasi tidak sesuai. Scan harus ke "' + d.lokasi + '". Klik Override jika yakin.');
+                    inputEl.focus();
+                    inputEl.select();
+                    return;
+                }
+            }
+
             const form = document.getElementById('forklift-detail-form');
             form.querySelector('input[name="lokasi_code"]').value = code;
+
+            // Remove existing override input
+            const existingOverride = form.querySelector('input[name="override"]');
+            if (existingOverride) existingOverride.remove();
+
+            if (override) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'override';
+                input.value = '1';
+                form.appendChild(input);
+            }
 
             const fd = new FormData(form);
 
             // loading state
             inputEl.disabled = true;
             confirmBtn.disabled = true;
+            overrideBtn.disabled = true;
             const originalText = confirmBtn.textContent;
             confirmBtn.textContent = 'Memproses...';
             document.getElementById('rack-result').classList.add('hidden');
@@ -339,6 +422,7 @@
 
                     inputEl.disabled = false;
                     confirmBtn.disabled = false;
+                    overrideBtn.disabled = false;
                     confirmBtn.textContent = originalText;
                     inputEl.focus();
                     inputEl.select();
@@ -354,6 +438,7 @@
                 showRackResult(false, 'Terjadi kesalahan: ' + err.message);
                 inputEl.disabled = false;
                 confirmBtn.disabled = false;
+                overrideBtn.disabled = false;
                 confirmBtn.textContent = originalText;
             }
         }
@@ -361,11 +446,10 @@
         document.getElementById('rack-input').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                submitForkliftDetail();
+                submitForkliftDetail(false);
             }
         });
 
-        document.getElementById('rack-confirm').addEventListener('click', submitForkliftDetail);
         document.getElementById('forklift-detail-modal').addEventListener('click', closeForkliftDetail);
     </script>
 </x-layouts::app>

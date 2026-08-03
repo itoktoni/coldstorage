@@ -50,6 +50,11 @@ class So extends BaseModel
         return $this->belongsTo(Customer::class, 'so_id_customer', 'customer_id');
     }
 
+    public function prepare()
+    {
+        return $this->hasOne(SoPrepare::class, 'so_prepare_id_so', 'so_id');
+    }
+
     protected static function booted(): void
     {
         static::creating(function (self $so) {

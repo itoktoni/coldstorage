@@ -24,6 +24,7 @@
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
                 <x-table-sort field="stock_code" label="Stock Code" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="stock_reff" label="Reff" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="product_nama" label="Product" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="stock_code_lokasi" label="Lokasi" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="stock_type" label="Type" :sortField="$sortField" :sortDir="$sortDir" />
@@ -35,6 +36,7 @@
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary" />
                     <td>{{ $table->stock_code }}</td>
+                    <td>{{ $table->stock_reff }}</td>
                     <td>{{ $table->product->product_nama ?? $table->stock_id_product }}</td>
                     <td>{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}</td>
                     <td>{{ $table->stock_type }}</td>
@@ -55,6 +57,7 @@
                     <x-table-mobile-item :id="$table->field_primary">
                         <x-table-mobile-header title="{{ $table->product_nama ?? $table->stock_code }}" />
                         <x-table-mobile-text label="Stock Code" value="{{ $table->stock_code }}" />
+                        <x-table-mobile-text label="Reff" value="{{ $table->stock_reff }}" />
                         <x-table-mobile-text label="Product" value="{{ $table->product_nama ?? $table->stock_id_product }}" />
                         <x-table-mobile-text label="Lokasi" value="{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}" />
                         <x-table-mobile-text label="Type" value="{{ $table->stock_type }}" />

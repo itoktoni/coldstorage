@@ -20,16 +20,24 @@ return new class extends Migration
             });
         }
 
-        // Backfill existing products with generated codes using raw SQL
-        DB::unprepared("
-            UPDATE product
-            SET product_code = CONCAT('P', LPAD(product_id, 10, '0'))
-            WHERE product_code = '' OR product_code IS NULL
-        ");
+        // Backfill existing products with generated codes using raw SQL (MySQL only)
+        if (DB::getDriverName() === 'mysql') {
+            DB::unprepared("
+                UPDATE product
+                SET product_code = CONCAT('P', LPAD(product_id, 10, '0'))
+                WHERE product_code = '' OR product_code IS NULL
+            ");
+        }
 
         // Add unique constraint if not exists
-        $hasUnique = DB::select("SHOW INDEX FROM product WHERE Column_name = 'product_code' AND Key_name != 'PRIMARY'");
-        if (empty($hasUnique)) {
+        $hasUnique = DB::getDriverName() === 'mysql'
+            ? !empty(DB::select("SHOW INDEX FROM product WHERE Column_name = 'product_code' AND Key_name != 'PRIMARY'"))
+            : collect(DB::select("PRAGMA index_list('product')"))
+                ->filter(fn ($idx) => in_array($idx->origin, ['c', 'u'], true))
+                ->map(fn ($idx) => collect(DB::select("PRAGMA index_info('".$idx->name."')"))->pluck('name')->all())
+                ->flatten()
+                ->contains('product_code');
+        if (!$hasUnique) {
             Schema::table('product', function (Blueprint $table) {
                 $table->unique('product_code');
             });

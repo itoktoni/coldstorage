@@ -64,6 +64,7 @@
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 @foreach($qrcodes as $qr)
                 <div class="border border-outline-variant rounded-lg p-3 text-center bg-white qr-item">
+                    <p style="font-size: 8px;" class="qr-label text-xs mb-2 text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $qr['content'] }}</p>
                     <img src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code" class="mx-auto mb-2" style="width:150px;height:150px;" />
                     <p class="qr-label text-xs text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $product->product_nama }}</p>
                     <p class="qr-label text-xs text-on-surface-variant">Qty: {{ (float) $qty }}</p>

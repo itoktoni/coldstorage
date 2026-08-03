@@ -29,6 +29,8 @@
                 <x-table-sort field="po_tanggal" label="Tanggal" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="supplier_id" label="Supplier" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="po_detail_qty" label="Quantity" :sortField="$sortField" :sortDir="$sortDir" />
+                <th>Prepare</th>
+                <th>Sisa</th>
             </x-slot:head>
             <x-slot:body>
                 @forelse ($data as $table)
@@ -47,11 +49,13 @@
                     <td>{{ formatDate($table->po->po_tanggal) }}</td>
                     <td>{{ $table->po->supplier->supplier_nama ?? 'N/A' }}</td>
                     <td>{{ (float) $table->po_detail_qty }}</td>
+                    <td>{{ (float) $table->prepare_qty }}</td>
+                    <td>{{ (float) $table->po_detail_qty - (float) $table->prepare_qty }}</td>
 
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ count($model::$sortColumns) + 2 }}" class="text-center">No data available.</td>
+                    <td colspan="{{ count($model::$sortColumns) + 4 }}" class="text-center">No data available.</td>
                 </tr>
                 @endforelse
             </x-slot:body>

@@ -14,8 +14,31 @@ class KeluarRealisasi extends BaseModel
     protected $fillable = [
         'out_realisasi_id_detail',
         'out_realisasi_code',
+        'out_realisasi_qty',
         'out_realisasi_id_stock',
     ];
+
+    protected $casts = [
+        'out_realisasi_qty' => 'double',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $row) {
+            if (empty($row->out_realisasi_code)) {
+                $row->out_realisasi_code = self::generateCode();
+            }
+        });
+    }
+
+    public static function generateCode(): string
+    {
+        do {
+            $code = 'OUTR-'.now()->format('Ymd').'-'.unic_number(4);
+        } while (self::where('out_realisasi_code', $code)->exists());
+
+        return $code;
+    }
 
     public function detail()
     {

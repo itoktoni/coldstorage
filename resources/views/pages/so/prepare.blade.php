@@ -4,9 +4,21 @@
 <x-layouts::app>
     <x-breadcrumb :items="[['url' => route('wms-so.getTable'), 'label' => 'Sales Order'], ['url' => '', 'label' => 'Prepare SO']]" />
 
-    <form action="{{ route('wms-so.postPrepare') }}" method="POST">
+    @if($errors->any())
+    <div class="bg-error/10 border border-error rounded-xl p-4 mt-5">
+        <ul class="list-disc list-inside text-error font-body-sm">
+            @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
+    <form action="{{ route('wms-so-prepare.store') }}" method="POST">
         @csrf
-        <input type="hidden" name="so_ids" value="{{ implode(',', $soIds) }}">
+        @foreach($soIds as $soId)
+            <input type="hidden" name="so_ids[]" value="{{ $soId }}">
+        @endforeach
 
         {{-- SO Info --}}
         <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">

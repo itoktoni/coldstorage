@@ -56,7 +56,7 @@ it('stores a Stock IN when a valid pallet is scanned', function () {
     $response->assertRedirect(route('wms-forklift.index'));
     $response->assertSessionHasNoErrors();
 
-    $stock = Stock::where('stock_reff', $this->detail->in_detail_code)->first();
+    $stock = Stock::where('stock_reff', $this->group)->first();
 
     expect($stock)->not->toBeNull()
         ->and($stock->stock_type)->toBe('IN')
@@ -76,7 +76,7 @@ it('rejects a scan when pallet_scan does not match group_code', function () {
         'lokasi_code' => $this->lokasi->lokasi_code,
     ])->assertSessionHasErrors(['pallet_scan']);
 
-    expect(Stock::where('stock_reff', $this->detail->in_detail_code)->exists())->toBeFalse();
+    expect(Stock::where('stock_reff', $this->group)->exists())->toBeFalse();
 });
 
 it('does not create Stock when status is not READY', function () {
@@ -88,5 +88,6 @@ it('does not create Stock when status is not READY', function () {
         'lokasi_code' => $this->lokasi->lokasi_code,
     ])->assertSessionHasErrors(['error']);
 
-    expect(Stock::where('stock_reff', $this->detail->in_detail_code)->exists())->toBeFalse();
+    expect(Stock::where('stock_reff', $this->group)->exists())->toBeFalse();
 });
+

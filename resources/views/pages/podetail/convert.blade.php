@@ -30,8 +30,11 @@
                     </div>
                 </div>
                 <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Total Qty</label>
-                    <input type="text" value="{{ (float) $totalQty }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50" readonly />
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Sisa Qty</label>
+                    <input type="text" value="{{ (float) $remainingQty }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 font-semibold text-primary" readonly />
+                    @if($alreadyConverted > 0)
+                    <p class="text-xs text-on-surface-variant mt-1">Dari {{ (float) $totalQty }} ({{ (float) $alreadyConverted }} sudah masuk)</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -95,7 +98,7 @@
                             </td>
                             <td class="px-4 py-3">{{ (float) $lokasi['current_qty'] }}</td>
                             <td class="px-4 py-3">
-                                {{ $lokasi['max_qty'] ? (float) $lokasi['max_qty'] : '<span class="text-success">∞</span>' }}
+                                {!! $lokasi['max_qty'] ? (float) $lokasi['max_qty'] : '<span class="text-success">∞</span>' !!}
                             </td>
                             <td class="px-4 py-3">
                                 <span class="{{ ($lokasi['capacity_left'] ?? 0) < 10 ? 'text-error' : '' }}">
@@ -131,7 +134,7 @@
                             <td colspan="5" class="px-4 py-3 text-right">Total Alokasi:</td>
                             <td class="px-4 py-3">
                                 <span id="total-allocation" class="text-primary">{{ number_format($lokasiData->sum('suggested_qty'), 3) }}</span>
-                                / {{ number_format($totalQty, 3) }}
+                                / {{ number_format($remainingQty, 3) }}
                             </td>
                         </tr>
                     </tfoot>
@@ -141,44 +144,44 @@
     </div>
 
     <script>
-        const TARGET_QTY = {{ (float) $totalQty }};
+        const TARGET_QTY = {{ (float) $remainingQty }};
         const allInputs = () => Array.from(document.querySelectorAll('input[data-remaining]'));
 
-        // Auto-clamp to capacity and update total
-        allInputs().forEach(input => {
-            input.addEventListener('change', function() {
-                const max = parseFloat(this.dataset.remaining) || 0;
-                let val = parseFloat(this.value) || 0;
-                if (max > 0 && val > max) {
-                    val = max;
-                    this.value = max;
-                    alert('Qty melebihi sisa capacity lokasi ini (' + max + ')');
-                }
-                this.value = val;
-                updateTotal();
-            });
-        });
+        function redistribute(edited) {
+            const inputs = allInputs();
+            let editedVal = parseFloat(edited.value) || 0;
 
-        // Auto-distribute: when user clears/lowers one input, fill next empty rows with remainder
-        allInputs().forEach(input => {
-            input.addEventListener('input', function() {
-                const inputs = allInputs();
-                let total = 0;
-                inputs.forEach(i => { total += parseFloat(i.value) || 0; });
-                const remaining = TARGET_QTY - total;
-                if (remaining > 0.001) {
-                    for (const i of inputs) {
-                        if (i === this) continue;
-                        const v = parseFloat(i.value) || 0;
-                        if (v === 0) {
-                            const cap = parseFloat(i.dataset.remaining) || 0;
-                            const fill = Math.min(remaining, cap > 0 ? cap : remaining);
-                            i.value = fill.toFixed(3);
-                            return;
-                        }
-                    }
+            const editedCap = parseFloat(edited.dataset.remaining) || 0;
+            if (editedCap > 0 && editedVal > editedCap) {
+                editedVal = editedCap;
+                edited.value = editedVal;
+                showToast('Melebihi Kapasitas', 'Qty melebihi sisa capacity lokasi ini (' + editedCap + ')');
+            }
+            if (editedVal > TARGET_QTY) {
+                editedVal = TARGET_QTY;
+                edited.value = editedVal;
+                showToast('Melebihi Qty PO', 'Total alokasi melebihi qty PO (' + TARGET_QTY + ')');
+            }
+
+            inputs.forEach(i => { if (i !== edited) i.value = ''; });
+
+            let remaining = TARGET_QTY - editedVal;
+            for (const i of inputs) {
+                if (i === edited || remaining <= 0.0001) continue;
+                const cap = parseFloat(i.dataset.remaining) || 0;
+                const fill = Math.min(remaining, cap > 0 ? cap : remaining);
+                if (fill > 0) {
+                    i.value = fill.toFixed(3);
+                    remaining -= fill;
                 }
-                updateTotal();
+            }
+            updateTotal();
+        }
+
+        allInputs().forEach(input => {
+            input.addEventListener('input', updateTotal);
+            input.addEventListener('change', function() {
+                redistribute(this);
             });
         });
 
@@ -194,13 +197,13 @@
             const qty = parseFloat(input.value) || 0;
 
             if (qty <= 0) {
-                alert('Qty harus lebih dari 0');
+                showToast('Qty Tidak Valid', 'Qty harus lebih dari 0');
                 return;
             }
 
             const max = parseFloat(input.dataset.remaining) || 0;
             if (max > 0 && qty > max) {
-                alert('Qty melebihi sisa capacity lokasi ini (' + max + ')');
+                showToast('Melebihi Kapasitas', 'Qty melebihi sisa capacity lokasi ini (' + max + ')');
                 input.value = max;
                 updateTotal();
                 return;
@@ -241,11 +244,11 @@
                 try { data = await res.json(); } catch (_) {}
 
                 if (!res.ok || data.ok === false) {
-                    alert('Gagal convert: ' + (data.message || ('HTTP ' + res.status)));
+                    showToast('Gagal Convert', 'Gagal convert: ' + (data.message || ('HTTP ' + res.status)));
                     return;
                 }
 
-                alert(data.message || 'Berhasil konversi ' + qty + ' ke lokasi');
+                showToast('Berhasil', data.message || 'Berhasil konversi ' + qty + ' ke lokasi');
 
                 if (data.masuk_detail_code) {
                     window.location.href = "{{ url('/wms/masuk-detail') }}/" + data.masuk_detail_code + "/realisasikan";
@@ -253,7 +256,7 @@
                     window.location.reload();
                 }
             } catch (err) {
-                alert('Terjadi kesalahan: ' + err.message);
+                showToast('Terjadi Kesalahan', 'Terjadi kesalahan: ' + err.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalContent;

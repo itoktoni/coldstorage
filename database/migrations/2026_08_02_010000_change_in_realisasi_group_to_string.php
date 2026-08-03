@@ -7,11 +7,17 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
         DB::statement("ALTER TABLE masuk_realisasi MODIFY in_realisasi_group VARCHAR(50) NULL");
     }
 
     public function down(): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
         DB::statement("ALTER TABLE masuk_realisasi MODIFY in_realisasi_group INT NULL");
     }
 };

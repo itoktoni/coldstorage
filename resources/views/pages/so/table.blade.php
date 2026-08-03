@@ -85,8 +85,18 @@
             <button type="button" onclick="prepareSelected()"
                 class="inline-flex items-center justify-center gap-2 h-10 px-4 md:px-5 text-sm font-semibold rounded-lg bg-green-600 text-white hover:bg-green-700 shadow-sm transition-all active:scale-95">
                 <span class="material-symbols-outlined text-xl">inventory</span>
-                <span class="hidden sm:inline">Prepare</span>
+                <span class="hidden sm:inline">Buat Pick List</span>
             </button>
+            <a href="{{ route('wms-so-prepare.index') }}"
+                class="inline-flex items-center justify-center gap-2 h-10 px-4 md:px-5 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition-all active:scale-95">
+                <span class="material-symbols-outlined text-xl">assignment</span>
+                <span class="hidden sm:inline">Prepare Barang</span>
+            </a>
+            <a href="{{ route('wms-forklift.index') }}"
+                class="inline-flex items-center justify-center gap-2 h-10 px-4 md:px-5 text-sm font-semibold rounded-lg bg-orange-600 text-white hover:bg-orange-700 shadow-sm transition-all active:scale-95">
+                <span class="material-symbols-outlined text-xl">local_shipping</span>
+                <span class="hidden sm:inline">Pick List</span>
+            </a>
         </x-action>
     </div>
 
@@ -98,7 +108,7 @@
         const desktopIds = [...document.querySelectorAll('tbody input[type="checkbox"]:checked')].map(c => c.value);
         const ids = desktopIds.length ? desktopIds : [...mSelected];
         if (!ids.length) return alert('Pilih minimal 1 SO terlebih dahulu');
-        window.location.href = '{{ route("wms-so.prepare") }}?so_ids[]=' + ids.join('&so_ids[]=');
+        window.location.href = '{{ route("wms-so-prepare.create") }}?so_ids[]=' + ids.join('&so_ids[]=');
     }
     </script>
 </x-layouts::app>

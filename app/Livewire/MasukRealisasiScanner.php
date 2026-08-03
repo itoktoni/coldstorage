@@ -6,6 +6,7 @@ use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
 use App\Models\Product;
+use App\Models\Stock;
 use App\Wms\MasukStatusEnum;
 use Livewire\Component;
 
@@ -20,6 +21,7 @@ class MasukRealisasiScanner extends Component
     public $cameraActive = false;
     public $error = '';
     public $success = '';
+    public $existingStockBarcodes = [];
 
     protected $listeners = ['barcodeScanned' => 'scan'];
 
@@ -58,12 +60,20 @@ class MasukRealisasiScanner extends Component
             return;
         }
 
-        // Check for duplicate barcode
+        // Check for duplicate barcode in this detail
         $exists = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)
             ->where('in_realisasi_barcode', $barcodeContent)
             ->exists();
         if ($exists) {
             $this->error = 'Barcode ini sudah pernah di-scan';
+            $this->refreshSummary();
+            return;
+        }
+
+        // Check if barcode already exists in stock (from previous realisasi)
+        $stockExists = Stock::where('stock_code', $barcodeContent)->exists();
+        if ($stockExists) {
+            $this->error = 'Barcode ini sudah terdaftar di stock. Tidak bisa di-scan lagi.';
             $this->refreshSummary();
             return;
         }
@@ -86,13 +96,37 @@ class MasukRealisasiScanner extends Component
         // Check if all qty scanned → process → ready
         $totalRealisasi = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)
             ->sum('in_realisasi_qty');
+
+        // Check if any scanned barcode already exists in stock (from OTHER sessions)
+        $groupCode = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)->value('in_realisasi_group');
+        $existingBarcodes = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)
+            ->whereNotNull('in_realisasi_barcode')
+            ->pluck('in_realisasi_barcode')
+            ->filter(fn ($bc) => Stock::where('stock_code', $bc)
+                ->where(function ($q) use ($groupCode) {
+                    $q->whereNull('stock_reff')
+                      ->orWhere('stock_reff', '!=', $groupCode);
+                })
+                ->exists());
+
+        if ($existingBarcodes->isNotEmpty() && $totalRealisasi >= $this->masukDetail->in_detail_qty && $this->masukDetail->in_detail_status === MasukStatusEnum::PROCESS) {
+            $count = $existingBarcodes->count();
+            $total = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)->count();
+            $this->error = "Tidak bisa READY: {$count} dari {$total} barcode sudah terdaftar di stock. Hapus barcode duplikat terlebih dahulu.";
+            $this->refreshSummary();
+            return;
+        }
+
         if ($totalRealisasi >= $this->masukDetail->in_detail_qty && $this->masukDetail->in_detail_status === MasukStatusEnum::PROCESS) {
             $this->masukDetail->update(['in_detail_status' => MasukStatusEnum::READY]);
             $this->masukDetail->refresh();
             $this->generateGroupForDetail($this->masukDetail->in_detail_code);
+            $this->insertStockForDetail($this->masukDetail->in_detail_code);
+            $this->dispatch('show-toast', message: 'Semua qty sudah terpenuhi! Status → READY', type: 'success');
         }
 
         $this->success = 'Barcode berhasil di-scan';
+        $this->dispatch('show-toast', message: 'Barcode berhasil di-scan', type: 'success');
         $this->barcodeInput = '';
         $this->refreshSummary();
     }
@@ -122,9 +156,11 @@ class MasukRealisasiScanner extends Component
 
         if ($enum === MasukStatusEnum::READY) {
             $this->generateGroupForDetail($this->masukDetail->in_detail_code);
+            $this->insertStockForDetail($this->masukDetail->in_detail_code);
         }
 
         $this->success = 'Status diubah ke '.$enum->description();
+        $this->dispatch('show-toast', message: 'Status → '.$enum->description(), type: 'success');
     }
 
     public function parseBarcode($content)
@@ -149,6 +185,23 @@ class MasukRealisasiScanner extends Component
             ->groupBy('in_realisasi_id_product')
             ->with('product')
             ->get();
+
+        // Only flag barcodes that were in stock BEFORE this detail's realisasi created new stock.
+        // Exclude stock rows whose stock_reff matches this detail's group (just created by us).
+        $detailCode = $this->masukDetail->in_detail_code;
+        $groupCode = MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->value('in_realisasi_group');
+
+        $this->existingStockBarcodes = MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)
+            ->whereNotNull('in_realisasi_barcode')
+            ->pluck('in_realisasi_barcode')
+            ->filter(fn ($bc) => Stock::where('stock_code', $bc)
+                ->where(function ($q) use ($groupCode) {
+                    $q->whereNull('stock_reff')
+                      ->orWhere('stock_reff', '!=', $groupCode);
+                })
+                ->exists())
+            ->values()
+            ->all();
     }
 
     public function getDetail($productId)
@@ -185,6 +238,37 @@ class MasukRealisasiScanner extends Component
         $group = $existing ?: MasukRealisasi::generateGroupCode();
 
         MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->update(['in_realisasi_group' => $group]);
+    }
+
+    protected function insertStockForDetail(string $detailCode): void
+    {
+        $group = MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->value('in_realisasi_group');
+        if (!$group || Stock::where('stock_reff', $group)->exists()) {
+            return;
+        }
+
+        MasukRealisasi::where('in_realisasi_masuk_code', $detailCode)->get()->each(function (MasukRealisasi $realisasi) use ($group) {
+            if (Stock::where('stock_code', $realisasi->in_realisasi_barcode)->exists()) {
+                return;
+            }
+
+            Stock::create([
+                'stock_code'         => $realisasi->in_realisasi_barcode,
+                'stock_id_product'   => $realisasi->in_realisasi_id_product,
+                'stock_code_lokasi'  => null,
+                'stock_qty'          => $realisasi->in_realisasi_qty,
+                'stock_type'         => Stock::TYPE_STAGING,
+                'stock_expired_date' => $this->expiredDateFromBarcode($realisasi->in_realisasi_barcode),
+                'stock_reff'         => $group,
+            ]);
+        });
+    }
+
+    protected function expiredDateFromBarcode(?string $barcode): ?string
+    {
+        $parsed = $barcode ? $this->parseBarcode($barcode) : null;
+
+        return $parsed['expired_date'] ?? null;
     }
 
     public function render()

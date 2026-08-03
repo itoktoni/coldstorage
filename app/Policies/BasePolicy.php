@@ -60,4 +60,14 @@ class BasePolicy
     {
         return $this->accessProtected($user, __FUNCTION__) ? Response::deny() : Response::allow();
     }
+
+    public function prepare(User $user): Response
+    {
+        return $this->accessProtected($user, __FUNCTION__) ? Response::deny() : Response::allow();
+    }
+
+    public function prepareSo(User $user): Response
+    {
+        return $this->accessProtected($user, __FUNCTION__) ? Response::deny() : Response::allow();
+    }
 }

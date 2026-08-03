@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Wms;
 
 use App\Http\Controllers\Controller;
+use App\Models\Keluar;
+use App\Models\KeluarDetail;
+use App\Models\KeluarRealisasi;
 use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
@@ -67,8 +70,27 @@ class ForkliftController extends Controller
             ->sortBy(fn ($g) => $g['completed'] ? 1 : 0)
             ->values();
 
+        $pickLists = $this->buildPickLists();
+
+        $tasks = collect();
+        $putawayCount = 0;
+        foreach ($groups as $group) {
+            $tasks->push([
+                'type'        => 'putaway',
+                'group'       => $group,
+                'group_index' => $putawayCount,
+            ]);
+            $putawayCount++;
+        }
+        foreach ($pickLists as $pickRow) {
+            $tasks->push([
+                'type'   => 'pick',
+                'pick'   => $pickRow,
+            ]);
+        }
+
         return view('pages.forklift.index', [
-            'groups' => $groups,
+            'tasks'   => $tasks,
             'details' => $groups->map(function ($g) {
                 $suggested = collect($g['suitable_lokasi'])->firstWhere('lokasi_code', $g['suggested_lokasi_code']);
                 return [
@@ -94,6 +116,7 @@ class ForkliftController extends Controller
                     })->values()->all(),
                 ];
             })->values()->all(),
+            'pickLists' => $pickLists,
         ]);
     }
 
@@ -103,7 +126,10 @@ class ForkliftController extends Controller
             'group_code'   => ['required', 'string'],
             'pallet_scan'  => ['required', 'string', 'same:group_code'],
             'lokasi_code'  => ['required', 'string', 'exists:lokasi,lokasi_code'],
+            'override'     => ['nullable', 'boolean'],
         ]);
+
+        $isOverride = (bool) ($data['override'] ?? false);
 
         $rows = MasukRealisasi::with('product')
             ->where('in_realisasi_group', $data['group_code'])
@@ -128,7 +154,9 @@ class ForkliftController extends Controller
             return $this->storeError($request, 'Status belum READY');
         }
 
-        $alreadyMoved = Stock::where('stock_reff', $detailCode)->exists();
+        $alreadyMoved = Stock::where('stock_reff', $data['group_code'])
+            ->where('stock_type', Stock::TYPE_IN)
+            ->exists();
         if ($alreadyMoved) {
             return $this->storeError($request, 'Pallet ini sudah selesai dipindahkan');
         }
@@ -143,16 +171,46 @@ class ForkliftController extends Controller
             return $this->storeError($request, 'Lokasi ini tidak memiliki kapasitas cukup. Sisa: '.($lokasi->lokasi_max_qty - $lokasi->current_qty).', dibutuhkan: '.$totalQty);
         }
 
+        // Validate lokasi is the suggested one for this pallet
+        $allLokasi = Lokasi::with('gudang')->get();
+        $suitableLokasi = $allLokasi->filter(function ($l) use ($product, $totalQty) {
+            return $l->canAcceptCategory($product->product_category) && $l->hasCapacity($totalQty);
+        });
+
+        if (!$isOverride) {
+            $existingLokasiCode = $rows->pluck('in_realisasi_code_lokasi')->filter()->unique()->first();
+            $suggestedLokasi = $existingLokasiCode
+                ? $suitableLokasi->firstWhere('lokasi_code', $existingLokasiCode)
+                : $suitableLokasi->sortBy(fn ($l) => $l->current_qty)->first();
+
+            if (!$suggestedLokasi || $data['lokasi_code'] !== $suggestedLokasi->lokasi_code) {
+                $expected = $suggestedLokasi ? $suggestedLokasi->lokasi_nama : '-';
+                return $this->storeError($request, 'Lokasi tidak sesuai. Scan harus ke "'.$expected.'"');
+            }
+        }
+
         try {
             DB::transaction(function () use ($masukDetail, $rows, $data, $totalQty, $detailCode) {
-                Stock::create([
-                    'stock_id_product'   => $rows->first()->in_realisasi_id_product,
-                    'stock_code_lokasi'  => $data['lokasi_code'],
-                    'stock_qty'          => $totalQty,
-                    'stock_type'         => 'IN',
-                    'stock_expired_date' => now()->addDays(30),
-                    'stock_reff'         => $detailCode,
-                ]);
+                // Stock sudah dibuat saat detail berstatus READY (reff = group code),
+                // tinggal pindahkan lokasi. Fallback create untuk data legacy.
+                $stockRows = Stock::where('stock_reff', $data['group_code'])->get();
+
+                if ($stockRows->isNotEmpty()) {
+                    Stock::where('stock_reff', $data['group_code'])
+                        ->update([
+                            'stock_type'        => Stock::TYPE_IN,
+                            'stock_code_lokasi' => $data['lokasi_code'],
+                        ]);
+                } else {
+                    Stock::create([
+                        'stock_id_product'   => $rows->first()->in_realisasi_id_product,
+                        'stock_code_lokasi'  => $data['lokasi_code'],
+                        'stock_qty'          => $totalQty,
+                        'stock_type'         => 'IN',
+                        'stock_expired_date' => now()->addDays(30),
+                        'stock_reff'         => $data['group_code'],
+                    ]);
+                }
 
                 MasukRealisasi::whereIn('in_realisasi_id', $rows->pluck('in_realisasi_id'))
                     ->update(['in_realisasi_code_lokasi' => $data['lokasi_code']]);
@@ -198,12 +256,29 @@ class ForkliftController extends Controller
         $groupCode = $request->input('group_code');
         $lokasiCode = $request->input('lokasi_code');
 
-        $updated = MasukRealisasi::where('in_realisasi_group', $groupCode)
-            ->update(['in_realisasi_code_lokasi' => $lokasiCode]);
-
-        if ($updated === 0) {
+        $rows = MasukRealisasi::where('in_realisasi_group', $groupCode)->get();
+        if ($rows->isEmpty()) {
             return response()->json(['ok' => false, 'message' => 'Pallet tidak ditemukan'], 404);
         }
+
+        $product = $rows->first()->product;
+        if (!$product) {
+            return response()->json(['ok' => false, 'message' => 'Product pada pallet tidak valid'], 422);
+        }
+
+        $totalQty = (float) $rows->sum('in_realisasi_qty');
+        $lokasi = Lokasi::findOrFail($lokasiCode);
+
+        if (!$lokasi->canAcceptCategory($product->product_category)) {
+            return response()->json(['ok' => false, 'message' => 'Lokasi ini tidak menerima kategori produk "'.$product->product_category.'"'], 422);
+        }
+
+        if (!$lokasi->hasCapacity($totalQty)) {
+            return response()->json(['ok' => false, 'message' => 'Lokasi ini tidak memiliki kapasitas cukup. Sisa: '.($lokasi->lokasi_max_qty - $lokasi->current_qty).', dibutuhkan: '.$totalQty], 422);
+        }
+
+        $updated = MasukRealisasi::where('in_realisasi_group', $groupCode)
+            ->update(['in_realisasi_code_lokasi' => $lokasiCode]);
 
         $lokasi = Lokasi::with('gudang')->find($lokasiCode);
 
@@ -239,5 +314,246 @@ class ForkliftController extends Controller
         ])->setPaper('a4', 'portrait');
 
         return $pdf->stream('pallet-' . $groupCode . '.pdf');
+    }
+
+    /**
+     * Build the list of Keluar (outbound pick lists) ready to be picked by forklift.
+     * Status: Pending / In Progress (the ones generated from SO prepare).
+     */
+    private function buildPickLists(): \Illuminate\Support\Collection
+    {
+        return Keluar::with(['details.product'])
+            ->whereIn('out_status', ['Pending', 'In Progress'])
+            ->orderBy('out_tanggal')
+            ->get()
+            ->map(function (Keluar $keluar) {
+                $details = $keluar->details;
+
+                $pickedQty = (float) KeluarRealisasi::whereIn('out_realisasi_id_detail', $details->pluck('out_detail_id'))
+                    ->sum('out_realisasi_qty');
+
+                $totalQty   = (int) $details->sum('out_detail_qty');
+                $progress   = $totalQty > 0 ? min(100, (int) round($pickedQty / $totalQty * 100)) : 0;
+
+                return [
+                    'keluar'      => $keluar,
+                    'total_qty'   => $totalQty,
+                    'picked_rows' => $pickedQty,
+                    'progress'    => $progress,
+                    'item_count'  => $details->count(),
+                ];
+            });
+    }
+
+    /**
+     * Pick detail page: shows required items + guide (rak tujuan scan + staging area).
+     * Forklift operator scans lokasi rack (sumber) lalu scan rak staging (A/B/C/D).
+     * Saat staging discan sesuai panduan, stock berpindah rack -> staging (type STAGING).
+     */
+    public function pick(string $outCode)
+    {
+        $keluar = Keluar::with(['details.product'])->findOrFail($outCode);
+
+        $rows = $keluar->details->map(function (KeluarDetail $detail) {
+            $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                ->sum('out_realisasi_qty');
+
+            $remaining = max(0, (float) $detail->out_detail_qty - $alreadyPicked);
+
+            // FIFO guide: stock IN untuk produk ini, oldest expired first.
+            $suggestedStocks = Stock::query()
+                ->where('stock_type', 'IN')
+                ->where('stock_id_product', $detail->out_detail_id_product)
+                ->where('stock_qty', '>', 0)
+                ->orderBy('stock_expired_date')
+                ->orderBy('stock_id')
+                ->with('lokasi.gudang')
+                ->get()
+                ->map(function (Stock $s) use ($remaining) {
+                    return [
+                        'stock_id'    => $s->stock_id,
+                        'lokasi_code' => $s->stock_code_lokasi,
+                        'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
+                        'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
+                        'stock_code'  => $s->stock_code,
+                        'stock_qty'   => (float) $s->stock_qty,
+                        'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                        'take_max'    => min((float) $s->stock_qty, $remaining),
+                    ];
+                })
+                ->values();
+
+            return [
+                'detail'         => $detail,
+                'qty_requested'  => (int) $detail->out_detail_qty,
+                'qty_picked'     => (float) $alreadyPicked,
+                'qty_remaining'  => $remaining,
+                'suggested'      => $suggestedStocks,
+            ];
+        });
+
+        $totalQty = (float) $rows->sum('qty_requested');
+        $totalPicked = (float) $rows->sum('qty_picked');
+
+        return view('pages.forklift.pick', [
+            'keluar' => $keluar,
+            'rows'   => $rows->filter(fn ($r) => $r['qty_remaining'] > 0)->values(),
+            'summary' => [
+                'total_qty'   => $totalQty,
+                'total_picked'=> $totalPicked,
+                'progress'    => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
+                'done_count'  => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
+            ],
+        ]);
+    }
+
+    /**
+     * Process scan-based pick: operator scan lokasi rack (sumber) + scan rak staging.
+     * Stock IN di rack berkurang, row STAGING dibuat di lokasi staging (type STAGING).
+     */
+    public function pickStore(Request $request, string $outCode)
+    {
+        $data = $request->validate([
+            'detail_id'    => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
+            'rack_scan'    => ['required', 'string', 'exists:lokasi,lokasi_code'],
+            'staging_scan' => ['required', 'string', 'exists:lokasi,lokasi_code'],
+        ]);
+
+        $keluar = Keluar::findOrFail($outCode);
+
+        try {
+            $result = DB::transaction(function () use ($keluar, $data) {
+                $detail = KeluarDetail::where('out_detail_id', $data['detail_id'])
+                    ->where('out_detail_code_keluar', $keluar->out_code)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                $rackLokasi = Lokasi::findOrFail($data['rack_scan']);
+                $stagingLokasi = Lokasi::findOrFail($data['staging_scan']);
+
+                if (strtolower($stagingLokasi->lokasi_category ?? '') !== 'staging') {
+                    throw new \RuntimeException('Rak staging tidak valid. Scan staging area A/B/C/D.');
+                }
+                if ($stagingLokasi->lokasi_code === $rackLokasi->lokasi_code) {
+                    throw new \RuntimeException('Rak staging tidak boleh sama dengan lokasi rack sumber.');
+                }
+
+                $alreadyPicked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                    ->sum('out_realisasi_qty');
+
+                $remaining = (float) $detail->out_detail_qty - $alreadyPicked;
+                if ($remaining <= 0) {
+                    throw new \RuntimeException('Item ini sudah terpenuhi.');
+                }
+
+                // Guide rack: FIFO stock IN untuk produk ini (oldest expired first)
+                $guideLokasi = Stock::query()
+                    ->where('stock_type', 'IN')
+                    ->where('stock_id_product', $detail->out_detail_id_product)
+                    ->where('stock_qty', '>', 0)
+                    ->orderBy('stock_expired_date')
+                    ->orderBy('stock_id')
+                    ->with('lokasi')
+                    ->get()
+                    ->first();
+
+                if (!$guideLokasi) {
+                    throw new \RuntimeException('Tidak ada stok tersedia di rak untuk product ini.');
+                }
+
+                if ($data['rack_scan'] !== $guideLokasi->stock_code_lokasi) {
+                    $guideNama = $guideLokasi->lokasi?->lokasi_nama ?? $guideLokasi->stock_code_lokasi;
+                    throw new \RuntimeException('Rak yang discan tidak sesuai. Pick harus dari rack '.$guideNama.'.');
+                }
+
+                // Stock IN di rack sumber untuk produk ini (FIFO)
+                $stocks = Stock::query()
+                    ->where('stock_type', 'IN')
+                    ->where('stock_id_product', $detail->out_detail_id_product)
+                    ->where('stock_code_lokasi', $rackLokasi->lokasi_code)
+                    ->where('stock_qty', '>', 0)
+                    ->orderBy('stock_expired_date')
+                    ->orderBy('stock_id')
+                    ->lockForUpdate()
+                    ->get();
+
+                $available = (float) $stocks->sum('stock_qty');
+                if ($available <= 0) {
+                    throw new \RuntimeException('Tidak ada stok produk ini di rak '.$rackLokasi->lokasi_nama.'.');
+                }
+
+                // Forklift memindahkan SELURUH pallet di rack → rack jadi 0.
+                $palletQty = $available;
+                $fulfilled = min($palletQty, $remaining);
+                $expiredDates = [];
+
+                foreach ($stocks as $stock) {
+                    $rowQty = (float) $stock->stock_qty;
+                    $stock->decrement('stock_qty', $rowQty);
+
+                    if ($stock->stock_expired_date) {
+                        $expiredDates[] = $stock->stock_expired_date;
+                    }
+                }
+
+                // Catat stock berpindah ke staging (type STAGING) — qty penuh pallet
+                Stock::create([
+                    'stock_id_product'   => $detail->out_detail_id_product,
+                    'stock_code_lokasi'  => $stagingLokasi->lokasi_code,
+                    'stock_qty'          => $palletQty,
+                    'stock_type'         => Stock::TYPE_STAGING,
+                    'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
+                    'stock_reff'         => $keluar->out_code,
+                ]);
+
+                // Realisasi = qty SO yang terpenuhi dari pallet ini (bukan seluruh pallet)
+                KeluarRealisasi::create([
+                    'out_realisasi_id_detail' => $detail->out_detail_id,
+                    'out_realisasi_id_stock'  => $stocks->first()->stock_id,
+                    'out_realisasi_code'      => KeluarRealisasi::generateCode(),
+                    'out_realisasi_qty'       => $fulfilled,
+                ]);
+
+                // Fulfil SO reservation tied to this keluar detail
+                Stock::consumeReserve((string) ($detail->out_detail_reff ?? ''), $detail->out_detail_id_product, $fulfilled);
+
+                // Recompute keluar status
+                $allDetails = KeluarDetail::where('out_detail_code_keluar', $keluar->out_code)->get();
+                $totalPicked = 0;
+                foreach ($allDetails as $d) {
+                    $totalPicked += (float) KeluarRealisasi::where('out_realisasi_id_detail', $d->out_detail_id)
+                        ->sum('out_realisasi_qty');
+                }
+                $totalQty = (float) $allDetails->sum('out_detail_qty');
+
+                if ($totalPicked + 1e-9 >= $totalQty) {
+                    $keluar->update(['out_status' => Keluar::STATUS_DONE]);
+                } elseif ($totalPicked > 0) {
+                    $keluar->update(['out_status' => Keluar::STATUS_IN_PROGRESS]);
+                }
+
+                return [
+                    'pallet_moved'    => $palletQty,
+                    'fulfilled'       => $fulfilled,
+                    'picked_total'    => $totalPicked,
+                    'remaining_total' => max(0, $totalQty - $totalPicked),
+                    'item_remaining'  => max(0, $remaining - $fulfilled),
+                    'status'          => $keluar->out_status,
+                ];
+            });
+
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => true, 'message' => 'Pallet dipindah ke staging ('.$result['pallet_moved'].' unit).', 'data' => $result]);
+            }
+
+            flash()->success('Pallet dipindah ke staging ('.$result['pallet_moved'].' unit). Sisa SO: '.$result['remaining_total']);
+            return redirect()->route('wms-forklift-pick.show', ['outCode' => $keluar->out_code]);
+        } catch (\Throwable $th) {
+            if ($request->expectsJson()) {
+                return response()->json(['ok' => false, 'message' => $th->getMessage()], 422);
+            }
+            flash()->error($th->getMessage());
+            return back();
+        }
     }
 }

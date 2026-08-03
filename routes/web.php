@@ -61,10 +61,15 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/po-detail/{id}/convert-single', [\App\Http\Controllers\Wms\PoDetailController::class, 'postConvertSingleRow'])->name('wms-po-detail.convertSingle');
 
     // WMS Sales
-    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so', 'except' => ['getPrepare', 'postPrepare', 'cetak']]);
+    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so', 'except' => ['getPrepare', 'postPrepare', 'getPrepareList', 'getPrepareSo', 'postPrepareSo', 'cetak']]);
     Route::get('/wms/so/{id}/cetak', [\App\Http\Controllers\Wms\SoController::class, 'cetak'])->name('wms-so.cetak');
-    Route::get('/wms/so/prepare', [\App\Http\Controllers\Wms\SoController::class, 'getPrepare'])->name('wms-so.prepare');
-    Route::post('/wms/so/prepare', [\App\Http\Controllers\Wms\SoController::class, 'postPrepare'])->name('wms-so.postPrepare');
+
+    // WMS SO Prepare - prefix terpisah (bukan wms-so.*) biar menu aktif tidak bentrok
+    Route::get('/wms/so-prepare', [\App\Http\Controllers\Wms\SoController::class, 'getPrepareList'])->name('wms-so-prepare.index');
+    Route::get('/wms/so-prepare/create', [\App\Http\Controllers\Wms\SoController::class, 'getPrepare'])->name('wms-so-prepare.create');
+    Route::post('/wms/so-prepare', [\App\Http\Controllers\Wms\SoController::class, 'postPrepare'])->name('wms-so-prepare.store');
+    Route::get('/wms/so-prepare/{soId}', [\App\Http\Controllers\Wms\SoController::class, 'getPrepareSo'])->name('wms-so-prepare.show');
+    Route::post('/wms/so-prepare/{soId}', [\App\Http\Controllers\Wms\SoController::class, 'postPrepareSo'])->name('wms-so-prepare.update');
 
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
@@ -77,6 +82,8 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'store'])->name('wms-forklift.store');
     Route::get('/wms/forklift/{groupCode}/print-qr', [\App\Http\Controllers\Wms\ForkliftController::class, 'printGroupQr'])->name('wms-forklift.printQr');
     Route::post('/wms/forklift/relokasi', [\App\Http\Controllers\Wms\ForkliftController::class, 'relokasi'])->name('wms-forklift.relokasi');
+    Route::get('/wms/forklift-pick/{outCode}', [\App\Http\Controllers\Wms\ForkliftController::class, 'pick'])->name('wms-forklift-pick.show');
+    Route::post('/wms/forklift-pick/{outCode}', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickStore'])->name('wms-forklift-pick.update');
 
     // WMS Outbound
     Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);

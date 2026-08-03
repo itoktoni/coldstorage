@@ -37,9 +37,9 @@ class BarcodeController extends Controller
         for ($i = 0; $i < $data['jumlah']; $i++) {
             $content = implode('#', [
                 $product->product_code,
-                $timestamp,
+                $timestamp. strtoupper(uniqid()),
                 $data['qty'],
-                $data['expired_date'] ? Carbon::parse($data['expired_date'])->format('Ymd') : '-',
+                $data['expired_date'] ? Carbon::parse($data['expired_date'])->format('Ymd') : null,
             ]);
 
             $qrcodes[] = [
@@ -80,6 +80,7 @@ class BarcodeController extends Controller
                 $timestamp,
                 $request->qty,
                 $request->expired_date ? Carbon::parse($request->expired_date)->format('Ymd') : '-',
+                strtoupper(uniqid()),
             ]);
 
             $qrcodes[] = [
