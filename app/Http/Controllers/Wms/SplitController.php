@@ -17,8 +17,17 @@ class SplitController extends Controller
         $this->model = $model::getModel();
     }
 
+    public function getProduce()
+    {
+        return view('livewire.split-produce');
+    }
+
     protected function share($data = [])
     {
-        return array_merge(['model' => $this->model, 'productOptions' => Product::pluck('product_nama', 'product_id'), 'stockOptions' => Stock::pluck('stock_code', 'stock_id')], $data);
+        return array_merge([
+            'model' => $this->model,
+            'productOptions' => Product::pluck('product_nama', 'product_id'),
+            'stockOptions' => Stock::pluck('stock_code', 'stock_id'),
+        ], $data);
     }
 }

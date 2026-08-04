@@ -62,8 +62,13 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/po-detail/{id}/convert-single', [\App\Http\Controllers\Wms\PoDetailController::class, 'postConvertSingleRow'])->name('wms-po-detail.convertSingle');
 
     // WMS Sales
-    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so', 'except' => ['getPrepare', 'postPrepare', 'getPrepareList', 'getPrepareSo', 'postPrepareSo', 'cetak']]);
+    Route::auto('/wms/so', 'Wms\SoController', ['name' => 'wms-so', 'except' => ['getPrepare', 'postPrepare', 'getPrepareList', 'getPrepareSo', 'postPrepareSo', 'cetak', 'ship', 'storeShip', 'cetakInvoice', 'cetakPerformance', 'cetakDelivery']]);
     Route::get('/wms/so/{id}/cetak', [\App\Http\Controllers\Wms\SoController::class, 'cetak'])->name('wms-so.cetak');
+    Route::get('/wms/so/{id}/ship', [\App\Http\Controllers\Wms\SoController::class, 'ship'])->name('wms-so.ship');
+    Route::post('/wms/so/{id}/ship', [\App\Http\Controllers\Wms\SoController::class, 'storeShip'])->name('wms-so.storeShip');
+    Route::get('/wms/so/{id}/cetak-invoice', [\App\Http\Controllers\Wms\SoController::class, 'cetakInvoice'])->name('wms-so.cetakInvoice');
+    Route::get('/wms/so/{id}/cetak-performance', [\App\Http\Controllers\Wms\SoController::class, 'cetakPerformance'])->name('wms-so.cetakPerformance');
+    Route::get('/wms/so/{id}/cetak-delivery', [\App\Http\Controllers\Wms\SoController::class, 'cetakDelivery'])->name('wms-so.cetakDelivery');
 
     // WMS SO Prepare - prefix terpisah (bukan wms-so.*) biar menu aktif tidak bentrok
     Route::get('/wms/so-prepare', [\App\Http\Controllers\Wms\SoController::class, 'getPrepareList'])->name('wms-so-prepare.index');
@@ -73,6 +78,10 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::post('/wms/so-prepare/{soId}', [\App\Http\Controllers\Wms\SoController::class, 'postPrepareSo'])->name('wms-so-prepare.update');
     Route::get('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'getAssign'])->name('wms-so-prepare.assign');
     Route::post('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'postAssign'])->name('wms-so-prepare.assignStore');
+
+    // WMS Staging Recap → Putaway
+    Route::get('/wms/staging-recap', [\App\Http\Controllers\Wms\StagingRecapController::class, 'index'])->name('wms-staging-recap.index');
+    Route::get('/wms/staging-recap/{lokasiCode}', [\App\Http\Controllers\Wms\StagingRecapController::class, 'show'])->name('wms-staging-recap.show');
 
     // WMS Keluar Prepare - jalur global untuk prepare dari keluar table
     Route::get('/wms/keluar-prepare/{outCode}', [\App\Http\Controllers\Wms\KeluarController::class, 'getPrepare'])->name('wms-keluar-prepare.show');
@@ -101,10 +110,12 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     // WMS Outbound
     Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar', 'except' => ['getPrepare', 'postPrepare']]);
     Route::auto('/wms/keluar-detail', 'Wms\KeluarDetailController', ['name' => 'wms-keluar-detail']);
+    Route::get('/wms/keluar-realisasi-scan/{detailId}', [\App\Http\Controllers\Wms\KeluarController::class, 'realisasiScan'])->name('wms-keluar-realisasi-scan.show');
     Route::auto('/wms/keluar-realisasi', 'Wms\KeluarRealisasiController', ['name' => 'wms-keluar-realisasi']);
 
     // WMS Split
     Route::auto('/wms/split', 'Wms\SplitController', ['name' => 'wms-split']);
+    Route::get('/wms/split/produce', [\App\Http\Controllers\Wms\SplitController::class, 'getProduce'])->name('wms-split.produce');
 
     // WMS Barcode
     Route::get('/wms/barcode/generate', [\App\Http\Controllers\Wms\BarcodeController::class, 'generate'])->name('wms-barcode.generate');
