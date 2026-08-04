@@ -15,7 +15,7 @@ class WmsSeeder extends Seeder
         // (children before parents, FK checks disabled to avoid ordering issues).
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
         foreach ([
-            'split', 'keluar_realisasi', 'keluar_detail', 'keluar',
+            'split_detail', 'split', 'keluar_realisasi', 'keluar_detail', 'keluar',
             'masuk_realisasi', 'masuk_detail',
             'detail_so', 'so', 'customer',
             'detail_po', 'po', 'supplier',
@@ -76,6 +76,10 @@ class WmsSeeder extends Seeder
             ['product_code' => 'PROD-20', 'product_nama' => 'Yoghurt Plain 1L', 'product_harga' => 28000, 'created_at' => $now, 'updated_at' => $now],
             ['product_code' => 'PROD-21', 'product_nama' => 'Krim Kental Manis (kg)', 'product_harga' => 45000, 'created_at' => $now, 'updated_at' => $now],
             ['product_code' => 'PROD-22', 'product_nama' => 'Keju Mozarella (kg)', 'product_harga' => 110000, 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-23', 'product_nama' => 'Sirloin Slice (kg)', 'product_harga' => 210000, 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-24', 'product_nama' => 'Daging Giling (kg)', 'product_harga' => 95000, 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-25', 'product_nama' => 'Has Dalam Slice (kg)', 'product_harga' => 220000, 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-26', 'product_nama' => 'Tetelan Sapi (kg)', 'product_harga' => 75000, 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== SUPPLIER ==========
@@ -140,6 +144,9 @@ class WmsSeeder extends Seeder
             ['stock_code' => 'STK-20260706-0002', 'stock_id_product' => 9,  'stock_code_lokasi' => 'LOC-05', 'stock_qty' => 50,  'stock_expired_date' => '2026-09-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
             ['stock_code' => 'STK-20260706-0003', 'stock_id_product' => 17, 'stock_code_lokasi' => 'LOC-06', 'stock_qty' => 80,  'stock_expired_date' => '2026-08-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
             ['stock_code' => 'STK-20260706-0004', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-05', 'stock_qty' => 60,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
+            // Source stock for split testing
+            ['stock_code' => 'STK-20260804-0001', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 50,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
+            ['stock_code' => 'STK-20260804-0002', 'stock_id_product' => 2,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 30,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== MASUK DETAIL ==========
