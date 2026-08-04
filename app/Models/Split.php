@@ -45,4 +45,18 @@ class Split extends BaseModel
     {
         return $this->hasMany(SplitDetail::class, 'split_detail_id_split', 'split_id');
     }
+
+    public function rules(): array
+    {
+        $id = $this->exists ? $this->split_id : null;
+
+        return [
+            'split_id_product_target' => ['required', 'exists:product,product_id'],
+            'split_id_product_waste'  => ['nullable', 'exists:product,product_id'],
+            'split_qty_hasil'         => ['required', 'numeric', 'min:0'],
+            'split_qty_waste'         => ['required', 'numeric', 'min:0'],
+            'split_tanggal'           => ['required', 'date'],
+            'split_status'            => ['nullable', 'string', 'max:20'],
+        ];
+    }
 }

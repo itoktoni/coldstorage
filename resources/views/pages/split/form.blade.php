@@ -6,12 +6,12 @@
     <x-form :model="$model">
         <x-card :label="ucfirst(module())">
             @bind($model ?? null)
-                <x-select col="6" name="split_id_product" :options="$productOptions" />
-                <x-select col="6" name="split_id_stock" :options="$stockOptions" />
-                <x-input col="6" name="split_qty_new" type="number" />
-                <x-input col="6" name="split_qty_old" type="number" />
+                <x-select col="6" name="split_id_product_target" :options="$productOptions" />
+                <x-select col="6" name="split_id_product_waste" :options="$productOptions" />
+                <x-input col="6" name="split_qty_hasil" type="number" />
                 <x-input col="6" name="split_qty_waste" type="number" />
                 <x-input col="6" name="split_tanggal" type="date" />
+                <x-input col="6" name="split_status" value="Draft" readonly />
             @endbind
         </x-card>
 
