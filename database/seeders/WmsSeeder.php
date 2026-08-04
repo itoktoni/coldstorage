@@ -35,16 +35,21 @@ class WmsSeeder extends Seeder
         // ========== LOKASI ==========
         DB::table('lokasi')->insert([
             // Gudang Utama (Frozen Zone)
-            ['lokasi_code' => 'LOC-01', 'lokasi_nama' => 'Freezer A-1 (Daging)', 'lokasi_code_gudang' => 'GD-01', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-02', 'lokasi_nama' => 'Freezer A-2 (Ayam)', 'lokasi_code_gudang' => 'GD-01', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-03', 'lokasi_nama' => 'Freezer B-1 (Ikan)', 'lokasi_code_gudang' => 'GD-01', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-04', 'lokasi_nama' => 'Chiller C-1 (Dairy)', 'lokasi_code_gudang' => 'GD-01', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-01', 'lokasi_nama' => 'Freezer A-1 (Daging)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-02', 'lokasi_nama' => 'Freezer A-2 (Ayam)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-03', 'lokasi_nama' => 'Freezer B-1 (Ikan)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-04', 'lokasi_nama' => 'Chiller C-1 (Dairy)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             // Gudang Cabang
-            ['lokasi_code' => 'LOC-05', 'lokasi_nama' => 'Freezer D-1', 'lokasi_code_gudang' => 'GD-02', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-06', 'lokasi_nama' => 'Chiller D-2', 'lokasi_code_gudang' => 'GD-02', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-05', 'lokasi_nama' => 'Freezer D-1', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-06', 'lokasi_nama' => 'Chiller D-2', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             // Dry Storage
-            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'Rak E-1 (Kentang)', 'lokasi_code_gudang' => 'GD-03', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-08', 'lokasi_nama' => 'Rak E-2 (Bumbu)', 'lokasi_code_gudang' => 'GD-03', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'Rak E-1 (Kentang)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-08', 'lokasi_nama' => 'Rak E-2 (Bumbu)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            // Staging Areas
+            ['lokasi_code' => 'STG-A', 'lokasi_nama' => 'Staging Area A', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'STG-B', 'lokasi_nama' => 'Staging Area B', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'STG-C', 'lokasi_nama' => 'Staging Area C', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'STG-D', 'lokasi_nama' => 'Staging Area D', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== PRODUCT ==========

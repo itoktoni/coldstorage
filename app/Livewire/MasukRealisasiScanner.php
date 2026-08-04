@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ForkliftTask;
 use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
@@ -22,6 +23,7 @@ class MasukRealisasiScanner extends Component
     public $error = '';
     public $success = '';
     public $existingStockBarcodes = [];
+    public $stagingCode = '';
 
     protected $listeners = ['barcodeScanned' => 'scan'];
 
@@ -29,6 +31,7 @@ class MasukRealisasiScanner extends Component
     {
         $this->masukDetailId = $masukDetailId;
         $this->masukDetail = MasukDetail::with('product')->findOrFail($masukDetailId);
+        $this->stagingCode = $this->masukDetail->in_detail_id_staging ?? '';
         $this->refreshSummary();
     }
 
@@ -36,6 +39,12 @@ class MasukRealisasiScanner extends Component
     {
         $this->error = '';
         $this->success = '';
+
+        if (empty($this->stagingCode)) {
+            $this->error = 'Pilih staging area terlebih dahulu';
+            $this->refreshSummary();
+            return;
+        }
 
         // Parse barcode
         $parsed = $this->parseBarcode($barcodeContent);
@@ -122,6 +131,18 @@ class MasukRealisasiScanner extends Component
             $this->masukDetail->refresh();
             $this->generateGroupForDetail($this->masukDetail->in_detail_code);
             $this->insertStockForDetail($this->masukDetail->in_detail_code);
+            // Auto-create putaway task
+            $group = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)->value('in_realisasi_group');
+            ForkliftTask::firstOrCreate(
+                ['forklift_type' => 'putaway', 'forklift_pallet_code' => $group],
+                [
+                    'forklift_lokasi_asal'   => $this->stagingCode,
+                    'forklift_lokasi_tujuan' => $this->masukDetail->in_detail_id_lokasi,
+                    'forklift_reff'          => $this->masukDetail->in_detail_code,
+                    'forklift_status'        => 'Pending',
+                ]
+            );
+            $this->masukDetail->update(['in_detail_id_staging' => $this->stagingCode]);
             $this->dispatch('show-toast', message: 'Semua qty sudah terpenuhi! Status → READY', type: 'success');
         }
 
@@ -157,6 +178,17 @@ class MasukRealisasiScanner extends Component
         if ($enum === MasukStatusEnum::READY) {
             $this->generateGroupForDetail($this->masukDetail->in_detail_code);
             $this->insertStockForDetail($this->masukDetail->in_detail_code);
+            $group = MasukRealisasi::where('in_realisasi_masuk_code', $this->masukDetail->in_detail_code)->value('in_realisasi_group');
+            ForkliftTask::firstOrCreate(
+                ['forklift_type' => 'putaway', 'forklift_pallet_code' => $group],
+                [
+                    'forklift_lokasi_asal'   => $this->stagingCode,
+                    'forklift_lokasi_tujuan' => $this->masukDetail->in_detail_id_lokasi,
+                    'forklift_reff'          => $this->masukDetail->in_detail_code,
+                    'forklift_status'        => 'Pending',
+                ]
+            );
+            $this->masukDetail->update(['in_detail_id_staging' => $this->stagingCode]);
         }
 
         $this->success = 'Status diubah ke '.$enum->description();
@@ -236,7 +268,7 @@ class MasukRealisasiScanner extends Component
 
     protected function stagingLokasiCode(): string
     {
-        return Lokasi::query()->orderBy('lokasi_code')->value('lokasi_code') ?? '';
+        return $this->masukDetail->in_detail_id_lokasi ?? '';
     }
 
     protected function generateGroupForDetail(string $detailCode): void
@@ -275,8 +307,9 @@ class MasukRealisasiScanner extends Component
     protected function expiredDateFromBarcode(?string $barcode): ?string
     {
         $parsed = $barcode ? $this->parseBarcode($barcode) : null;
+        $expired = $parsed['expired_date'] ?? null;
 
-        return $parsed['expired_date'] ?? null;
+        return empty($expired) ? null : $expired;
     }
 
     public function render()

@@ -109,6 +109,8 @@ class PoDetailController extends Controller
             ];
         });
 
+        $stagingOptions = \App\Models\Lokasi::where('lokasi_category', 'staging')->pluck('lokasi_nama', 'lokasi_code');
+
         return view('pages.podetail.convert', [
             'poDetail' => $poDetail,
             'product' => $poDetail->product,
@@ -118,6 +120,7 @@ class PoDetailController extends Controller
             'productCategory' => $productCategory,
             'lokasiData' => $lokasiData,
             'suitableCount' => $suitableLokasi->count(),
+            'stagingOptions' => $stagingOptions,
         ]);
     }
 
@@ -152,15 +155,17 @@ class PoDetailController extends Controller
 
         try {
             DB::transaction(function () use ($poDetail, $allocations) {
-                $masukDetail = MasukDetail::create([
-                    'in_detail_code'       => MasukDetail::generateCode(),
-                    'in_detail_reff'       => $poDetail->po_detail_code,
-                    'in_detail_tanggal'    => now()->toDateString(),
-                    'in_detail_status'     => MasukStatusEnum::PENDING,
-                    'in_detail_id_product' => $poDetail->po_detail_id_product,
-                    'in_detail_qty'        => array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations)),
-                    'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
-                ]);
+                    $masukDetail = MasukDetail::create([
+                        'in_detail_code'       => MasukDetail::generateCode(),
+                        'in_detail_reff'       => $poDetail->po_detail_code,
+                        'in_detail_tanggal'    => now()->toDateString(),
+                        'in_detail_status'     => MasukStatusEnum::PENDING,
+                        'in_detail_id_product' => $poDetail->po_detail_id_product,
+                        'in_detail_id_lokasi'  => $allocations[0]['lokasi_code'] ?? null,
+                        'in_detail_qty'        => array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations)),
+                        'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
+                        'in_detail_id_staging' => $allocations[0]['staging_code'] ?? null,
+                    ]);
 
                 foreach ($allocations as $allocation) {
                     MasukRealisasi::create([
@@ -217,15 +222,17 @@ class PoDetailController extends Controller
                     return response()->json(['ok' => false, 'message' => "Qty melebihi sisa PO. Sisa yang bisa dikonversi: {$sisa}"], 422);
                 }
 
-                $masukDetail = DB::transaction(function () use ($poDetail, $lokasi, $qty) {
+                $masukDetail = DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
                     $detail = MasukDetail::create([
                         'in_detail_code'       => MasukDetail::generateCode(),
                         'in_detail_reff'       => $poDetail->po_detail_code,
                         'in_detail_tanggal'    => now()->toDateString(),
                         'in_detail_status'     => MasukStatusEnum::PENDING,
                         'in_detail_id_product' => $poDetail->po_detail_id_product,
+                        'in_detail_id_lokasi'  => $lokasi->lokasi_code,
                         'in_detail_qty'        => $qty,
                         'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
+                        'in_detail_id_staging' => $request->input('staging_code'),
                     ]);
 
                     // MasukRealisasi::create([
@@ -264,15 +271,17 @@ class PoDetailController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($poDetail, $lokasi, $qty) {
+DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
                 $masukDetail = MasukDetail::create([
                     'in_detail_code'       => MasukDetail::generateCode(),
                     'in_detail_reff'       => $poDetail->po_detail_code,
                     'in_detail_tanggal'    => now()->toDateString(),
                     'in_detail_status'     => MasukStatusEnum::PENDING,
                     'in_detail_id_product' => $poDetail->po_detail_id_product,
+                    'in_detail_id_lokasi'  => $lokasi->lokasi_code,
                     'in_detail_qty'        => $qty,
                     'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
+                    'in_detail_id_staging' => $request->input('staging_code'),
                 ]);
 
                 MasukRealisasi::create([

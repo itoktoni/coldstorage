@@ -79,4 +79,20 @@ class Keluar extends BaseModel
             return $d->relationLoaded('realisasi') ? $d->realisasi->sum('out_realisasi_qty') : 0;
         });
     }
+
+    public function getSoIdAttribute()
+    {
+        if ($this->relationLoaded('details')) {
+            foreach ($this->details as $detail) {
+                if ($detail->relationLoaded('soDetail') && $detail->soDetail?->so_detail_id_so) {
+                    return $detail->soDetail->so_detail_id_so;
+                }
+            }
+        }
+
+        return \App\Models\KeluarDetail::where('out_detail_code_keluar', $this->out_code)
+            ->whereNotNull('out_detail_id_so_detail')
+            ->join('detail_so', 'out_detail_id_so_detail', '=', 'so_detail_id')
+            ->value('so_detail_id_so');
+    }
 }

@@ -33,7 +33,7 @@ return [
                 ['route' => 'category.getTable', 'icon' => 'category', 'label' => 'Categories'],
                 ['route' => 'tag.getTable', 'icon' => 'label', 'label' => 'Tags'],
                 ['route' => 'wms-customer.getTable', 'icon' => 'groups', 'label' => 'Customer'],
-                // ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
+                ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
                 ['route' => 'wms-lokasi.getTable', 'icon' => 'place', 'label' => 'Lokasi'],
                 ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
                 ['route' => 'wms-barcode.generate', 'icon' => 'qr_code', 'label' => 'Generate Barcode'],
@@ -54,6 +54,7 @@ return [
             'items' => [
                 ['route' => 'wms-po.getTable', 'icon' => 'shopping_cart', 'label' => 'Purchase Order'],
                 ['route' => 'wms-po-detail.getTable', 'icon' => 'list_alt', 'label' => 'PO Detail'],
+                ['route' => 'wms-supplier.getTable', 'icon' => 'business', 'label' => 'Supplier'],
             ],
         ],
         [

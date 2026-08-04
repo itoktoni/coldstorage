@@ -29,6 +29,7 @@
                 <th>Supplier</th>
                 <x-table-sort field="in_detail_tanggal" label="Tanggal" :sortField="$sortField" :sortDir="$sortDir" />
                 <th>Qty</th>
+                <th>Lokasi</th>
                 <x-table-sort field="in_detail_status" label="Status" :sortField="$sortField" :sortDir="$sortDir" />
             </x-slot:head>
             <x-slot:body>
@@ -50,6 +51,7 @@
                     <td>{{ $table->supplier_nama ?? '-' }}</td>
                     <td>{{ $table->in_detail_tanggal->format('d M Y') }}</td>
                     <td>{{ $table->in_detail_qty ?? '-' }}</td>
+                    <td>{{ $table->lokasi->lokasi_nama ?? '-' }}</td>
                     <td>
                         <span class="badge badge-{{ $table->in_detail_status->badgeColor() }}">
                             {{ $table->in_detail_status->description() }}
@@ -74,6 +76,7 @@
                         <x-table-mobile-text label="Tanggal" :text="$table->in_detail_tanggal->format('d M Y')" />
                         <x-table-mobile-text label="Status" :text="$table->in_detail_status->description()" />
                         <x-table-mobile-text label="Qty" :text="$table->in_detail_qty" />
+                        <x-table-mobile-text label="Lokasi" :text="$table->lokasi->lokasi_nama ?? '-'" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary">
                                 @if ($table->in_detail_status !== \App\Wms\MasukStatusEnum::COMPLETE)

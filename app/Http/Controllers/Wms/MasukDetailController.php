@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Wms;
 
 use App\Concerns\ControllerTrait;
 use App\Http\Controllers\Controller;
+use App\Models\ForkliftTask;
 use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
@@ -33,7 +34,9 @@ class MasukDetailController extends Controller
 
     protected function getData()
     {
-        return $this->model->with(['product', 'poDetail.po.supplier'])->filter()->sort();
+        return $this->model->with(['lokasi', 'product', 'poDetail.po.supplier'])
+          ->filter()
+          ->sort();
     }
 
     public function getDelete(Request $request, string $id)
@@ -75,11 +78,19 @@ class MasukDetailController extends Controller
 
         $data = $request->validate([
             'realisasi_qty'   => ['required', 'numeric', 'min:0.001', 'lte:'.$masukDetail->in_detail_qty],
-            'realisasi_lokasi' => ['required', 'string', 'exists:lokasi,lokasi_code'],
         ]);
 
+        $lokasiCode = $masukDetail->in_detail_id_lokasi;
+        if (!$lokasiCode) {
+            return redirect()->back()->withErrors(['error' => 'Masuk detail belum memiliki lokasi tujuan']);
+        }
+
+        if (empty($masukDetail->in_detail_id_staging)) {
+            return redirect()->back()->withErrors(['error' => 'Pilih staging area terlebih dahulu sebelum set READY']);
+        }
+
         try {
-            DB::transaction(function () use ($masukDetail, $data) {
+            DB::transaction(function () use ($masukDetail, $data, $lokasiCode) {
                 // Generate atau ambil group code (PAL-xxx) untuk pallet
                 $existingGroup = MasukRealisasi::where('in_realisasi_masuk_code', $masukDetail->in_detail_code)
                     ->whereNotNull('in_realisasi_group')
@@ -90,7 +101,7 @@ class MasukDetailController extends Controller
                     'in_realisasi_masuk_code' => $masukDetail->in_detail_code,
                     'in_realisasi_id_product' => $masukDetail->in_detail_id_product,
                     'in_realisasi_qty'        => $data['realisasi_qty'],
-                    'in_realisasi_code_lokasi' => $data['realisasi_lokasi'],
+                    'in_realisasi_code_lokasi' => $lokasiCode,
                     'in_realisasi_group'      => $groupCode,
                 ]);
 
@@ -100,6 +111,16 @@ class MasukDetailController extends Controller
 
                 if ($totalRealisasi >= $masukDetail->in_detail_qty) {
                     $masukDetail->update(['in_detail_status' => MasukStatusEnum::READY]);
+                    // Auto-create putaway task
+                    ForkliftTask::firstOrCreate(
+                        ['forklift_type' => 'putaway', 'forklift_pallet_code' => $groupCode],
+                        [
+                            'forklift_lokasi_asal'   => $masukDetail->in_detail_id_staging,
+                            'forklift_lokasi_tujuan' => $masukDetail->in_detail_id_lokasi,
+                            'forklift_reff'          => $masukDetail->in_detail_code,
+                            'forklift_status'        => 'Pending',
+                        ]
+                    );
                 } else {
                     $masukDetail->update(['in_detail_status' => MasukStatusEnum::PROCESS]);
                 }

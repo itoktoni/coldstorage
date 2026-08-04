@@ -45,9 +45,8 @@
                     <div class="flex items-center justify-between gap-3">
                         <span class="text-sm text-on-surface-variant">Lokasi Tujuan Rekomendasi</span>
                         <span class="text-sm font-medium text-on-surface text-right" id="suggested-lokasi-{{ $groupIndex }}">
-                            @php $suggested = $group['suitable_lokasi']->firstWhere('lokasi_code', $group['suggested_lokasi_code']); @endphp
-                            @if($suggested?->lokasi_code)
-                            {{ $suggested->lokasi_nama }}{{ $suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '' }}
+                            @if($group['suggested_lokasi'])
+                            {{ $group['suggested_lokasi']->lokasi_nama }}{{ $group['suggested_lokasi']->gudang ? ' ('.$group['suggested_lokasi']->gudang->gudang_nama.')' : '' }}
                             @else
                             -
                             @endif
@@ -392,6 +391,15 @@
                 const groupCode = form.querySelector('input[name="group_code"]').value;
                 const d = detailData.find(dd => dd.group_code === groupCode);
                 if (d && d.suggested && code !== d.suggested) {
+
+                    if(d.lokasi == '-')
+                    {
+                        showRackResult(false, 'Lokasi tidak sesuai. Scan harus ke lokasi yang tersedia.');
+                        inputEl.focus();
+                        inputEl.select();
+                        return;
+                    }
+
                     showRackResult(false, 'Lokasi tidak sesuai. Scan harus ke "' + d.lokasi + '". Klik Override jika yakin.');
                     inputEl.focus();
                     inputEl.select();

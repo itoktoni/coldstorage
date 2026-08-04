@@ -78,6 +78,8 @@
                             <th class="px-4 py-3">Max</th>
                             <th class="px-4 py-3">Sisa</th>
                             <th class="px-4 py-3">Alokasi Qty</th>
+                            <th class="px-4 py-3">Staging</th>
+                            <th class="px-4 py-3">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,21 +119,32 @@
                                            data-remaining="{{ min($lokasi['capacity_left'] ?? $remainingQty, $remainingQty) }}"
                                            data-lokasi-code="{{ $lokasi['lokasi_code'] }}">
                                     <input type="hidden" name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][lokasi_code]" value="{{ $lokasi['lokasi_code'] }}">
-                                    <button type="button"
-                                            class="inline-flex items-center px-2.5 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors text-xs"
-                                            title="Convert row ini saja ke Masuk Detail"
-                                            onclick="convertSingle({{ $poDetail->po_detail_id }}, '{{ $lokasi['lokasi_code'] }}', this)">
-                                        <span class="material-symbols-outlined text-base">inventory_2</span>
-                                        Convert
-                                    </button>
                                 </div>
+                            </td>
+                            <td class="px-4 py-3">
+                                <select name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][staging_code]"
+                                        class="w-32 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    <option value="">Pilih Staging</option>
+                                    @foreach($stagingOptions as $sc => $sn)
+                                    <option value="{{ $sc }}">{{ $sn }}</option>
+                                    @endforeach
+                                </select>
+                            </td>
+                            <td class="px-4 py-3">
+                                <button type="button"
+                                        class="inline-flex items-center px-2.5 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors text-xs"
+                                        title="Convert row ini saja ke Masuk Detail"
+                                        onclick="convertSingle({{ $poDetail->po_detail_id }}, '{{ $lokasi['lokasi_code'] }}', this)">
+                                    <span class="material-symbols-outlined text-base">inventory_2</span>
+                                    Convert
+                                </button>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr class="bg-gray-50 font-semibold">
-                            <td colspan="5" class="px-4 py-3 text-right">Total Alokasi:</td>
+                            <td colspan="6" class="px-4 py-3 text-right">Total Alokasi:</td>
                             <td class="px-4 py-3">
                                 <span id="total-allocation" class="text-primary">{{ number_format($lokasiData->sum('suggested_qty'), 3) }}</span>
                                 / {{ number_format($remainingQty, 3) }}
@@ -209,6 +222,9 @@
                 return;
             }
 
+            const stagingSelect = row.querySelector('select[name*="[staging_code]"]');
+            const stagingCode = stagingSelect ? stagingSelect.value : '';
+
             btn.disabled = true;
             const originalContent = btn.innerHTML;
             btn.innerHTML = '<span class="material-symbols-outlined text-base animate-spin">progress_activity</span>';
@@ -223,6 +239,7 @@
                 formData.append('_token', csrf);
                 formData.append('lokasi_code', lokasiCode);
                 formData.append('qty', qty);
+                formData.append('staging_code', stagingCode);
 
                 const res = await fetch(url, {
                     method: 'POST',

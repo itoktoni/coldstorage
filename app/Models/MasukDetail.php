@@ -31,6 +31,7 @@ class MasukDetail extends BaseModel
         'in_detail_updated_by',
         'in_detail_id_product',
         'in_detail_id_lokasi',
+        'in_detail_id_staging',
         'in_detail_qty',
     ];
 
@@ -49,6 +50,11 @@ class MasukDetail extends BaseModel
     public function lokasi()
     {
         return $this->belongsTo(Lokasi::class, 'in_detail_id_lokasi', 'lokasi_code');
+    }
+
+    public function staging()
+    {
+        return $this->belongsTo(Lokasi::class, 'in_detail_id_staging', 'lokasi_code');
     }
 
     public function poDetail()

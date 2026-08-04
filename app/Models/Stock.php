@@ -34,8 +34,7 @@ class Stock extends BaseModel
     ];
 
     protected $casts = [
-        'stock_expired_date' => 'date',
-        'stock_qty'          => 'double',
+        'stock_qty' => 'double',
     ];
 
     protected static function booted(): void

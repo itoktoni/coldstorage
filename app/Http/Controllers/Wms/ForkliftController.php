@@ -64,7 +64,7 @@ class ForkliftController extends Controller
                     'total_qty'  => $totalQty,
                     'rows'       => $rows,
                     'suitable_lokasi' => $suitableLokasi,
-                    'suggested_lokasi_code' => $suggestedLokasi?->lokasi_code,
+                    'suggested_lokasi' => $suggestedLokasi,
                     'completed'  => $moved,
                 ];
             })
@@ -93,13 +93,13 @@ class ForkliftController extends Controller
         return view('pages.forklift.index', [
             'tasks'   => $tasks,
             'details' => $groups->map(function ($g) {
-                $suggested = collect($g['suitable_lokasi'])->firstWhere('lokasi_code', $g['suggested_lokasi_code']);
+                $suggested = $g['suggested_lokasi'];
                 return [
                     'group_code' => $g['group_code'],
                     'product'    => $g['product']->product_nama ?? '-',
                     'qty'        => number_format($g['total_qty'], 3),
                     'lokasi'     => $suggested ? ($suggested->lokasi_nama . ($suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '')) : '-',
-                    'suggested'  => $g['suggested_lokasi_code'] ?? '',
+                    'suggested'  => $suggested?->lokasi_code ?? '',
                     'suitable_lokasi' => $g['suitable_lokasi']->map(function ($lokasi) {
                         $current = (float) $lokasi->current_qty;
                         $max = $lokasi->lokasi_max_qty;
@@ -181,7 +181,7 @@ class ForkliftController extends Controller
         if (!$isOverride) {
             $existingLokasiCode = $rows->pluck('in_realisasi_code_lokasi')->filter()->unique()->first();
             $suggestedLokasi = $existingLokasiCode
-                ? $suitableLokasi->firstWhere('lokasi_code', $existingLokasiCode)
+                ? Lokasi::find($existingLokasiCode)
                 : $suitableLokasi->sortBy(fn ($l) => $l->current_qty)->first();
 
             if (!$suggestedLokasi || $data['lokasi_code'] !== $suggestedLokasi->lokasi_code) {
@@ -305,7 +305,9 @@ class ForkliftController extends Controller
         $first = $rows->first();
         $totalQty = (float) $rows->sum('in_realisasi_qty');
 
-        $qrPng = DNS2DFacade::getBarcodePNG($groupCode, 'QRCODE', 8, 8);
+        // QR encodes scan prefix + group code so scanner strips prefix back to group code
+        $scanValue = config('scan.prefix.pallet', 'P') . $groupCode;
+        $qrPng = DNS2DFacade::getBarcodePNG($scanValue, 'QRCODE', 8, 8);
 
         $pdf = Pdf::loadView('pdf.pallet-qr', [
             'groupCode' => $groupCode,

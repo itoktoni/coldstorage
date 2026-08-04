@@ -74,6 +74,10 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::get('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'getAssign'])->name('wms-so-prepare.assign');
     Route::post('/wms/so-prepare/{soId}/assign', [\App\Http\Controllers\Wms\SoController::class, 'postAssign'])->name('wms-so-prepare.assignStore');
 
+    // WMS Keluar Prepare - jalur global untuk prepare dari keluar table
+    Route::get('/wms/keluar-prepare/{outCode}', [\App\Http\Controllers\Wms\KeluarController::class, 'getPrepare'])->name('wms-keluar-prepare.show');
+    Route::post('/wms/keluar-prepare/{outCode}', [\App\Http\Controllers\Wms\KeluarController::class, 'postPrepare'])->name('wms-keluar-prepare.update');
+
     // WMS Inbound
     Route::auto('/wms/masuk-detail', 'Wms\MasukDetailController', ['name' => 'wms-masuk-detail']);
     Route::get('/wms/masuk-detail/{id}/realisasikan', [\App\Http\Controllers\Wms\MasukDetailController::class, 'getRealisasikan'])->name('wms-masuk-detail.realisasikan');
@@ -81,7 +85,7 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/wms/masuk-realisasi', 'Wms\MasukRealisasiController', ['name' => 'wms-masuk-realisasi']);
 
     // WMS Forklift
-    Route::get('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'index'])->name('wms-forklift.index');
+    Route::get('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftTaskController::class, 'index'])->name('wms-forklift.index');
     Route::post('/wms/forklift', [\App\Http\Controllers\Wms\ForkliftController::class, 'store'])->name('wms-forklift.store');
     Route::get('/wms/forklift/{groupCode}/print-qr', [\App\Http\Controllers\Wms\ForkliftController::class, 'printGroupQr'])->name('wms-forklift.printQr');
     Route::post('/wms/forklift/relokasi', [\App\Http\Controllers\Wms\ForkliftController::class, 'relokasi'])->name('wms-forklift.relokasi');
@@ -90,8 +94,12 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::get('/wms/forklift-pick/{outCode}/scan', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickScan'])->name('wms-forklift-pick.scan');
     Route::post('/wms/forklift-pick/{outCode}/scan', [\App\Http\Controllers\Wms\ForkliftController::class, 'pickScanProcess'])->name('wms-forklift-pick.scanProcess');
 
+    // WMS Forklift Task
+    Route::get('/wms/forklift-task', [\App\Http\Controllers\Wms\ForkliftTaskController::class, 'index'])->name('wms-forklift-task.index');
+    Route::post('/wms/forklift-task/scan', [\App\Http\Controllers\Wms\ForkliftTaskController::class, 'scan'])->name('wms-forklift-task.scan');
+
     // WMS Outbound
-    Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar']);
+    Route::auto('/wms/keluar', 'Wms\KeluarController', ['name' => 'wms-keluar', 'except' => ['getPrepare', 'postPrepare']]);
     Route::auto('/wms/keluar-detail', 'Wms\KeluarDetailController', ['name' => 'wms-keluar-detail']);
     Route::auto('/wms/keluar-realisasi', 'Wms\KeluarRealisasiController', ['name' => 'wms-keluar-realisasi']);
 

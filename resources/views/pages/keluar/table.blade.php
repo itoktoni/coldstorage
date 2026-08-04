@@ -26,7 +26,7 @@
                 <x-table-sort field="out_code" label="Kode Keluar" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="out_tanggal" label="Tanggal" :sortField="$sortField" :sortDir="$sortDir" />
                 <x-table-sort field="out_reff" label="Reff" :sortField="$sortField" :sortDir="$sortDir" />
-                <x-table-sort field="out_qty" label="Total Qty" :sortField="$sortField" :sortDir="$sortDir" />
+                <x-table-sort field="out_qty" label="Qty" :sortField="$sortField" :sortDir="$sortDir" />
                 <th class="text-center">Detail</th>
                 <x-table-sort field="out_status" label="Status" :sortField="$sortField" :sortDir="$sortDir" />
             </x-slot:head>
@@ -34,7 +34,15 @@
                 @forelse($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    <x-table-action :model="$model" :id="$table->field_primary">
+                        @if($table->so_id)
+                                <a href="{{ route('wms-keluar-prepare.show', ['outCode' => $table->field_primary]) }}"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           title="Prepare SO">
+                            <span class="material-symbols-outlined text-lg">inventory</span>
+                        </a>
+                        @endif
+                    </x-table-action>
                     <td class="font-mono text-sm">{{ $table->out_code }}</td>
                     <td>{{ $table->out_tanggal?->format('d M Y') ?? '-' }}</td>
                     <td>{{ $table->out_reff ?? '-' }}</td>
@@ -74,7 +82,15 @@
                         <x-table-mobile-text label="Detail" :text="$table->detail_count . ' item'" />
                         <x-table-mobile-text label="Status" :text="$table->out_status" />
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
+                            <x-table-action :model="$model" :id="$table->field_primary">
+                                @if($table->so_id)
+                        <a href="{{ route('wms-keluar-prepare.show', ['outCode' => $table->field_primary]) }}"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                                   title="Prepare SO">
+                                    <span class="material-symbols-outlined text-lg">inventory</span>
+                                </a>
+                                @endif
+                            </x-table-action>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty

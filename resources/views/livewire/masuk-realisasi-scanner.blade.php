@@ -56,6 +56,23 @@
             </div>
         </div>
 
+        {{-- Staging Area --}}
+        <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
+            <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">warehouse</span>
+                Staging Area
+            </h3>
+            <div class="flex items-center gap-2">
+                <label class="text-sm font-medium">Staging Area:</label>
+                <select wire:model.live="stagingCode" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">Pilih Staging</option>
+                    @foreach(\App\Models\Lokasi::where('lokasi_category', 'staging')->get() as $s)
+                    <option value="{{ $s->lokasi_code }}">{{ $s->lokasi_nama }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         {{-- Scanner Section --}}
         <div class="bg-surface-container-lowest mt-5 border border-outline-variant rounded-xl p-6 form-card">
             <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
