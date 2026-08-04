@@ -22,6 +22,11 @@ class SplitController extends Controller
         return view('livewire.split-produce');
     }
 
+    public function getCreate()
+    {
+        return redirect()->route('wms-split.produce');
+    }
+
     protected function share($data = [])
     {
         return array_merge([
