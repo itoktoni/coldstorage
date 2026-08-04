@@ -2,51 +2,111 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
-use App\Models\Content;
-use App\Models\Section;
-use App\Models\Tag;
-use App\Models\Type;
+use App\Models\ForkliftTask;
+use App\Models\Gudang;
+use App\Models\Keluar;
+use App\Models\MasukDetail;
+use App\Models\Product;
+use App\Models\Split;
+use App\Models\Stock;
+use App\Models\StockLog;
 
 class DashboardController extends Controller
 {
     public function __invoke()
     {
+        $today = now()->toDateString();
+
         $stats = [
-            'total_content' => Content::count(),
-            'total_sections' => Section::count(),
-            'total_categories' => Category::count(),
-            'total_tags' => Tag::count(),
+            'total_stock' => Stock::where('stock_type', Stock::TYPE_IN)->sum('stock_qty'),
+            'total_product' => Product::where('product_status', 'active')->count(),
+            'inbound_today' => MasukDetail::where('in_detail_tanggal', $today)->count(),
+            'outbound_today' => Keluar::where('out_tanggal', $today)->count(),
+            'pending_forklift' => ForkliftTask::where('forklift_status', 'Pending')->count(),
+            'pending_split' => Split::where('split_status', 'Draft')->count(),
         ];
 
-        $cmsTypes = Type::withCount('contents')->latest()->get();
+        $warehouses = Gudang::with(['lokasi' => function ($q) {
+            $q->whereNull('lokasi_category')->orWhere('lokasi_category', '!=', 'staging');
+        }])->get()->map(function ($gudang) {
+            $lokasiData = $gudang->lokasi->map(function ($lokasi) {
+                $currentQty = $lokasi->stock()->where('stock_type', 'IN')->where('stock_qty', '>', 0)->sum('stock_qty');
+                $maxQty = $lokasi->lokasi_max_qty;
+                $percent = $maxQty > 0 ? round(($currentQty / $maxQty) * 100) : 0;
 
-        $recentContents = Content::latest('updated_at')
-            ->limit(5)
+                return [
+                    'code' => $lokasi->lokasi_code,
+                    'name' => $lokasi->lokasi_nama,
+                    'current_qty' => $currentQty,
+                    'max_qty' => $maxQty,
+                    'percent' => $percent,
+                    'category' => $lokasi->lokasi_category,
+                ];
+            });
+
+            $totalCurrent = $lokasiData->sum('current_qty');
+            $totalMax = $lokasiData->sum('max_qty');
+            $totalPercent = $totalMax > 0 ? round(($totalCurrent / $totalMax) * 100) : 0;
+
+            return [
+                'code' => $gudang->gudang_code,
+                'name' => $gudang->gudang_nama,
+                'total_current' => $totalCurrent,
+                'total_max' => $totalMax,
+                'total_percent' => $totalPercent,
+                'lokasi' => $lokasiData,
+            ];
+        });
+
+        $recentLogs = StockLog::with(['product', 'lokasi'])
+            ->latest('created_at')
+            ->limit(8)
             ->get()
-            ->map(fn ($content) => [
-                'icon' => match ($content->status) {
-                    'published' => 'check_circle',
-                    default => 'edit_note',
+            ->map(fn ($log) => [
+                'icon' => match ($log->stock_type) {
+                    'IN' => 'login',
+                    'OUT' => 'logout',
+                    'STAGING' => 'swap_horiz',
+                    default => 'sync',
                 },
-                'iconBg' => match ($content->status) {
-                    'published' => 'bg-green-50',
-                    default => 'bg-primary/5',
+                'iconBg' => match ($log->stock_type) {
+                    'IN' => 'bg-success/10',
+                    'OUT' => 'bg-error/10',
+                    'STAGING' => 'bg-warning/10',
+                    default => 'bg-primary/10',
                 },
-                'iconColor' => match ($content->status) {
-                    'published' => 'text-green-600',
+                'iconColor' => match ($log->stock_type) {
+                    'IN' => 'text-success',
+                    'OUT' => 'text-error',
+                    'STAGING' => 'text-warning',
                     default => 'text-primary',
                 },
-                'title' => $content->title,
-                'subtitle' => $content->type?->name ?? 'Draft',
-                'status' => strtoupper($content->status),
-                'statusClass' => match ($content->status) {
-                    'published' => 'bg-green-50 text-green-700',
-                    default => 'bg-surface-container-high text-on-surface-variant',
-                },
-                'time' => $content->updated_at?->diffForHumans() ?? '',
+                'title' => $log->product->product_nama ?? '-',
+                'subtitle' => $log->lokasi->lokasi_nama ?? $log->stock_code_lokasi,
+                'qty' => $log->stock_qty,
+                'type' => $log->stock_type,
+                'time' => $log->created_at?->diffForHumans() ?? '',
             ]);
 
-        return view('dashboard', compact('stats', 'cmsTypes', 'recentContents'));
+        $lowStock = Stock::with(['product', 'lokasi'])
+            ->where('stock_type', Stock::TYPE_IN)
+            ->where('stock_qty', '>', 0)
+            ->where('stock_qty', '<=', 5)
+            ->orderBy('stock_qty')
+            ->limit(5)
+            ->get();
+
+        $pendingForklift = ForkliftTask::where('forklift_status', 'Pending')
+            ->latest()
+            ->limit(5)
+            ->get();
+
+        return view('dashboard', compact(
+            'stats',
+            'warehouses',
+            'recentLogs',
+            'lowStock',
+            'pendingForklift'
+        ));
     }
 }

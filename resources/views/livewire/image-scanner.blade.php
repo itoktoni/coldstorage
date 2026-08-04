@@ -16,7 +16,7 @@
             Capture Photo
         </button>
         <button class="btn btn-outline gap-2" wire:click="scanQRCode">
-            <span class="icon-[tabler--qr-code] size-4"></span>
+            <span class="icon-[tabler--qrcode] size-4"></span>
             Scan QR Code
         </button>
     </div>
