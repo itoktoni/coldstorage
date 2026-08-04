@@ -40,3 +40,20 @@ if (notificationEnabled && userId) {
     centrifuge.connect();
     window.centrifuge = centrifuge;
 }
+
+/**
+ * Format angka: 1.000 (tanpa desimal jika 0), 1,255 / 1,24 (hapus trailing zero).
+ * Tanda: titik ribuan, koma desimal.
+ */
+function formatQty(value) {
+    const num = parseFloat(value);
+    if (isNaN(num)) return '0';
+    const integer = Math.floor(num);
+    const decimal = num - integer;
+    if (Math.abs(decimal) < 0.001) {
+        return integer.toLocaleString('id-ID');
+    }
+    let formatted = num.toLocaleString('id-ID', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+    formatted = formatted.replace(/0+$/, '').replace(/,$/, '');
+    return formatted;
+}

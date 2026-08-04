@@ -2,7 +2,6 @@
     <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '/wms/split', 'label' => 'Split'], ['url' => '', 'label' => 'Produce']]" />
 
     <div class="content mt-4 lg:mt-0">
-        {{-- Error / Success --}}
         @if($error)
         <div class="bg-error/10 border border-error rounded-xl p-4 mb-4">
             <p class="text-error font-body-sm font-semibold">{{ $error }}</p>
@@ -15,7 +14,6 @@
         @endif
 
         <div class="grid grid-cols-12 gap-5">
-            {{-- Left: Form --}}
             <div class="col-span-12 lg:col-span-8">
                 {{-- Target & Waste Product --}}
                 <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 form-card">
@@ -25,8 +23,17 @@
                     </h3>
 
                     <div class="grid grid-cols-12 gap-4">
-                        <div class="col-span-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Produk Target (Hasil Split)</label>
+                        <div class="col-span-12">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Produk Asal (Sumber) <span class="text-error">*</span></label>
+                            <select wire:model.live="sourceProductId" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option value="">-- Pilih Produk Asal --</option>
+                                @foreach ($products as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-5">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Produk Target (Hasil Split) <span class="text-error">*</span></label>
                             <select wire:model.live="targetProductId" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                 <option value="">-- Pilih Produk Target --</option>
                                 @foreach ($products as $id => $name)
@@ -34,7 +41,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-span-6">
+                        <div class="col-span-4">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Waste Product (Optional)</label>
                             <select wire:model.live="wasteProductId" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                 <option value="">-- Tidak Ada Waste --</option>
@@ -43,6 +50,22 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-span-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                            <select wire:model.live="splitStatus" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option value="Draft">Draft</option>
+                                <option value="Active">Active</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-end">
+                        <button wire:click="saveConfig" wire:loading.attr="disabled"
+                                class="inline-flex items-center justify-center px-6 py-2.5 bg-primary text-white hover:bg-primary/90 rounded-lg transition-colors text-sm font-medium shadow-sm disabled:opacity-50">
+                            <span wire:loading.remove class="material-symbols-outlined text-sm mr-1">save</span>
+                            <span wire:loading class="loading loading-spinner mr-2"></span>
+                            <span wire:loading.remove>Simpan Konfigurasi</span>
+                        </button>
                     </div>
                 </div>
 
@@ -53,14 +76,33 @@
                         Scan Barcode Sumber
                     </h3>
 
+                    {{-- Source Product Badge --}}
+                    @if ($sourceProductName)
+                    <div class="mb-4 p-4 bg-primary/5 border-2 border-primary/30 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary text-2xl">inventory_2</span>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-0.5">Produk Asal (wajib sama)</div>
+                                <div class="text-lg font-bold text-primary">{{ $sourceProductName }}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-on-surface-variant">Barcode</div>
+                                <div class="text-lg font-bold text-on-surface">{{ count($scannedBarcodes) }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="grid grid-cols-12 gap-4">
                         <div class="col-span-8">
                             <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Input (USB Scanner)</label>
                             <input type="text"
                                    wire:model="barcodeInput"
                                    x-on:keydown.enter.prevent="$wire.scanBarcode($el.value); $el.value = ''"
+                                   @if ($sourceProductName) placeholder="Scan barcode produk yang sama..." @else placeholder="Scan barcode di sini..." @endif
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary"
-                                   placeholder="Scan barcode di sini..."
                                    autofocus />
                         </div>
                         <div class="col-span-4 flex items-end">
@@ -196,7 +238,6 @@
         </div>
     </div>
 
-    {{-- Camera Scanner Script --}}
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
         document.addEventListener('livewire:initialized', () => {
@@ -215,9 +256,7 @@
                     @this.scanBarcode(decodedText);
                     html5QrcodeScanner.clear();
                     Livewire.dispatch('close-camera-scanner');
-                }, (error) => {
-                    // Ignore scan errors
-                });
+                }, (error) => {});
             });
 
             Livewire.on('close-camera-scanner', () => {

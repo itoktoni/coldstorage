@@ -14,8 +14,8 @@ use App\Models\StockAssignment;
 use App\Wms\MasukStatusEnum;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Milon\Barcode\Facades\DNS2DFacade;
 
 class ForkliftController extends Controller
@@ -38,12 +38,13 @@ class ForkliftController extends Controller
 
                 $allLokasi = Lokasi::with('gudang')->get();
                 $suitableLokasi = $allLokasi->filter(function ($lokasi) use ($productCategory, $totalQty) {
-                    if (!$lokasi->canAcceptCategory($productCategory)) {
+                    if (! $lokasi->canAcceptCategory($productCategory)) {
                         return false;
                     }
-                    if (!$lokasi->hasCapacity($totalQty)) {
+                    if (! $lokasi->hasCapacity($totalQty)) {
                         return false;
                     }
+
                     return true;
                 })->values();
 
@@ -58,14 +59,14 @@ class ForkliftController extends Controller
 
                 return [
                     'group_code' => $first->in_realisasi_group,
-                    'detail'     => $first->masukDetail,
-                    'product'    => $product,
+                    'detail' => $first->masukDetail,
+                    'product' => $product,
                     'product_category' => $productCategory,
-                    'total_qty'  => $totalQty,
-                    'rows'       => $rows,
+                    'total_qty' => $totalQty,
+                    'rows' => $rows,
                     'suitable_lokasi' => $suitableLokasi,
                     'suggested_lokasi' => $suggestedLokasi,
-                    'completed'  => $moved,
+                    'completed' => $moved,
                 ];
             })
             ->sortBy(fn ($g) => $g['completed'] ? 1 : 0)
@@ -77,33 +78,35 @@ class ForkliftController extends Controller
         $putawayCount = 0;
         foreach ($groups as $group) {
             $tasks->push([
-                'type'        => 'putaway',
-                'group'       => $group,
+                'type' => 'putaway',
+                'group' => $group,
                 'group_index' => $putawayCount,
             ]);
             $putawayCount++;
         }
         foreach ($pickLists as $pickRow) {
             $tasks->push([
-                'type'   => 'pick',
-                'pick'   => $pickRow,
+                'type' => 'pick',
+                'pick' => $pickRow,
             ]);
         }
 
         return view('pages.forklift.index', [
-            'tasks'   => $tasks,
+            'tasks' => $tasks,
             'details' => $groups->map(function ($g) {
                 $suggested = $g['suggested_lokasi'];
+
                 return [
                     'group_code' => $g['group_code'],
-                    'product'    => $g['product']->product_nama ?? '-',
-                    'qty'        => number_format($g['total_qty'], 3),
-                    'lokasi'     => $suggested ? ($suggested->lokasi_nama . ($suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '')) : '-',
-                    'suggested'  => $suggested?->lokasi_code ?? '',
+                    'product' => $g['product']->product_nama ?? '-',
+                    'qty' => number_format($g['total_qty'], 3),
+                    'lokasi' => $suggested ? ($suggested->lokasi_nama.($suggested->gudang ? ' ('.$suggested->gudang->gudang_nama.')' : '')) : '-',
+                    'suggested' => $suggested?->lokasi_code ?? '',
                     'suitable_lokasi' => $g['suitable_lokasi']->map(function ($lokasi) {
                         $current = (float) $lokasi->current_qty;
                         $max = $lokasi->lokasi_max_qty;
                         $left = is_null($max) ? null : max(0, (float) $max - $current);
+
                         return [
                             'lokasi_code' => $lokasi->lokasi_code,
                             'lokasi_nama' => $lokasi->lokasi_nama,
@@ -112,7 +115,7 @@ class ForkliftController extends Controller
                             'current_qty' => $current,
                             'max_qty' => is_null($max) ? null : (float) $max,
                             'capacity_left' => $left,
-                            'label' => $lokasi->lokasi_nama . ($lokasi->gudang ? ' ('.$lokasi->gudang->gudang_nama.')' : ''),
+                            'label' => $lokasi->lokasi_nama.($lokasi->gudang ? ' ('.$lokasi->gudang->gudang_nama.')' : ''),
                         ];
                     })->values()->all(),
                 ];
@@ -124,10 +127,10 @@ class ForkliftController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'group_code'   => ['required', 'string'],
-            'pallet_scan'  => ['required', 'string', 'same:group_code'],
-            'lokasi_code'  => ['required', 'string', 'exists:lokasi,lokasi_code'],
-            'override'     => ['nullable', 'boolean'],
+            'group_code' => ['required', 'string'],
+            'pallet_scan' => ['required', 'string', 'same:group_code'],
+            'lokasi_code' => ['required', 'string', 'exists:lokasi,lokasi_code'],
+            'override' => ['nullable', 'boolean'],
         ]);
 
         $isOverride = (bool) ($data['override'] ?? false);
@@ -145,7 +148,7 @@ class ForkliftController extends Controller
         $product = $first->product;
         $totalQty = (float) $rows->sum('in_realisasi_qty');
 
-        if (!$product) {
+        if (! $product) {
             return $this->storeError($request, 'Product pada pallet tidak valid');
         }
 
@@ -164,11 +167,11 @@ class ForkliftController extends Controller
 
         $lokasi = Lokasi::findOrFail($data['lokasi_code']);
 
-        if (!$lokasi->canAcceptCategory($product->product_category)) {
+        if (! $lokasi->canAcceptCategory($product->product_category)) {
             return $this->storeError($request, 'Lokasi ini tidak menerima kategori produk "'.$product->product_category.'"');
         }
 
-        if (!$lokasi->hasCapacity($totalQty)) {
+        if (! $lokasi->hasCapacity($totalQty)) {
             return $this->storeError($request, 'Lokasi ini tidak memiliki kapasitas cukup. Sisa: '.($lokasi->lokasi_max_qty - $lokasi->current_qty).', dibutuhkan: '.$totalQty);
         }
 
@@ -178,20 +181,21 @@ class ForkliftController extends Controller
             return $l->canAcceptCategory($product->product_category) && $l->hasCapacity($totalQty);
         });
 
-        if (!$isOverride) {
+        if (! $isOverride) {
             $existingLokasiCode = $rows->pluck('in_realisasi_code_lokasi')->filter()->unique()->first();
             $suggestedLokasi = $existingLokasiCode
                 ? Lokasi::find($existingLokasiCode)
                 : $suitableLokasi->sortBy(fn ($l) => $l->current_qty)->first();
 
-            if (!$suggestedLokasi || $data['lokasi_code'] !== $suggestedLokasi->lokasi_code) {
+            if (! $suggestedLokasi || $data['lokasi_code'] !== $suggestedLokasi->lokasi_code) {
                 $expected = $suggestedLokasi ? $suggestedLokasi->lokasi_nama : '-';
+
                 return $this->storeError($request, 'Lokasi tidak sesuai. Scan harus ke "'.$expected.'"');
             }
         }
 
         try {
-            DB::transaction(function () use ($masukDetail, $rows, $data, $totalQty, $detailCode) {
+            DB::transaction(function () use ($masukDetail, $rows, $data, $totalQty) {
                 // Stock sudah dibuat saat detail berstatus READY (reff = group code),
                 // tinggal pindahkan lokasi. Fallback create untuk data legacy.
                 $stockRows = Stock::where('stock_reff', $data['group_code'])->get();
@@ -199,19 +203,19 @@ class ForkliftController extends Controller
                 if ($stockRows->isNotEmpty()) {
                     Stock::where('stock_reff', $data['group_code'])
                         ->update([
-                            'stock_type'        => Stock::TYPE_IN,
+                            'stock_type' => Stock::TYPE_IN,
                             'stock_code_lokasi' => $data['lokasi_code'],
                             'stock_pallet_code' => $data['group_code'],
                         ]);
                 } else {
                     Stock::create([
-                        'stock_id_product'   => $rows->first()->in_realisasi_id_product,
-                        'stock_code_lokasi'  => $data['lokasi_code'],
-                        'stock_qty'          => $totalQty,
-                        'stock_type'         => 'IN',
+                        'stock_id_product' => $rows->first()->in_realisasi_id_product,
+                        'stock_code_lokasi' => $data['lokasi_code'],
+                        'stock_qty' => $totalQty,
+                        'stock_type' => 'IN',
                         'stock_expired_date' => now()->addDays(30),
-                        'stock_reff'         => $data['group_code'],
-                        'stock_pallet_code'  => $data['group_code'],
+                        'stock_reff' => $data['group_code'],
+                        'stock_pallet_code' => $data['group_code'],
                     ]);
                 }
 
@@ -252,7 +256,7 @@ class ForkliftController extends Controller
     public function relokasi(Request $request)
     {
         $request->validate([
-            'group_code'  => ['required', 'string'],
+            'group_code' => ['required', 'string'],
             'lokasi_code' => ['required', 'string', 'exists:lokasi,lokasi_code'],
         ]);
 
@@ -265,18 +269,18 @@ class ForkliftController extends Controller
         }
 
         $product = $rows->first()->product;
-        if (!$product) {
+        if (! $product) {
             return response()->json(['ok' => false, 'message' => 'Product pada pallet tidak valid'], 422);
         }
 
         $totalQty = (float) $rows->sum('in_realisasi_qty');
         $lokasi = Lokasi::findOrFail($lokasiCode);
 
-        if (!$lokasi->canAcceptCategory($product->product_category)) {
+        if (! $lokasi->canAcceptCategory($product->product_category)) {
             return response()->json(['ok' => false, 'message' => 'Lokasi ini tidak menerima kategori produk "'.$product->product_category.'"'], 422);
         }
 
-        if (!$lokasi->hasCapacity($totalQty)) {
+        if (! $lokasi->hasCapacity($totalQty)) {
             return response()->json(['ok' => false, 'message' => 'Lokasi ini tidak memiliki kapasitas cukup. Sisa: '.($lokasi->lokasi_max_qty - $lokasi->current_qty).', dibutuhkan: '.$totalQty], 422);
         }
 
@@ -286,9 +290,9 @@ class ForkliftController extends Controller
         $lokasi = Lokasi::with('gudang')->find($lokasiCode);
 
         return response()->json([
-            'ok'      => true,
+            'ok' => true,
             'message' => "Lokasi pallet {$groupCode} berhasil diupdate ke {$lokasiCode}",
-            'label'   => $lokasi ? ($lokasi->lokasi_nama . ($lokasi->gudang ? ' ('.$lokasi->gudang->gudang_nama.')' : '')) : $lokasiCode,
+            'label' => $lokasi ? ($lokasi->lokasi_nama.($lokasi->gudang ? ' ('.$lokasi->gudang->gudang_nama.')' : '')) : $lokasiCode,
         ]);
     }
 
@@ -306,26 +310,26 @@ class ForkliftController extends Controller
         $totalQty = (float) $rows->sum('in_realisasi_qty');
 
         // QR encodes scan prefix + group code so scanner strips prefix back to group code
-        $scanValue = config('scan.prefix.pallet', 'P') . $groupCode;
+        $scanValue = config('scan.prefix.pallet', 'P').$groupCode;
         $qrPng = DNS2DFacade::getBarcodePNG($scanValue, 'QRCODE', 8, 8);
 
         $pdf = Pdf::loadView('pdf.pallet-qr', [
             'groupCode' => $groupCode,
-            'qrPng'     => $qrPng,
-            'product'   => $first->product,
-            'detail'    => $first->masukDetail,
-            'totalQty'  => $totalQty,
-            'rows'      => $rows,
+            'qrPng' => $qrPng,
+            'product' => $first->product,
+            'detail' => $first->masukDetail,
+            'totalQty' => $totalQty,
+            'rows' => $rows,
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->stream('pallet-' . $groupCode . '.pdf');
+        return $pdf->stream('pallet-'.$groupCode.'.pdf');
     }
 
     /**
      * Build the list of Keluar (outbound pick lists) ready to be picked by forklift.
      * Status: Pending / In Progress (the ones generated from SO prepare).
      */
-    private function buildPickLists(): \Illuminate\Support\Collection
+    private function buildPickLists(): Collection
     {
         return Keluar::with(['details.product'])
             ->whereIn('out_status', ['Pending', 'In Progress'])
@@ -337,8 +341,8 @@ class ForkliftController extends Controller
                 $pickedQty = (float) KeluarRealisasi::whereIn('out_realisasi_id_detail', $details->pluck('out_detail_id'))
                     ->sum('out_realisasi_qty');
 
-                $totalQty   = (int) $details->sum('out_detail_qty');
-                $progress   = $totalQty > 0 ? min(100, (int) round($pickedQty / $totalQty * 100)) : 0;
+                $totalQty = (int) $details->sum('out_detail_qty');
+                $progress = $totalQty > 0 ? min(100, (int) round($pickedQty / $totalQty * 100)) : 0;
 
                 // Build stock source guide per detail
                 $stockSources = $details->map(function (KeluarDetail $detail) {
@@ -362,24 +366,24 @@ class ForkliftController extends Controller
                             return [
                                 'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
                                 'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                                'stock_qty'   => (float) $s->stock_qty,
-                                'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                                'stock_qty' => (float) $s->stock_qty,
+                                'expired' => optional($s->stock_expired_date)->format('Y-m-d'),
                             ];
                         });
 
                     return [
                         'product_nama' => $detail->product->product_nama ?? '-',
                         'qty_remaining' => $remaining,
-                        'stocks'       => $stocks,
+                        'stocks' => $stocks,
                     ];
                 })->filter()->values();
 
                 return [
-                    'keluar'        => $keluar,
-                    'total_qty'     => $totalQty,
-                    'picked_rows'   => $pickedQty,
-                    'progress'      => $progress,
-                    'item_count'    => $details->count(),
+                    'keluar' => $keluar,
+                    'total_qty' => $totalQty,
+                    'picked_rows' => $pickedQty,
+                    'progress' => $progress,
+                    'item_count' => $details->count(),
                     'stock_sources' => $stockSources,
                 ];
             });
@@ -411,15 +415,16 @@ class ForkliftController extends Controller
                         ->where('out_realisasi_id_detail', $a->stock_assignment_id_keluar_detail)
                         ->sum('out_realisasi_qty');
                     $pickRemaining = max(0, (float) $a->stock_assignment_qty - $alreadyPicked);
+
                     return [
-                        'stock_id'    => $stock->stock_id,
+                        'stock_id' => $stock->stock_id,
                         'lokasi_code' => $stock->stock_code_lokasi,
                         'lokasi_nama' => $stock->lokasi?->lokasi_nama ?? '-',
                         'gudang_nama' => $stock->lokasi?->gudang?->gudang_nama ?? '-',
-                        'stock_code'  => $stock->stock_code,
-                        'stock_qty'   => (float) $stock->stock_qty,
-                        'expired'     => optional($stock->stock_expired_date)->format('Y-m-d'),
-                        'take_max'    => $pickRemaining,
+                        'stock_code' => $stock->stock_code,
+                        'stock_qty' => (float) $stock->stock_qty,
+                        'expired' => optional($stock->stock_expired_date)->format('Y-m-d'),
+                        'take_max' => $pickRemaining,
                         'is_assigned' => true,
                         'assignment_id' => $a->stock_assignment_id,
                     ];
@@ -435,14 +440,14 @@ class ForkliftController extends Controller
                     ->get()
                     ->map(function (Stock $s) use ($remaining) {
                         return [
-                            'stock_id'    => $s->stock_id,
+                            'stock_id' => $s->stock_id,
                             'lokasi_code' => $s->stock_code_lokasi,
                             'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
                             'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                            'stock_code'  => $s->stock_code,
-                            'stock_qty'   => (float) $s->stock_qty,
-                            'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
-                            'take_max'    => min((float) $s->stock_qty, $remaining),
+                            'stock_code' => $s->stock_code,
+                            'stock_qty' => (float) $s->stock_qty,
+                            'expired' => optional($s->stock_expired_date)->format('Y-m-d'),
+                            'take_max' => min((float) $s->stock_qty, $remaining),
                             'is_assigned' => false,
                             'assignment_id' => null,
                         ];
@@ -451,11 +456,11 @@ class ForkliftController extends Controller
             }
 
             return [
-                'detail'         => $detail,
-                'qty_requested'  => (int) $detail->out_detail_qty,
-                'qty_picked'     => (float) $alreadyPicked,
-                'qty_remaining'  => $remaining,
-                'suggested'      => $suggestedStocks,
+                'detail' => $detail,
+                'qty_requested' => (int) $detail->out_detail_qty,
+                'qty_picked' => (float) $alreadyPicked,
+                'qty_remaining' => $remaining,
+                'suggested' => $suggestedStocks,
             ];
         });
 
@@ -464,12 +469,12 @@ class ForkliftController extends Controller
 
         return view('pages.forklift.pick', [
             'keluar' => $keluar,
-            'rows'   => $rows->filter(fn ($r) => $r['qty_remaining'] > 0)->values(),
+            'rows' => $rows->filter(fn ($r) => $r['qty_remaining'] > 0)->values(),
             'summary' => [
-                'total_qty'   => $totalQty,
-                'total_picked'=> $totalPicked,
-                'progress'    => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
-                'done_count'  => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
+                'total_qty' => $totalQty,
+                'total_picked' => $totalPicked,
+                'progress' => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
+                'done_count' => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
             ],
         ]);
     }
@@ -481,8 +486,8 @@ class ForkliftController extends Controller
     public function pickStore(Request $request, string $outCode)
     {
         $data = $request->validate([
-            'detail_id'    => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
-            'rack_scan'    => ['required', 'string', 'exists:lokasi,lokasi_code'],
+            'detail_id' => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
+            'rack_scan' => ['required', 'string', 'exists:lokasi,lokasi_code'],
             'staging_scan' => ['required', 'string', 'exists:lokasi,lokasi_code'],
         ]);
 
@@ -524,7 +529,7 @@ class ForkliftController extends Controller
                     ->get()
                     ->first();
 
-                if (!$guideLokasi) {
+                if (! $guideLokasi) {
                     throw new \RuntimeException('Tidak ada stok tersedia di rak untuk product ini.');
                 }
 
@@ -565,20 +570,20 @@ class ForkliftController extends Controller
 
                 // Catat stock berpindah ke staging (type STAGING) — qty penuh pallet
                 Stock::create([
-                    'stock_id_product'   => $detail->out_detail_id_product,
-                    'stock_code_lokasi'  => $stagingLokasi->lokasi_code,
-                    'stock_qty'          => $palletQty,
-                    'stock_type'         => Stock::TYPE_STAGING,
+                    'stock_id_product' => $detail->out_detail_id_product,
+                    'stock_code_lokasi' => $stagingLokasi->lokasi_code,
+                    'stock_qty' => $palletQty,
+                    'stock_type' => Stock::TYPE_STAGING,
                     'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
-                    'stock_reff'         => $keluar->out_code,
+                    'stock_reff' => $keluar->out_code,
                 ]);
 
                 // Realisasi = qty SO yang terpenuhi dari pallet ini (bukan seluruh pallet)
                 KeluarRealisasi::create([
                     'out_realisasi_id_detail' => $detail->out_detail_id,
-                    'out_realisasi_id_stock'  => $stocks->first()->stock_id,
-                    'out_realisasi_code'      => KeluarRealisasi::generateCode(),
-                    'out_realisasi_qty'       => $fulfilled,
+                    'out_realisasi_id_stock' => $stocks->first()->stock_id,
+                    'out_realisasi_code' => KeluarRealisasi::generateCode(),
+                    'out_realisasi_qty' => $fulfilled,
                 ]);
 
                 // Fulfil SO reservation tied to this keluar detail
@@ -596,17 +601,18 @@ class ForkliftController extends Controller
 
                 if ($totalPicked + 1e-9 >= $totalQty) {
                     $keluar->update(['out_status' => Keluar::STATUS_DONE]);
+                    self::cleanupZeroStock($keluar);
                 } elseif ($totalPicked > 0) {
                     $keluar->update(['out_status' => Keluar::STATUS_IN_PROGRESS]);
                 }
 
                 return [
-                    'pallet_moved'    => $palletQty,
-                    'fulfilled'       => $fulfilled,
-                    'picked_total'    => $totalPicked,
+                    'pallet_moved' => $palletQty,
+                    'fulfilled' => $fulfilled,
+                    'picked_total' => $totalPicked,
                     'remaining_total' => max(0, $totalQty - $totalPicked),
-                    'item_remaining'  => max(0, $remaining - $fulfilled),
-                    'status'          => $keluar->out_status,
+                    'item_remaining' => max(0, $remaining - $fulfilled),
+                    'status' => $keluar->out_status,
                 ];
             });
 
@@ -615,12 +621,14 @@ class ForkliftController extends Controller
             }
 
             flash()->success('Pallet dipindah ke staging ('.$result['pallet_moved'].' unit). Sisa SO: '.$result['remaining_total']);
+
             return redirect()->route('wms-forklift-pick.show', ['outCode' => $keluar->out_code]);
         } catch (\Throwable $th) {
             if ($request->expectsJson()) {
                 return response()->json(['ok' => false, 'message' => $th->getMessage()], 422);
             }
             flash()->error($th->getMessage());
+
             return back();
         }
     }
@@ -649,15 +657,16 @@ class ForkliftController extends Controller
                         ->where('out_realisasi_id_detail', $a->stock_assignment_id_keluar_detail)
                         ->sum('out_realisasi_qty');
                     $pickRemaining = max(0, (float) $a->stock_assignment_qty - $alreadyPicked);
+
                     return [
-                        'stock_id'    => $stock->stock_id,
+                        'stock_id' => $stock->stock_id,
                         'lokasi_code' => $stock->stock_code_lokasi,
                         'lokasi_nama' => $stock->lokasi?->lokasi_nama ?? '-',
                         'gudang_nama' => $stock->lokasi?->gudang?->gudang_nama ?? '-',
-                        'stock_code'  => $stock->stock_code,
-                        'stock_qty'   => (float) $stock->stock_qty,
-                        'expired'     => optional($stock->stock_expired_date)->format('Y-m-d'),
-                        'take_max'    => $pickRemaining,
+                        'stock_code' => $stock->stock_code,
+                        'stock_qty' => (float) $stock->stock_qty,
+                        'expired' => optional($stock->stock_expired_date)->format('Y-m-d'),
+                        'take_max' => $pickRemaining,
                         'is_assigned' => true,
                     ];
                 })->values();
@@ -672,14 +681,14 @@ class ForkliftController extends Controller
                     ->get()
                     ->map(function (Stock $s) use ($remaining) {
                         return [
-                            'stock_id'    => $s->stock_id,
+                            'stock_id' => $s->stock_id,
                             'lokasi_code' => $s->stock_code_lokasi,
                             'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
                             'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                            'stock_code'  => $s->stock_code,
-                            'stock_qty'   => (float) $s->stock_qty,
-                            'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
-                            'take_max'    => min((float) $s->stock_qty, $remaining),
+                            'stock_code' => $s->stock_code,
+                            'stock_qty' => (float) $s->stock_qty,
+                            'expired' => optional($s->stock_expired_date)->format('Y-m-d'),
+                            'take_max' => min((float) $s->stock_qty, $remaining),
                             'is_assigned' => false,
                         ];
                     })
@@ -687,12 +696,12 @@ class ForkliftController extends Controller
             }
 
             return [
-                'detail'         => $detail,
-                'product_nama'   => $detail->product->product_nama ?? '-',
-                'qty_requested'  => (float) $detail->out_detail_qty,
-                'qty_picked'     => (float) $alreadyPicked,
-                'qty_remaining'  => $remaining,
-                'suggested'      => $suggestedStocks,
+                'detail' => $detail,
+                'product_nama' => $detail->product->product_nama ?? '-',
+                'qty_requested' => (float) $detail->out_detail_qty,
+                'qty_picked' => (float) $alreadyPicked,
+                'qty_remaining' => $remaining,
+                'suggested' => $suggestedStocks,
             ];
         });
 
@@ -701,15 +710,15 @@ class ForkliftController extends Controller
         $currentPick = $rows->first(fn ($r) => $r['qty_remaining'] > 0);
 
         return view('pages.forklift.pick-scan', [
-            'keluar'     => $keluar,
-            'rows'       => $rows,
-            'current'    => $currentPick,
-            'summary'    => [
-                'total_qty'    => $totalQty,
+            'keluar' => $keluar,
+            'rows' => $rows,
+            'current' => $currentPick,
+            'summary' => [
+                'total_qty' => $totalQty,
                 'total_picked' => $totalPicked,
-                'progress'     => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
-                'total_items'  => $rows->count(),
-                'done_items'   => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
+                'progress' => $totalQty > 0 ? min(100, (int) round($totalPicked / $totalQty * 100)) : 0,
+                'total_items' => $rows->count(),
+                'done_items' => $rows->filter(fn ($r) => $r['qty_remaining'] <= 0)->count(),
             ],
         ]);
     }
@@ -768,7 +777,7 @@ class ForkliftController extends Controller
 
                 // 2. Validate
                 if ($stocks->isEmpty()) {
-                    throw new \RuntimeException('Code tidak dikenali atau stock tidak tersedia.');
+                    throw new \RuntimeException('Barcode tidak dikenali atau stock tidak tersedia.');
                 }
 
                 // Check product match (for pallet/location mode)
@@ -793,7 +802,9 @@ class ForkliftController extends Controller
                 $expiredDates = [];
 
                 foreach ($stocks as $stock) {
-                    if ($left <= 0) break;
+                    if ($left <= 0) {
+                        break;
+                    }
 
                     $take = min((float) $stock->stock_qty, $left);
                     $stock->decrement('stock_qty', $take);
@@ -805,14 +816,14 @@ class ForkliftController extends Controller
                     // Create KeluarRealisasi per barcode
                     KeluarRealisasi::create([
                         'out_realisasi_id_detail' => $detail->out_detail_id,
-                        'out_realisasi_id_stock'  => $stock->stock_id,
-                        'out_realisasi_code'      => KeluarRealisasi::generateCode(),
-                        'out_realisasi_qty'       => $take,
+                        'out_realisasi_id_stock' => $stock->stock_id,
+                        'out_realisasi_code' => KeluarRealisasi::generateCode(),
+                        'out_realisasi_qty' => $take,
                     ]);
 
                     $pickedItems[] = [
                         'stock_code' => $stock->stock_code,
-                        'qty'        => $take,
+                        'qty' => $take,
                     ];
 
                     $left -= $take;
@@ -822,12 +833,12 @@ class ForkliftController extends Controller
 
                 // Create STAGING stock
                 Stock::create([
-                    'stock_id_product'   => $detail->out_detail_id_product,
-                    'stock_code_lokasi'  => 'STAGING',
-                    'stock_qty'          => $fulfilled,
-                    'stock_type'         => Stock::TYPE_STAGING,
+                    'stock_id_product' => $detail->out_detail_id_product,
+                    'stock_code_lokasi' => 'STAGING',
+                    'stock_qty' => $fulfilled,
+                    'stock_type' => Stock::TYPE_STAGING,
                     'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
-                    'stock_reff'         => $keluar->out_code,
+                    'stock_reff' => $keluar->out_code,
                 ]);
 
                 // Consume RESERVE
@@ -845,6 +856,7 @@ class ForkliftController extends Controller
 
                 if ($totalPicked + 1e-9 >= $totalQty) {
                     $keluar->update(['out_status' => Keluar::STATUS_DONE]);
+                    self::cleanupZeroStock($keluar);
                 } elseif ($totalPicked > 0) {
                     $keluar->update(['out_status' => 'In Progress']);
                 }
@@ -853,17 +865,18 @@ class ForkliftController extends Controller
                 $nextPickDetail = $allDetails->first(function ($d) use ($detail) {
                     $picked = (float) KeluarRealisasi::where('out_realisasi_id_detail', $d->out_detail_id)
                         ->sum('out_realisasi_qty');
+
                     return $d->out_detail_id !== $detail->out_detail_id && $picked < (float) $d->out_detail_qty;
                 });
 
                 return [
-                    'ok'            => true,
-                    'picked_items'  => $pickedItems,
-                    'fulfilled'     => $fulfilled,
-                    'remaining'     => max(0, $left),
-                    'done'          => max(0, $left) <= 0,
-                    'total_picked'  => $totalPicked,
-                    'total_qty'     => $totalQty,
+                    'ok' => true,
+                    'picked_items' => $pickedItems,
+                    'fulfilled' => $fulfilled,
+                    'remaining' => max(0, $left),
+                    'done' => max(0, $left) <= 0,
+                    'total_picked' => $totalPicked,
+                    'total_qty' => $totalQty,
                     'next_detail_id' => $nextPickDetail?->out_detail_id,
                 ];
             });
@@ -871,6 +884,33 @@ class ForkliftController extends Controller
             return response()->json($result);
         } catch (\Throwable $th) {
             return response()->json(['ok' => false, 'message' => $th->getMessage()], 422);
+        }
+    }
+
+    /**
+     * Hapus stock RESERVE & STAGING yang qty-nya sudah 0 setelah keluar Done.
+     */
+    private static function cleanupZeroStock(Keluar $keluar): void
+    {
+        // Hapus STAGING stock qty 0 untuk keluar ini
+        Stock::where('stock_type', Stock::TYPE_STAGING)
+            ->where('stock_reff', $keluar->out_code)
+            ->where('stock_qty', '<=', 0)
+            ->delete();
+
+        // Hapus RESERVE stock qty 0 untuk SO terkait
+        $soCodes = $keluar->details()
+            ->with('soDetail.so')
+            ->get()
+            ->pluck('soDetail.so.so_code')
+            ->filter()
+            ->values();
+
+        if ($soCodes->isNotEmpty()) {
+            Stock::where('stock_type', Stock::TYPE_RESERVE)
+                ->whereIn('stock_reff', $soCodes)
+                ->where('stock_qty', '<=', 0)
+                ->delete();
         }
     }
 }

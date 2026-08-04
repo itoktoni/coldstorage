@@ -33,8 +33,33 @@
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary">
+                        @if($table->so_status->value === 'Confirmed')
+                        <a href="{{ route('wms-so.ship', ['id' => $table->field_primary]) }}"
+                           onclick="return confirm('Yakin ingin mengirim SO ini? Invoice akan dibuat dari qty yang benar-benar dikirim.')"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+                           title="Kirim SO">
+                            <span class="material-symbols-outlined text-lg">local_shipping</span>
+                        </a>
+                        @endif
+                        @if($table->so_status->value === 'Shipped')
+                        <a href="{{ route('wms-so.cetakDelivery', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                           title="Cetak Delivery Order">
+                            <span class="material-symbols-outlined text-lg">local_shipping</span>
+                        </a>
+                        <a href="{{ route('wms-so.cetakInvoice', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
+                           title="Cetak Invoice">
+                            <span class="material-symbols-outlined text-lg">receipt_long</span>
+                        </a>
+                        <a href="{{ route('wms-so.cetakPerformance', ['id' => $table->field_primary]) }}" target="_blank"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
+                           title="Performance Report">
+                            <span class="material-symbols-outlined text-lg">analytics</span>
+                        </a>
+                        @endif
                         <a href="{{ route('wms-so.cetak', ['id' => $table->field_primary]) }}" target="_blank"
-                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
                            title="Cetak SO">
                             <span class="material-symbols-outlined text-lg">print</span>
                         </a>
@@ -63,6 +88,31 @@
                         <x-table-mobile-text label="Status" :text="$table->so_status" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary">
+                        @if($table->so_status->value === 'Confirmed')
+                                <a href="{{ route('wms-so.ship', ['id' => $table->field_primary]) }}"
+                                   onclick="return confirm('Yakin ingin mengirim SO ini? Invoice akan dibuat dari qty yang benar-benar dikirim.')"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
+                                   title="Kirim SO">
+                                    <span class="material-symbols-outlined text-lg">local_shipping</span>
+                                </a>
+                                @endif
+                                @if($table->so_status->value === 'Shipped')
+                                <a href="{{ route('wms-so.cetakDelivery', ['id' => $table->field_primary]) }}" target="_blank"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                                   title="Cetak Delivery Order">
+                                    <span class="material-symbols-outlined text-lg">local_shipping</span>
+                                </a>
+                                <a href="{{ route('wms-so.cetakInvoice', ['id' => $table->field_primary]) }}" target="_blank"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-600 text-white hover:bg-orange-700 transition-colors"
+                                   title="Cetak Invoice">
+                                    <span class="material-symbols-outlined text-lg">receipt_long</span>
+                                </a>
+                                <a href="{{ route('wms-so.cetakPerformance', ['id' => $table->field_primary]) }}" target="_blank"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+                                   title="Performance Report">
+                                    <span class="material-symbols-outlined text-lg">analytics</span>
+                                </a>
+                                @endif
                                 <a href="{{ route('wms-so.cetak', ['id' => $table->field_primary]) }}" target="_blank"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
                                    title="Cetak SO">

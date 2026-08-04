@@ -29,9 +29,16 @@
                 <th>Kode SO</th>
                 <x-table-sort field="out_detail_qty" label="Qty" :sortField="$sortField" :sortDir="$sortDir" />
                 <th class="text-center">Realisasi</th>
+                <th class="text-center">Aksi</th>
             </x-slot:head>
             <x-slot:body>
                 @forelse($data as $table)
+                @php
+                    $picked = $table->picked_qty;
+                    $qty = (float) $table->out_detail_qty;
+                    $pct = $qty > 0 ? round($picked / $qty * 100) : 0;
+                    $isDone = $pct >= 100;
+                @endphp
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary" />
@@ -41,17 +48,19 @@
                     <td class="font-mono text-sm">{{ $table->so_code ?? '-' }}</td>
                     <td class="text-right font-medium">{{ number_format($table->out_detail_qty, 0) }}</td>
                     <td class="text-right">
-                        @php
-                            $picked = $table->picked_qty;
-                            $qty = (float) $table->out_detail_qty;
-                            $pct = $qty > 0 ? round($picked / $qty * 100) : 0;
-                        @endphp
                         <span class="text-sm">{{ number_format($picked, 0) }} / {{ number_format($qty, 0) }}</span>
-                        @if($pct >= 100)
+                        @if($isDone)
                             <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success ml-1">Selesai</span>
                         @elseif($pct > 0)
                             <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning ml-1">{{ $pct }}%</span>
                         @endif
+                    </td>
+                    <td class="text-center">
+                        <a href="{{ route('wms-keluar-realisasi-scan.show', $table->field_primary) }}"
+                           class="inline-flex items-center gap-1 h-8 px-3 text-xs font-semibold rounded-lg {{ $isDone ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary' }} hover:bg-{{ $isDone ? 'success' : 'primary' }}/20 transition-colors">
+                            <span class="material-symbols-outlined text-sm">{{ $isDone ? 'check_circle' : 'qr_code_scanner' }}</span>
+                            {{ $isDone ? 'Selesai' : 'Realisasi' }}
+                        </a>
                     </td>
                 </tr>
                 @empty
@@ -74,6 +83,11 @@
                         <x-table-mobile-text label="Qty" :text="number_format($table->out_detail_qty, 0)" />
                         <x-table-mobile-text label="Realisasi" :text="number_format($table->picked_qty, 0) . ' / ' . number_format($table->out_detail_qty, 0)" />
                         <x-table-mobile-footer :label="$table->field_primary">
+                            <a href="{{ route('wms-keluar-realisasi-scan.show', $table->field_primary) }}"
+                               class="inline-flex items-center gap-1 h-8 px-3 text-xs font-semibold rounded-lg {{ $table->picked_qty >= $table->out_detail_qty ? 'bg-success/10 text-success' : 'bg-primary/10 text-primary' }} hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined text-sm">{{ $table->picked_qty >= $table->out_detail_qty ? 'check_circle' : 'qr_code_scanner' }}</span>
+                                {{ $table->picked_qty >= $table->out_detail_qty ? 'Selesai' : 'Realisasi' }}
+                            </a>
                             <x-table-action :model="$model" :id="$table->field_primary" />
                         </x-table-mobile-footer>
                     </x-table-mobile-item>

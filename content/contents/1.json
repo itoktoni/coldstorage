@@ -1,0 +1,14 @@
+{
+    "id": 1,
+    "content_type_id": 1,
+    "title": "Test Post",
+    "slug": "test-post",
+    "content": "Test content body",
+    "status": "published",
+    "menu_order": 0,
+    "meta": {
+        "subtitle": "A test subtitle"
+    },
+    "created_at": "2026-08-04T05:12:27.000000Z",
+    "updated_at": "2026-08-04T05:12:27.000000Z"
+}

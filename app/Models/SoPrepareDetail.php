@@ -5,13 +5,16 @@ namespace App\Models;
 class SoPrepareDetail extends BaseModel
 {
     protected $table = 'so_prepare_detail';
+
     protected $primaryKey = 'so_prepare_detail_id';
+
     public $timestamps = true;
 
     protected $fillable = [
         'so_prepare_detail_id_prepare',
         'so_prepare_detail_id_realisasi',
         'so_prepare_detail_id_product',
+        'so_prepare_detail_id_stock',
         'so_prepare_detail_qty',
     ];
 

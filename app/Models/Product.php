@@ -5,17 +5,21 @@ namespace App\Models;
 class Product extends BaseModel
 {
     protected $table = 'product';
+
     protected $primaryKey = 'product_id';
+
     public $timestamps = true;
 
-    public static $filterColumns = ['product_nama', 'product_category'];
-    public static $sortColumns   = ['product_code', 'product_category', 'product_nama'];
+    public static $filterColumns = ['product_nama', 'product_category', 'product_status'];
+
+    public static $sortColumns = ['product_code', 'product_category', 'product_nama', 'product_status'];
 
     protected $fillable = [
         'product_code',
         'product_nama',
         'product_harga',
         'product_category',
+        'product_status',
     ];
 
     protected $casts = [
@@ -41,7 +45,7 @@ class Product extends BaseModel
     {
         static::created(function (self $product) {
             if (empty($product->product_code)) {
-                $product->update(['product_code' => 'P' . str_pad($product->product_id, 10, '0', STR_PAD_LEFT)]);
+                $product->update(['product_code' => 'P'.str_pad($product->product_id, 10, '0', STR_PAD_LEFT)]);
             }
         });
     }
@@ -49,10 +53,11 @@ class Product extends BaseModel
     public function rules(): array
     {
         return [
-            'product_code'        => ['nullable', 'string', 'max:11', 'unique:product,product_code'],
-            'product_nama'        => ['required', 'string', 'max:200'],
-            'product_harga'       => ['required', 'numeric', 'min:0'],
+            'product_code' => ['nullable', 'string', 'max:11', 'unique:product,product_code'],
+            'product_nama' => ['required', 'string', 'max:200'],
+            'product_harga' => ['required', 'numeric', 'min:0'],
             'product_category' => ['nullable', 'string', 'max:50'],
+            'product_status' => ['nullable', 'string', 'in:active,inactive'],
         ];
     }
 

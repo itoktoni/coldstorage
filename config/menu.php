@@ -47,6 +47,7 @@ return [
                 ['route' => 'wms-stock-flow.index', 'icon' => 'swap_horiz', 'label' => 'Stock Flow'],
                 ['route' => 'wms-stock-sales.index', 'icon' => 'storefront', 'label' => 'Stock Sales'],
                 ['route' => 'wms-stock-card.index', 'icon' => 'history', 'label' => 'Kartu Stock'],
+                ['route' => 'wms-staging-recap.index', 'icon' => 'inventory', 'label' => 'Staging Recap'],
             ],
         ],
         [
@@ -76,7 +77,7 @@ return [
             'label' => 'Outbound',
             'items' => [
                 ['route' => 'wms-keluar.getTable', 'icon' => 'output', 'label' => 'Keluar'],
-                ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail'],
+                ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail', 'match' => ['wms-keluar-realisasi-scan.*']],
                 ['route' => 'wms-keluar-realisasi.getTable', 'icon' => 'task_alt', 'label' => 'Keluar Realisasi'],
             ],
         ],

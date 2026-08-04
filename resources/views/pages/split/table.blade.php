@@ -25,6 +25,7 @@
                 <th>Actions</th>
                 <th>Tanggal</th>
                 <th>Status</th>
+                <th>Produk Asal</th>
                 <th>Target Product</th>
                 <th>Waste Product</th>
                 <th>Qty Hasil</th>
@@ -35,12 +36,11 @@
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <td class="flex gap-1">
-                        <a href="{{ route('wms-split.produce') }}" class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-lg text-sm inline-flex items-center gap-1">
-                            <span class="material-symbols-outlined text-sm align-middle">play_arrow</span> Produce
+                    <x-table-action :model="$model" :id="$table->field_primary">
+                        <a href="{{ route('wms-split.produce') }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors" title="Produce">
+                            <span class="material-symbols-outlined text-lg">play_arrow</span>
                         </a>
-                        <x-table-action :model="$model" :id="$table->field_primary" />
-                    </td>
+                    </x-table-action>
                     <td>{{ $table->split_tanggal?->format('d M Y') ?? '-' }}</td>
                     <td>
                         @if ($table->split_status === 'Processed')
@@ -51,6 +51,7 @@
                             <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">{{ $table->split_status }}</span>
                         @endif
                     </td>
+                    <td>{{ $table->productSource->product_nama ?? '-' }}</td>
                     <td>{{ $table->productTarget->product_nama ?? '-' }}</td>
                     <td>{{ $table->productWaste->product_nama ?? '-' }}</td>
                     <td>{{ number_format($table->split_qty_hasil, 2) }}</td>
@@ -59,7 +60,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="text-center">No data available.</td>
+                    <td colspan="10" class="text-center">No data available.</td>
                 </tr>
                 @endforelse
             </x-slot:body>
@@ -71,6 +72,7 @@
                         <x-table-mobile-header title="{{ $table->productTarget->product_nama ?? 'Split' }}" />
                         <x-table-mobile-text :label="'Tanggal'" :text="$table->split_tanggal?->format('d M Y') ?? '-'" />
                         <x-table-mobile-text :label="'Status'" :text="$table->split_status" />
+                        <x-table-mobile-text :label="'Produk Asal'" :text="$table->productSource->product_nama ?? '-'" />
                         <x-table-mobile-text :label="'Qty Hasil'" :text="number_format($table->split_qty_hasil, 2)" />
                         <x-table-mobile-text :label="'Penyusutan'" :text="number_format($table->split_qty_penyusutan, 2)" />
                         <x-table-mobile-footer :label="$table->field_primary">

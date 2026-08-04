@@ -24,8 +24,9 @@
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
                 @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
+                <th>{{ formatLabel($column) }}</th>
                 @endforeach
+                <th>Status</th>
                 <th class="text-end">Qty</th>
             </x-slot:head>
             <x-slot:body>
@@ -36,6 +37,13 @@
                     @foreach ($model::$sortColumns as $column)
                     <td>{{ $table->$column }}</td>
                     @endforeach
+                    <td>
+                        @if ($table->product_status === 'active')
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">Active</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">Inactive</span>
+                        @endif
+                    </td>
                     <td class="text-end">{{ number_format($table->qty, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
@@ -47,6 +55,7 @@
                     <x-table-mobile-item :id="$table->field_primary">
                         <x-table-mobile-header title="{{ $table->product_nama }}" />
                         <x-table-mobile-text label="Harga" value="{{ number_format($table->product_harga, 2) }}" />
+                        <x-table-mobile-text label="Status" value="{{ $table->product_status ?? 'active' }}" />
                         <x-table-mobile-text label="Qty" value="{{ number_format($table->qty, 0, ',', '.') }}" />
                         <x-table-mobile-text label="Tanggal" value="{{ $table->tanggal ?? '-' }}" />
                         <x-table-mobile-footer :label="$table->field_primary">

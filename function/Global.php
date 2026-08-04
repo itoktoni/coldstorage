@@ -45,6 +45,28 @@ function formatAngka(int $value, $simbol = null)
     return $simbol.number_format($value, 0, ',', '.');
 }
 
+/**
+ * Format angka: 1.000 (tanpa desimal jika 0), 1,255 / 1,24 (hapus trailing zero).
+ * Tanda: titik ribuan, koma desimal.
+ */
+function formatQty($value): string
+{
+    $num = (float) $value;
+    $integer = (int) $num;
+    $decimal = $num - $integer;
+
+    if (abs($decimal) < 0.001) {
+        return number_format($integer, 0, ',', '.');
+    }
+
+    // 3 desimal, lalu hapus trailing zero
+    $formatted = number_format($num, 3, ',', '.');
+    $formatted = rtrim($formatted, '0');
+    $formatted = rtrim($formatted, ',');
+
+    return $formatted;
+}
+
 function formatLabel($value)
 {
     $label = Str::of($value);
@@ -118,6 +140,7 @@ function nominalQRIS($qris_data, $amount)
         if ($tag === '54') {
             // Skip field 54 (nominal lama)
             $i += $totalLen;
+
             continue;
         }
 
@@ -185,7 +208,7 @@ function showSql($query = null): string
         } elseif (is_numeric($binding)) {
             $value = (string) $binding;
         } else {
-            $value = "'" . addslashes($binding) . "'";
+            $value = "'".addslashes($binding)."'";
         }
 
         $sql = preg_replace('/\?/', $value, $sql, 1);
@@ -200,10 +223,10 @@ function ddSql($query = null): void
     $bindings = is_object($query) && method_exists($query, 'getBindings') ? $query->getBindings() : [];
 
     dump($sql);
-    if (!empty($bindings)) {
+    if (! empty($bindings)) {
         dump('Bindings:', $bindings);
     }
-    die;
+    exit;
 }
 
 function cleanText(?string $text): ?string
@@ -261,7 +284,7 @@ function renderFieldInput($fName, $fType, $fValue, $fieldName, $fLabel, $fieldDe
         $html = '<label class="relative inline-flex items-center cursor-pointer"><input type="hidden" name="'.$escaped.'" value="0"><input type="checkbox" name="'.$escaped.'" value="1" '.$checked.' class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"><span class="ml-2 text-sm text-gray-600">'.$escapedLabel.'</span></label>';
     } elseif ($fType === 'image') {
         $html = '<input type="text" name="'.$escaped.'" value="'.$escapedValue.'" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" placeholder="https://example.com/image.jpg" />';
-        if ($fValue && !is_array($fValue)) {
+        if ($fValue && ! is_array($fValue)) {
             $html .= '<img src="'.htmlspecialchars((string) $fValue, ENT_QUOTES, 'UTF-8').'" class="mt-2 h-16 w-24 object-cover rounded border" alt="Preview">';
         }
     } elseif ($fType === 'select') {
@@ -279,5 +302,6 @@ function renderFieldInput($fName, $fType, $fValue, $fieldName, $fLabel, $fieldDe
     } else {
         $html = '<input type="text" name="'.$escaped.'" value="'.$escapedValue.'" class="w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" />';
     }
+
     return $html;
 }

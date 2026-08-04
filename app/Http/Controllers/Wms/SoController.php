@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Wms;
 use App\Concerns\ControllerTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralRequest;
+use App\Models\Delivery;
+use App\Models\Invoice;
+use App\Models\InvoiceDetail;
 use App\Models\Keluar;
 use App\Models\KeluarDetail;
 use App\Models\KeluarRealisasi;
@@ -13,11 +16,13 @@ use App\Models\So;
 use App\Models\SoDetail;
 use App\Models\SoPrepare;
 use App\Models\SoPrepareDetail;
+use App\Models\Stock;
 use App\Models\StockAssignment;
 use App\Wms\SoStatusEnum;
-use App\Models\Stock;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SoController extends Controller
 {
@@ -46,12 +51,12 @@ class SoController extends Controller
         });
 
         return array_merge([
-            'model'           => $this->model,
-            'productOptions'  => Product::pluck('product_nama', 'product_id'),
-            'productPrices'   => Product::pluck('product_harga', 'product_id'),
+            'model' => $this->model,
+            'productOptions' => Product::pluck('product_nama', 'product_id'),
+            'productPrices' => Product::pluck('product_harga', 'product_id'),
             'customerOptions' => So::customerOptions(),
-            'statusOptions'   => So::statusOptions(),
-            'availableStock'  => $availableStock,
+            'statusOptions' => So::statusOptions(),
+            'availableStock' => $availableStock,
         ], $data);
     }
 
@@ -87,7 +92,7 @@ class SoController extends Controller
             });
 
             return $this->response($this->payload(TOAST_SUCCESS, $so));
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Throwable $th) {
             return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
@@ -110,7 +115,7 @@ class SoController extends Controller
             });
 
             return $this->response($this->payload(TOAST_SUCCESS, $so));
-        } catch (\Illuminate\Validation\ValidationException $e) {
+        } catch (ValidationException $e) {
             return back()->withErrors($e->errors())->withInput();
         } catch (\Throwable $th) {
             return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
@@ -148,10 +153,10 @@ class SoController extends Controller
             $productId = (int) $row['so_detail_id_product'];
             $qty = (int) $row['so_detail_qty'];
             $attrs = [
-                'so_detail_id_so'      => $so->so_id,
+                'so_detail_id_so' => $so->so_id,
                 'so_detail_id_product' => $productId,
-                'so_detail_qty'        => $qty,
-                'so_detail_harga'      => $prices[$productId] ?? 0,
+                'so_detail_qty' => $qty,
+                'so_detail_harga' => $prices[$productId] ?? 0,
             ];
 
             $id = $row['so_detail_id'] ?? null;
@@ -193,10 +198,10 @@ class SoController extends Controller
                 continue;
             }
             Stock::create([
-                'stock_id_product'  => (int) $productId,
-                'stock_qty'         => (float) $qty,
-                'stock_type'        => Stock::TYPE_RESERVE,
-                'stock_reff'        => $so->so_code,
+                'stock_id_product' => (int) $productId,
+                'stock_qty' => (float) $qty,
+                'stock_type' => Stock::TYPE_RESERVE,
+                'stock_reff' => $so->so_code,
                 'stock_code_lokasi' => null,
             ]);
         }
@@ -226,7 +231,7 @@ class SoController extends Controller
 
             if ($qty > $available) {
                 $name = Product::where('product_id', $productId)->value('product_nama') ?? $productId;
-                throw \Illuminate\Validation\ValidationException::withMessages([
+                throw ValidationException::withMessages([
                     'details' => "Stok product \"{$name}\" tidak mencukupi. Tersedia: {$available}, diminta: {$qty}.",
                 ]);
             }
@@ -260,52 +265,52 @@ class SoController extends Controller
             foreach ($so->details as $detail) {
                 $detailRows[] = [
                     'so_detail_id' => $detail->so_detail_id,
-                    'so_code'      => $so->so_code,
-                    'product_id'   => $detail->so_detail_id_product,
+                    'so_code' => $so->so_code,
+                    'product_id' => $detail->so_detail_id_product,
                     'product_nama' => $detail->product->product_nama ?? '-',
-                    'qty'          => $detail->so_detail_qty,
+                    'qty' => $detail->so_detail_qty,
                 ];
             }
         }
 
         return view('pages.so.prepare', [
-            'sos'        => $sos,
+            'sos' => $sos,
             'detailRows' => $detailRows,
-            'soIds'      => $soIds,
+            'soIds' => $soIds,
         ]);
     }
 
     public function postPrepare(GeneralRequest $request)
     {
         $data = $request->validate([
-            'details'                      => ['required', 'array', 'min:1'],
-            'details.*.so_detail_id'       => ['required', 'integer', 'exists:detail_so,so_detail_id'],
-            'details.*.product_id'         => ['required', 'integer', 'exists:product,product_id'],
-            'details.*.qty'                => ['required', 'numeric', 'min:1'],
-            'so_ids'                       => ['required', 'array', 'min:1'],
+            'details' => ['required', 'array', 'min:1'],
+            'details.*.so_detail_id' => ['required', 'integer', 'exists:detail_so,so_detail_id'],
+            'details.*.product_id' => ['required', 'integer', 'exists:product,product_id'],
+            'details.*.qty' => ['required', 'numeric', 'min:1'],
+            'so_ids' => ['required', 'array', 'min:1'],
         ]);
 
         try {
             $keluar = DB::transaction(function () use ($data) {
                 $totalQty = collect($data['details'])->sum('qty');
 
-                $keluar = \App\Models\Keluar::create([
-                    'out_tanggal'  => now()->toDateString(),
-                    'out_status'   => 'Pending',
-                    'out_reff'     => 'Prepare SO',
-                    'out_qty'      => $totalQty,
-                    'out_catatan'  => 'Digabung dari SO: '.implode(', ', $data['so_ids']),
+                $keluar = Keluar::create([
+                    'out_tanggal' => now()->toDateString(),
+                    'out_status' => 'Pending',
+                    'out_reff' => 'Prepare SO',
+                    'out_qty' => $totalQty,
+                    'out_catatan' => 'Digabung dari SO: '.implode(', ', $data['so_ids']),
                 ]);
 
                 $seq = 1;
                 foreach ($data['details'] as $row) {
-                    \App\Models\KeluarDetail::create([
-                        'out_detail_code_keluar'    => $keluar->out_code,
-                        'out_detail_id_product'     => $row['product_id'],
-                        'out_detail_id_so_detail'   => $row['so_detail_id'],
-                        'out_detail_code'           => sprintf('%s-%03d', $keluar->out_code, $seq),
-                        'out_detail_qty'            => $row['qty'],
-                        'out_detail_reff'           => SoDetail::find($row['so_detail_id'])?->so_detail_code,
+                    KeluarDetail::create([
+                        'out_detail_code_keluar' => $keluar->out_code,
+                        'out_detail_id_product' => $row['product_id'],
+                        'out_detail_id_so_detail' => $row['so_detail_id'],
+                        'out_detail_code' => sprintf('%s-%03d', $keluar->out_code, $seq),
+                        'out_detail_qty' => $row['qty'],
+                        'out_detail_reff' => SoDetail::find($row['so_detail_id'])?->so_detail_code,
                     ]);
                     $seq++;
                 }
@@ -318,9 +323,11 @@ class SoController extends Controller
             });
 
             flash()->success('Prepare SO berhasil. Keluar code: '.$keluar->out_code);
+
             return redirect()->route('wms-so.getTable');
         } catch (\Throwable $th) {
             flash()->error($th->getMessage());
+
             return back()->withInput();
         }
     }
@@ -330,8 +337,9 @@ class SoController extends Controller
         $so = So::with(['customer', 'details.product'])->findOrFail($soId);
 
         $keluarCode = $this->keluarCodeForSo($so);
-        if (!$keluarCode) {
+        if (! $keluarCode) {
             flash()->error('SO ini belum memiliki Keluar.');
+
             return redirect()->route('wms-so-prepare.index');
         }
 
@@ -350,15 +358,16 @@ class SoController extends Controller
                         ->whereIn('stock_assignment_status', ['Pending', 'Picked'])
                         ->sum('stock_assignment_qty');
                     $remaining = max(0, (float) $s->stock_qty - $assignedQty);
+
                     return [
-                        'stock_id'    => $s->stock_id,
-                        'stock_code'  => $s->stock_code,
+                        'stock_id' => $s->stock_id,
+                        'stock_code' => $s->stock_code,
                         'lokasi_code' => $s->stock_code_lokasi,
                         'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
                         'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                        'stock_qty'   => (float) $s->stock_qty,
-                        'remaining'   => $remaining,
-                        'expired'     => optional($s->stock_expired_date)->format('Y-m-d'),
+                        'stock_qty' => (float) $s->stock_qty,
+                        'remaining' => $remaining,
+                        'expired' => optional($s->stock_expired_date)->format('Y-m-d'),
                     ];
                 });
             });
@@ -367,35 +376,36 @@ class SoController extends Controller
             $assignments = $detail->assignments
                 ->map(fn ($a) => [
                     'assignment_id' => $a->stock_assignment_id,
-                    'stock_id'      => $a->stock_assignment_id_stock,
-                    'qty'           => $a->stock_assignment_qty,
+                    'stock_id' => $a->stock_assignment_id_stock,
+                    'qty' => $a->stock_assignment_qty,
                 ]);
+
             return [$detail->out_detail_id => $assignments];
         });
 
         return view('pages.so.assign', [
-            'so'                    => $so,
-            'keluar'                => $keluar,
-            'availableStock'        => $availableStock,
-            'existingAssignments'   => $existingAssignments,
+            'so' => $so,
+            'keluar' => $keluar,
+            'availableStock' => $availableStock,
+            'existingAssignments' => $existingAssignments,
         ]);
     }
 
     public function postAssign(Request $request, string $soId)
     {
         $data = $request->validate([
-            'assignments'                        => ['required', 'array', 'min:1'],
-            'assignments.*.keluar_detail_id'     => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
-            'assignments.*.stock_id'             => ['required', 'integer', 'exists:stock,stock_id'],
-            'assignments.*.qty'                  => ['required', 'numeric', 'min:0.001'],
-            'assignments.*.so_detail_id'         => ['required', 'integer', 'exists:detail_so,so_detail_id'],
+            'assignments' => ['required', 'array', 'min:1'],
+            'assignments.*.keluar_detail_id' => ['required', 'integer', 'exists:keluar_detail,out_detail_id'],
+            'assignments.*.stock_id' => ['required', 'integer', 'exists:stock,stock_id'],
+            'assignments.*.qty' => ['required', 'numeric', 'min:0.001'],
+            'assignments.*.so_detail_id' => ['required', 'integer', 'exists:detail_so,so_detail_id'],
         ]);
 
         try {
             DB::transaction(function () use ($data, $soId) {
                 $so = So::findOrFail($soId);
                 $keluarCode = $this->keluarCodeForSo($so);
-                if (!$keluarCode) {
+                if (! $keluarCode) {
                     throw new \Exception('SO ini belum memiliki Keluar.');
                 }
 
@@ -405,7 +415,7 @@ class SoController extends Controller
                     $stock = Stock::where('stock_id', $row['stock_id'])
                         ->where('stock_type', Stock::TYPE_IN)
                         ->first();
-                    if (!$stock) {
+                    if (! $stock) {
                         throw new \Exception("Stock ID {$row['stock_id']} tidak tersedia.");
                     }
 
@@ -426,12 +436,12 @@ class SoController extends Controller
                     }
 
                     StockAssignment::create([
-                        'stock_assignment_id_keluar'         => $keluarCode,
-                        'stock_assignment_id_stock'          => $row['stock_id'],
-                        'stock_assignment_id_keluar_detail'  => $row['keluar_detail_id'],
-                        'stock_assignment_id_so_detail'      => $row['so_detail_id'],
-                        'stock_assignment_qty'               => $row['qty'],
-                        'stock_assignment_status'            => 'Pending',
+                        'stock_assignment_id_keluar' => $keluarCode,
+                        'stock_assignment_id_stock' => $row['stock_id'],
+                        'stock_assignment_id_keluar_detail' => $row['keluar_detail_id'],
+                        'stock_assignment_id_so_detail' => $row['so_detail_id'],
+                        'stock_assignment_qty' => $row['qty'],
+                        'stock_assignment_status' => 'Pending',
                     ]);
                 }
 
@@ -439,9 +449,11 @@ class SoController extends Controller
             });
 
             flash()->success('Stock assignment berhasil disimpan.');
+
             return redirect()->route('wms-so-prepare.assign', ['soId' => $soId]);
         } catch (\Throwable $th) {
             flash()->error($th->getMessage());
+
             return back()->withInput();
         }
     }
@@ -451,6 +463,248 @@ class SoController extends Controller
         $so = $this->model->with(['details.product', 'customer'])->findOrFail($id);
 
         return view('pages.so.cetak', ['so' => $so]);
+    }
+
+    /**
+     * Cetak Invoice (real qty dari prepare).
+     */
+    public function cetakInvoice(string $id)
+    {
+        $invoice = Invoice::with(['so', 'customer', 'details.product'])
+            ->where('invoice_id_so', $id)
+            ->first();
+
+        if (! $invoice) {
+            flash()->error('Invoice belum dibuat untuk SO ini. Silakan kirim SO terlebih dahulu.');
+
+            return redirect()->route('wms-so.getTable');
+        }
+
+        return view('pages.so.cetak-invoice', ['invoice' => $invoice]);
+    }
+
+    /**
+     * Cetak Performance Invoice (perbandingan SO vs real qty).
+     */
+    public function cetakPerformance(string $id)
+    {
+        $so = So::with(['customer', 'prepare.details.product'])->findOrFail($id);
+
+        $prepare = $so->prepare;
+        if (! $prepare) {
+            flash()->error('SO ini belum memiliki data prepare.');
+
+            return back();
+        }
+
+        // Build performance data: order qty vs real qty per product
+        $orderQtys = $so->details->pluck('so_detail_qty', 'so_detail_id_product');
+        $realQtys = $prepare->details()
+            ->selectRaw('so_prepare_detail_id_product, SUM(so_prepare_detail_qty) as total')
+            ->groupBy('so_prepare_detail_id_product')
+            ->pluck('total', 'so_detail_id_product');
+
+        $performance = $so->details->map(function ($detail) use ($realQtys) {
+            $productId = $detail->so_detail_id_product;
+
+            return [
+                'product_kode' => $detail->product->product_kode ?? '-',
+                'product_nama' => $detail->product->product_nama ?? '-',
+                'order_qty' => (float) $detail->so_detail_qty,
+                'real_qty' => (float) ($realQtys->get($productId) ?? 0),
+            ];
+        });
+
+        return view('pages.so.cetak-performance', [
+            'so' => $so,
+            'performance' => $performance,
+        ]);
+    }
+
+    /**
+     * Cetak Delivery Order.
+     */
+    public function cetakDelivery(string $id)
+    {
+        $delivery = Delivery::with(['so.customer', 'invoice'])
+            ->where('delivery_id_so', $id)
+            ->first();
+
+        if (! $delivery) {
+            flash()->error('Delivery Order belum dibuat untuk SO ini. Silakan kirim SO terlebih dahulu.');
+
+            return redirect()->route('wms-so.getTable');
+        }
+
+        // Get real qty from prepare details
+        $prepare = $delivery->so->prepare;
+        $realQtys = $prepare
+            ? $prepare->details()
+                ->selectRaw('so_prepare_detail_id_product, SUM(so_prepare_detail_qty) as total')
+                ->groupBy('so_prepare_detail_id_product')
+                ->pluck('total', 'so_prepare_detail_id_product')
+            : collect();
+
+        $details = $delivery->so->details->map(function ($d) use ($realQtys) {
+            return [
+                'product_kode' => $d->product->product_kode ?? '-',
+                'product_nama' => $d->product->product_nama ?? '-',
+                'real_qty' => (float) ($realQtys->get($d->so_detail_id_product) ?? 0),
+            ];
+        });
+
+        return view('pages.so.cetak-delivery', [
+            'delivery' => $delivery,
+            'details' => $details,
+        ]);
+    }
+
+    /**
+     * Ship SO: show form with delivery details.
+     */
+    public function ship(string $id)
+    {
+        $so = So::with(['customer', 'prepare.details.product'])->findOrFail($id);
+
+        if ($so->so_status !== SoStatusEnum::CONFIRMED) {
+            flash()->error('SO ini belum berstatus Confirmed.');
+
+            return back();
+        }
+
+        $prepare = $so->prepare;
+        if (! $prepare) {
+            flash()->error('SO ini belum memiliki data prepare.');
+
+            return back();
+        }
+
+        // Build real qty data per product
+        $realQtys = $prepare->details()
+            ->selectRaw('so_prepare_detail_id_product, SUM(so_prepare_detail_qty) as total')
+            ->groupBy('so_prepare_detail_id_product')
+            ->pluck('total', 'so_prepare_detail_id_product');
+
+        $details = $so->details->map(function ($d) use ($realQtys) {
+            return [
+                'product_nama' => $d->product->product_nama ?? '-',
+                'order_qty' => (float) $d->so_detail_qty,
+                'real_qty' => (float) ($realQtys->get($d->so_detail_id_product) ?? 0),
+                'harga' => (float) $d->so_detail_harga,
+            ];
+        });
+
+        return view('pages.so.form-ship', [
+            'so' => $so,
+            'details' => $details,
+        ]);
+    }
+
+    /**
+     * Store ship: create invoice + delivery order.
+     */
+    public function storeShip(GeneralRequest $request, string $id)
+    {
+        $data = $request->validate([
+            'delivery_nama_penerima' => ['nullable', 'string', 'max:255'],
+            'delivery_alamat_tujuan' => ['nullable', 'string'],
+            'delivery_nama_driver' => ['nullable', 'string', 'max:255'],
+            'delivery_plat_kendaraan' => ['nullable', 'string', 'max:50'],
+            'delivery_nama_kurir' => ['nullable', 'string', 'max:255'],
+            'delivery_catatan' => ['nullable', 'string'],
+        ]);
+
+        $so = So::with(['customer', 'prepare.details.product'])->findOrFail($id);
+
+        if ($so->so_status !== SoStatusEnum::CONFIRMED) {
+            flash()->error('SO ini belum berstatus Confirmed.');
+
+            return back();
+        }
+
+        $prepare = $so->prepare;
+        if (! $prepare) {
+            flash()->error('SO ini belum memiliki data prepare.');
+
+            return back();
+        }
+
+        // Check if invoice already exists
+        $existingInvoice = Invoice::where('invoice_id_so', $so->so_id)->first();
+        if ($existingInvoice) {
+            flash()->error('Invoice sudah dibuat untuk SO ini.');
+
+            return back();
+        }
+
+        try {
+            DB::transaction(function () use ($so, $prepare, $data) {
+                // 1. Create Invoice from real qty
+                $productQtys = $prepare->details()
+                    ->selectRaw('so_prepare_detail_id_product, SUM(so_prepare_detail_qty) as total_qty')
+                    ->groupBy('so_prepare_detail_id_product')
+                    ->pluck('total_qty', 'so_prepare_detail_id_product');
+
+                $subtotal = 0;
+                $detailRows = [];
+
+                foreach ($productQtys as $productId => $realQty) {
+                    $realQty = (float) $realQty;
+                    if ($realQty <= 0) {
+                        continue;
+                    }
+
+                    $soDetail = $so->details->firstWhere('so_detail_id_product', $productId);
+                    $harga = $soDetail ? (float) $soDetail->so_detail_harga : 0;
+                    $lineSubtotal = $realQty * $harga;
+                    $subtotal += $lineSubtotal;
+
+                    $detailRows[] = [
+                        'invoice_detail_id_product' => $productId,
+                        'invoice_detail_qty' => $realQty,
+                        'invoice_detail_harga' => $harga,
+                        'invoice_detail_subtotal' => $lineSubtotal,
+                    ];
+                }
+
+                $ppn = $subtotal * 0.11;
+                $total = $subtotal + $ppn;
+
+                $invoice = Invoice::create([
+                    'invoice_tanggal' => now()->toDateString(),
+                    'invoice_id_so' => $so->so_id,
+                    'invoice_id_customer' => $so->so_id_customer,
+                    'invoice_subtotal' => $subtotal,
+                    'invoice_ppn' => $ppn,
+                    'invoice_total' => $total,
+                    'invoice_status' => 'Unpaid',
+                ]);
+
+                foreach ($detailRows as $row) {
+                    $row['invoice_detail_id_invoice'] = $invoice->invoice_id;
+                    InvoiceDetail::create($row);
+                }
+
+                // 2. Create Delivery Order
+                Delivery::create(array_merge($data, [
+                    'delivery_tanggal' => now()->toDateString(),
+                    'delivery_id_so' => $so->so_id,
+                    'delivery_id_invoice' => $invoice->invoice_id,
+                    'delivery_status' => 'Pending',
+                ]));
+
+                // 3. Update SO status
+                $so->update(['so_status' => SoStatusEnum::SHIPPED]);
+            });
+
+            flash()->success('SO berhasil dikirim. Invoice & Delivery Order telah dibuat.');
+
+            return redirect()->route('wms-so.getTable');
+        } catch (\Throwable $th) {
+            flash()->error('Gagal mengirim SO: '.$th->getMessage());
+
+            return back();
+        }
     }
 
     /**
@@ -466,17 +720,17 @@ class SoController extends Controller
             ->map(function (So $so) {
                 $prepare = $so->prepare()->first();
 
-                $totalQty    = (float) $so->details->sum('so_detail_qty');
-                $pickedQty   = $this->stagedQtyForSo($so);
+                $totalQty = (float) $so->details->sum('so_detail_qty');
+                $pickedQty = $this->stagedQtyForSo($so);
                 $assignedQty = $prepare ? (float) $prepare->details->sum('so_prepare_detail_qty') : 0;
 
                 return [
-                    'so'            => $so,
-                    'prepare'       => $prepare,
-                    'total_qty'     => $totalQty,
-                    'picked_qty'    => $pickedQty,
-                    'assigned_qty'  => $assignedQty,
-                    'progress'      => $totalQty > 0 ? (int) min(100, round($assignedQty / $totalQty * 100)) : 0,
+                    'so' => $so,
+                    'prepare' => $prepare,
+                    'total_qty' => $totalQty,
+                    'picked_qty' => $pickedQty,
+                    'assigned_qty' => $assignedQty,
+                    'progress' => $totalQty > 0 ? (int) min(100, round($assignedQty / $totalQty * 100)) : 0,
                 ];
             });
 
@@ -484,8 +738,8 @@ class SoController extends Controller
     }
 
     /**
-     * Warehouse prepare per-SO: tampil detail item SO + barang staging hasil forklift.
-     * Petugas scan kode SO lalu scan kode barang staging untuk mengalokasikan qty.
+     * Warehouse prepare per-SO: tampil detail item SO + stock staging.
+     * Petugas scan stock_code dari barcode staging untuk mengalokasikan qty.
      */
     public function getPrepareSo(Request $request, string $soId)
     {
@@ -493,58 +747,31 @@ class SoController extends Controller
 
         if ($so->so_status !== SoStatusEnum::PREPARE) {
             flash()->error('SO ini tidak berstatus Prepare.');
+
             return redirect()->route('wms-so-prepare.index');
         }
 
-        $prepare = SoPrepare::firstOrCreate(
-            ['so_prepare_id_so' => $so->so_id],
-            ['so_prepare_id_keluar' => $this->keluarCodeForSo($so)]
-        );
-
-        $staged = $this->stagedRealisasi($so);
-        $assigned = $prepare->details()->with('realisasi.stock.lokasi.gudang')->get();
-
-        $assignedByRealisasi = $assigned->groupBy('so_prepare_detail_id_realisasi')
-            ->map(fn ($rows) => (float) $rows->sum('so_prepare_detail_qty'));
-
-        $stagedLines = $staged->map(function (KeluarRealisasi $r) use ($assignedByRealisasi) {
-            return [
-                'realisasi'      => $r,
-                'stock'          => $r->stock,
-                'lokasi_nama'    => $r->stock?->lokasi?->lokasi_nama ?? '-',
-                'gudang_nama'    => $r->stock?->lokasi?->gudang?->gudang_nama ?? '-',
-                'qty_picked'     => (float) $r->out_realisasi_qty,
-                'qty_assigned'   => (float) ($assignedByRealisasi->get($r->out_realisasi_id) ?? 0),
-                'qty_remaining'  => max(0, (float) $r->out_realisasi_qty - (float) ($assignedByRealisasi->get($r->out_realisasi_id) ?? 0)),
-            ];
-        })->values();
-
-        return view('pages.so.prepare-so', [
-            'so'           => $so,
-            'prepare'      => $prepare,
-            'staged_lines' => $stagedLines,
-            'lines'        => $this->prepareLineStatus($so, $prepare),
-        ]);
+        return view('pages.so.prepare-so', ['soId' => $soId]);
     }
 
     /**
-     * Alokasikan barang staging ke SO. Bisa via scan barcode (stock_code / out_realisasi_code)
-     * atau manual qty per baris staging.
+     * Alokasikan barang staging ke SO. Scan stock_code dari barcode staging.
      */
     public function postPrepareSo(GeneralRequest $request, string $soId)
     {
         $data = $request->validate([
             'stock_scan' => ['nullable', 'string'],
-            'assign'     => ['nullable', 'array'],
-            'assign.*'   => ['nullable', 'array'],
-            'assign.*.realisasi_id' => ['nullable', 'integer'],
-            'assign.*.qty'          => ['nullable', 'numeric', 'min:0'],
+            'assign' => ['nullable', 'array'],
+            'assign.*' => ['nullable', 'array'],
+            'assign.*.stock_id' => ['nullable', 'integer'],
+            'assign.*.qty' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $so = So::with('details')->findOrFail($soId);
 
         if ($so->so_status !== SoStatusEnum::PREPARE) {
             flash()->error('SO ini tidak berstatus Prepare.');
+
             return redirect()->route('wms-so-prepare.index');
         }
 
@@ -555,19 +782,19 @@ class SoController extends Controller
 
         try {
             DB::transaction(function () use ($so, $prepare, $data) {
-                if (!empty($data['stock_scan'])) {
+                if (! empty($data['stock_scan'])) {
                     $this->assignByScan($so, $prepare, trim($data['stock_scan']));
                 }
 
                 foreach ($data['assign'] ?? [] as $row) {
-                    if (empty($row['realisasi_id'])) {
+                    if (empty($row['stock_id'])) {
                         continue;
                     }
                     $qty = (float) ($row['qty'] ?? 0);
                     if ($qty <= 0) {
                         continue;
                     }
-                    $this->assignRealisasi($so, $prepare, (int) $row['realisasi_id'], $qty);
+                    $this->assignStock($so, $prepare, (int) $row['stock_id'], $qty);
                 }
 
                 if ($this->soLinesFulfilled($so, $prepare)) {
@@ -577,9 +804,11 @@ class SoController extends Controller
             });
 
             flash()->success('Alokasi prepare SO berhasil.');
+
             return redirect()->route('wms-so-prepare.show', ['soId' => $so->so_id]);
         } catch (\Throwable $th) {
             flash()->error($th->getMessage());
+
             return back()->withInput();
         }
     }
@@ -603,21 +832,43 @@ class SoController extends Controller
             ->all();
     }
 
-    private function stagedRealisasi(So $so): \Illuminate\Support\Collection
+    private function stagedStockForSo(So $so): Collection
     {
-        $codes = $this->keluarCodesForSo($so);
-        if (empty($codes)) {
-            return collect();
-        }
+        $productIds = $so->details->pluck('so_detail_id_product');
+        $prepare = SoPrepare::where('so_prepare_id_so', $so->so_id)->first();
 
-        return KeluarRealisasi::with(['stock.lokasi.gudang', 'detail'])
-            ->whereHas('detail', fn ($q) => $q->whereIn('out_detail_code_keluar', $codes))
+        $stocks = Stock::where('stock_type', Stock::TYPE_STAGING)
+            ->where('stock_qty', '>', 0)
+            ->whereIn('stock_id_product', $productIds)
+            ->with('lokasi.gudang')
             ->get();
+
+        $assignedByStock = $prepare
+            ? $prepare->details()
+                ->selectRaw('so_prepare_detail_id_stock, SUM(so_prepare_detail_qty) as total')
+                ->groupBy('so_prepare_detail_id_stock')
+                ->pluck('total', 'so_prepare_detail_id_stock')
+            : collect();
+
+        return $stocks->map(function ($stock) use ($assignedByStock) {
+            $assigned = (float) ($assignedByStock->get($stock->stock_id) ?? 0);
+
+            return [
+                'stock_id' => $stock->stock_id,
+                'stock_code' => $stock->stock_code,
+                'product' => $stock->product,
+                'lokasi_nama' => $stock->lokasi?->lokasi_nama ?? '-',
+                'gudang_nama' => $stock->lokasi?->gudang?->gudang_nama ?? '-',
+                'stock_qty' => (float) $stock->stock_qty,
+                'qty_assigned' => $assigned,
+                'qty_remaining' => max(0, (float) $stock->stock_qty - $assigned),
+            ];
+        });
     }
 
     private function stagedQtyForSo(So $so): float
     {
-        return (float) $this->stagedRealisasi($so)->sum('out_realisasi_qty');
+        return (float) $this->stagedStockForSo($so)->sum('stock_qty');
     }
 
     private function prepareLineStatus(So $so, SoPrepare $prepare): array
@@ -628,8 +879,8 @@ class SoController extends Controller
                 ->sum('so_prepare_detail_qty');
 
             return [
-                'detail'      => $d,
-                'qty_needed'  => (float) $d->so_detail_qty,
+                'detail' => $d,
+                'qty_needed' => (float) $d->so_detail_qty,
                 'qty_assigned' => $assigned,
                 'qty_remaining' => max(0, (float) $d->so_detail_qty - $assigned),
             ];
@@ -651,94 +902,122 @@ class SoController extends Controller
         return true;
     }
 
-    private function assignRealisasi(So $so, SoPrepare $prepare, int $realisasiId, float $qty): void
+    private function assignStock(So $so, SoPrepare $prepare, int $stockId, float $qty): void
     {
-        $realisasi = KeluarRealisasi::with(['stock', 'detail'])->findOrFail($realisasiId);
+        $stock = Stock::where('stock_id', $stockId)
+            ->where('stock_type', Stock::TYPE_STAGING)
+            ->first();
 
-        $codes = $this->keluarCodesForSo($so);
-        if (!in_array($realisasi->detail->out_detail_code_keluar, $codes, true)) {
-            throw new \RuntimeException('Barang staging bukan milik batch prepare SO ini.');
+        if (! $stock) {
+            throw new \RuntimeException('Stock tidak ditemukan di staging.');
         }
 
-        $productId = $realisasi->stock->stock_id_product;
-        $line = $so->details->firstWhere('so_detail_id_product', $productId);
-        if (!$line) {
-            throw new \RuntimeException('Product barang staging tidak ada di SO ini.');
+        $line = $so->details->firstWhere('so_detail_id_product', $stock->stock_id_product);
+        if (! $line) {
+            throw new \RuntimeException('Product tidak ada di SO ini.');
         }
 
         $assignedForLine = (float) $prepare->details()
-            ->where('so_prepare_detail_id_product', $productId)
+            ->where('so_prepare_detail_id_product', $stock->stock_id_product)
             ->sum('so_prepare_detail_qty');
         $lineRemaining = (float) $line->so_detail_qty - $assignedForLine;
 
-        if ($qty > $lineRemaining) {
-            throw new \RuntimeException('Qty melebihi sisa kebutuhan SO (sisa '.$lineRemaining.').');
+        if ($qty > $lineRemaining + 0.001) {
+            throw new \RuntimeException('Qty melebihi sisa kebutuhan SO. Sisa: '.$lineRemaining);
         }
 
-        $assignedForRealisasi = (float) $prepare->details()
-            ->where('so_prepare_detail_id_realisasi', $realisasiId)
+        $assignedForStock = (float) $prepare->details()
+            ->where('so_prepare_detail_id_stock', $stockId)
             ->sum('so_prepare_detail_qty');
-        $pickRemaining = (float) $realisasi->out_realisasi_qty - $assignedForRealisasi;
+        $stockRemaining = (float) $stock->stock_qty - $assignedForStock;
 
-        if ($qty > $pickRemaining) {
-            throw new \RuntimeException('Qty melebihi sisa barang staging (sisa '.$pickRemaining.').');
+        if ($qty > $stockRemaining + 0.001) {
+            throw new \RuntimeException('Qty melebihi sisa stock staging. Sisa: '.$stockRemaining);
         }
+
+        $keluarDetail = KeluarDetail::where('out_detail_code_keluar', $this->keluarCodeForSo($so))
+            ->where('out_detail_id_product', $stock->stock_id_product)
+            ->first();
+
+        if (! $keluarDetail) {
+            throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+        }
+
+        $realisasi = KeluarRealisasi::create([
+            'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+            'out_realisasi_id_stock' => $stock->stock_id,
+            'out_realisasi_qty' => $qty,
+        ]);
 
         SoPrepareDetail::create([
-            'so_prepare_detail_id_prepare'   => $prepare->so_prepare_id,
-            'so_prepare_detail_id_realisasi' => $realisasiId,
-            'so_prepare_detail_id_product'   => $productId,
-            'so_prepare_detail_qty'          => $qty,
+            'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
+            'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+            'so_prepare_detail_id_product' => $stock->stock_id_product,
+            'so_prepare_detail_id_stock' => $stock->stock_id,
+            'so_prepare_detail_qty' => $qty,
         ]);
+
+        Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
     }
 
     private function assignByScan(So $so, SoPrepare $prepare, string $scan): void
     {
-        $realisasi = KeluarRealisasi::with(['stock', 'detail'])
-            ->where('out_realisasi_code', $scan)
-            ->orWhereHas('stock', fn ($q) => $q->where('stock_code', $scan))
+        $stock = Stock::where('stock_code', $scan)
+            ->where('stock_type', Stock::TYPE_STAGING)
+            ->where('stock_qty', '>', 0)
             ->first();
 
-        if (!$realisasi) {
-            throw new \RuntimeException('Barcode tidak ditemukan di staging. Cek kode stock atau OUTR.');
+        if (! $stock) {
+            throw new \RuntimeException('Stock tidak ditemukan di staging.');
         }
 
-        $codes = $this->keluarCodesForSo($so);
-        if (!in_array($realisasi->detail->out_detail_code_keluar, $codes, true)) {
-            throw new \RuntimeException('Barang staging bukan milik batch prepare SO ini.');
-        }
-
-        $productId = $realisasi->stock->stock_id_product;
-        $line = $so->details->firstWhere('so_detail_id_product', $productId);
-        if (!$line) {
-            throw new \RuntimeException('Product barang staging tidak ada di SO ini.');
+        $line = $so->details->firstWhere('so_detail_id_product', $stock->stock_id_product);
+        if (! $line) {
+            throw new \RuntimeException('Product tidak ada di SO ini.');
         }
 
         $assignedForLine = (float) $prepare->details()
-            ->where('so_prepare_detail_id_product', $productId)
+            ->where('so_prepare_detail_id_product', $stock->stock_id_product)
             ->sum('so_prepare_detail_qty');
         $lineRemaining = (float) $line->so_detail_qty - $assignedForLine;
 
         if ($lineRemaining <= 0) {
-            throw new \RuntimeException('Qty SO untuk product ini sudah terpenuhi.');
+            throw new \RuntimeException('Kebutuhan SO untuk product ini sudah terpenuhi.');
         }
 
-        $assignedForRealisasi = (float) $prepare->details()
-            ->where('so_prepare_detail_id_realisasi', $realisasi->out_realisasi_id)
+        $assignedForStock = (float) $prepare->details()
+            ->where('so_prepare_detail_id_stock', $stock->stock_id)
             ->sum('so_prepare_detail_qty');
-        $pickRemaining = (float) $realisasi->out_realisasi_qty - $assignedForRealisasi;
+        $stockRemaining = (float) $stock->stock_qty - $assignedForStock;
 
-        $qty = min($lineRemaining, $pickRemaining);
-
-        if ($qty <= 0) {
-            throw new \RuntimeException('Barang staging ini sudah habis dialokasikan.');
+        if ($stockRemaining <= 0) {
+            throw new \RuntimeException('Stock ini sudah habis dialokasikan.');
         }
+
+        $qty = min($lineRemaining, $stockRemaining);
+
+        $keluarDetail = KeluarDetail::where('out_detail_code_keluar', $this->keluarCodeForSo($so))
+            ->where('out_detail_id_product', $stock->stock_id_product)
+            ->first();
+
+        if (! $keluarDetail) {
+            throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+        }
+
+        $realisasi = KeluarRealisasi::create([
+            'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+            'out_realisasi_id_stock' => $stock->stock_id,
+            'out_realisasi_qty' => $qty,
+        ]);
 
         SoPrepareDetail::create([
-            'so_prepare_detail_id_prepare'   => $prepare->so_prepare_id,
+            'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
             'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
-            'so_prepare_detail_id_product'   => $productId,
-            'so_prepare_detail_qty'          => $qty,
+            'so_prepare_detail_id_product' => $stock->stock_id_product,
+            'so_prepare_detail_id_stock' => $stock->stock_id,
+            'so_prepare_detail_qty' => $qty,
         ]);
+
+        Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
     }
 }

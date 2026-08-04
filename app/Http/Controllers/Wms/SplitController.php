@@ -19,12 +19,21 @@ class SplitController extends Controller
 
     public function getProduce()
     {
-        return view('livewire.split-produce');
+        return view('pages.split.produce');
     }
 
     public function getCreate()
     {
         return redirect()->route('wms-split.produce');
+    }
+
+    protected function getData()
+    {
+        return $this->model->addSelect([
+            'product_source_nama' => Product::select('product_nama')->whereColumn('product_id', 'split.split_id_product_source'),
+            'product_target_nama' => Product::select('product_nama')->whereColumn('product_id', 'split.split_id_product_target'),
+            'product_waste_nama'  => Product::select('product_nama')->whereColumn('product_id', 'split.split_id_product_waste'),
+        ])->filter()->sort();
     }
 
     protected function share($data = [])

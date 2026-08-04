@@ -5,13 +5,17 @@ namespace App\Models;
 class Split extends BaseModel
 {
     protected $table = 'split';
+
     protected $primaryKey = 'split_id';
+
     public $timestamps = true;
 
-    public static $filterColumns = ['split_id_product_target', 'split_id_product_waste', 'split_status', 'split_tanggal'];
-    public static $sortColumns   = ['split_tanggal', 'split_status', 'split_id'];
+    public static $filterColumns = ['split_id_product_source', 'split_id_product_target', 'split_id_product_waste', 'split_status', 'split_tanggal'];
+
+    public static $sortColumns = ['split_tanggal', 'split_status', 'split_id'];
 
     protected $fillable = [
+        'split_id_product_source',
         'split_id_product_target',
         'split_id_product_waste',
         'split_qty_hasil',
@@ -24,12 +28,17 @@ class Split extends BaseModel
     ];
 
     protected $casts = [
-        'split_qty_hasil'      => 'double',
-        'split_qty_waste'      => 'double',
+        'split_qty_hasil' => 'double',
+        'split_qty_waste' => 'double',
         'split_qty_penyusutan' => 'double',
-        'split_tanggal'        => 'date',
-        'split_created_at'     => 'datetime',
+        'split_tanggal' => 'date',
+        'split_created_at' => 'datetime',
     ];
+
+    public function productSource()
+    {
+        return $this->belongsTo(Product::class, 'split_id_product_source', 'product_id');
+    }
 
     public function productTarget()
     {
@@ -51,12 +60,13 @@ class Split extends BaseModel
         $id = $this->exists ? $this->split_id : null;
 
         return [
+            'split_id_product_source' => ['required', 'exists:product,product_id'],
             'split_id_product_target' => ['required', 'exists:product,product_id'],
-            'split_id_product_waste'  => ['nullable', 'exists:product,product_id'],
-            'split_qty_hasil'         => ['required', 'numeric', 'min:0'],
-            'split_qty_waste'         => ['required', 'numeric', 'min:0'],
-            'split_tanggal'           => ['required', 'date'],
-            'split_status'            => ['nullable', 'string', 'max:20'],
+            'split_id_product_waste' => ['nullable', 'exists:product,product_id'],
+            'split_qty_hasil' => ['required', 'numeric', 'min:0'],
+            'split_qty_waste' => ['required', 'numeric', 'min:0'],
+            'split_tanggal' => ['required', 'date'],
+            'split_status' => ['nullable', 'string', 'max:20'],
         ];
     }
 }

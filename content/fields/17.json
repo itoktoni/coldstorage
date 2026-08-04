@@ -1,0 +1,11 @@
+{
+    "id": 17,
+    "name": "page_builder",
+    "label": "Page Builder",
+    "type": "container",
+    "is_required": false,
+    "sort_order": 0,
+    "mode": "multiple",
+    "created_at": "2026-08-04T05:12:44.000000Z",
+    "updated_at": "2026-08-04T05:12:44.000000Z"
+}

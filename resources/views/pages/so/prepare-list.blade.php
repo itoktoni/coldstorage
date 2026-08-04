@@ -51,7 +51,7 @@
                             <td class="py-2 px-3 font-body-sm text-right text-on-surface-variant">{{ $row['picked_qty'] }}</td>
                             <td class="py-2 px-3 font-body-sm text-right text-primary">{{ $row['assigned_qty'] }}</td>
                             <td class="py-2 px-3 font-body-sm">
-                                <div class="w-32 h-2 bg-outline-variant/40 rounded-full overflow-hidden">
+                                <div class="w-32 h-2 bg-outline-variant/40 border border-outline-variant rounded-full overflow-hidden">
                                     <div class="h-full bg-primary" style="width: {{ $row['progress'] }}%"></div>
                                 </div>
                                 <div class="text-xs text-on-surface-variant mt-1">{{ $row['progress'] }}%</div>

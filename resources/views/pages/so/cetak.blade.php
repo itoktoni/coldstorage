@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sales Order - {{ $so->so_code }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 13px; color: #1a1a1a; }
@@ -13,17 +14,17 @@
         .company-info h1 { font-size: 20px; font-weight: 700; color: #0d47a1; }
         .company-info p { font-size: 11px; color: #555; line-height: 1.5; }
         .so-badge { text-align: right; }
-        .so-badge h2 { font-size: 16px; font-weight: 700; color: #2e7d32; border: 2px solid #2e7d32; padding: 4px 16px; display: inline-block; }
+        .so-badge h2 { font-size: 16px; font-weight: 700; color: #5a8a5c; border: 2px solid #5a8a5c; padding: 4px 16px; display: inline-block; }
         .so-badge p { font-size: 11px; color: #555; margin-top: 4px; }
 
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
-        .info-box { border: 1px solid #ddd; border-radius: 6px; padding: 12px 16px; background: #fafafa; }
+        .info-box { border: 1px solid #e8e8e8; border-radius: 6px; padding: 12px 16px; background: #fcfcfc; }
         .info-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 6px; font-weight: 600; }
         .info-box p { font-size: 13px; font-weight: 500; }
         .info-box .label { color: #888; font-size: 11px; font-weight: 400; }
 
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        thead th { background: #2e7d32; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+        thead th { background: #5a8a5c; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         thead th:nth-child(1) { width: 40px; text-align: center; }
         thead th:nth-child(4) { text-align: right; }
         thead th:nth-child(5) { text-align: right; }
@@ -35,9 +36,9 @@
         tbody td:nth-child(6) { text-align: right; font-weight: 600; }
         tbody tr:hover { background: #f5f5f5; }
         tfoot td { padding: 10px 12px; font-weight: 700; border-top: 2px solid #333; }
-        tfoot td:last-child { text-align: right; font-size: 15px; color: #2e7d32; }
+        tfoot td:last-child { text-align: right; font-size: 15px; color: #5a8a5c; }
 
-        .notes { margin-bottom: 30px; padding: 12px 16px; border: 1px dashed #ccc; border-radius: 6px; background: #fffde7; }
+        .notes { margin-bottom: 30px; padding: 12px 16px; border: 1px dashed #ddd; border-radius: 6px; background: #fefefe; }
         .notes h4 { font-size: 11px; text-transform: uppercase; color: #666; margin-bottom: 4px; }
         .notes p { font-size: 12px; color: #333; }
 
@@ -58,7 +59,7 @@
 </head>
 <body>
     <div class="no-print" style="text-align:center; padding:10px; background:#f0f0f0; margin-bottom:10px;">
-        <button onclick="window.print()" style="padding:8px 24px; font-size:14px; cursor:pointer; background:#2e7d32; color:white; border:none; border-radius:6px;">
+        <button onclick="window.print()" style="padding:8px 24px; font-size:14px; cursor:pointer; background:#5a8a5c; color:white; border:none; border-radius:6px;">
             🖨️ Cetak / Print
         </button>
         <button onclick="window.close()" style="padding:8px 24px; font-size:14px; cursor:pointer; background:#666; color:white; border:none; border-radius:6px; margin-left:8px;">

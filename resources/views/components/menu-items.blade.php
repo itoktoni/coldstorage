@@ -13,7 +13,10 @@
             $routeName = $item['route'];
             $url = route($routeName);
             $routePrefix = Str::beforeLast($routeName, '.');
-            $isActive = request()->routeIs($routeName) || request()->routeIs($routePrefix . '.*');
+            $matchRoutes = $item['match'] ?? [];
+            $isActive = request()->routeIs($routeName)
+                || request()->routeIs($routePrefix . '.*')
+                || collect($matchRoutes)->contains(fn ($m) => request()->routeIs($m));
         @endphp
         <a
             href="{{ $url }}"
