@@ -48,10 +48,12 @@ return new class extends Migration
         }
 
         // Drop + recreate gudang, lokasi, stock, masuk_realisasi with new schema
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Schema::dropIfExists('masuk_realisasi');
         Schema::dropIfExists('stock');
         Schema::dropIfExists('lokasi');
         Schema::dropIfExists('gudang');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         Schema::create('gudang', function (Blueprint $table) {
             $table->string('gudang_code', 50)->primary();
@@ -100,9 +102,11 @@ return new class extends Migration
 
     public function down(): void
     {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         Schema::dropIfExists('masuk_realisasi');
         Schema::dropIfExists('stock');
         Schema::dropIfExists('lokasi');
         Schema::dropIfExists('gudang');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 };
