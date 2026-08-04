@@ -23,22 +23,43 @@
             <x-slot:head>
                 <x-table-checkbox :model="$model" onchange="toggleAll(this)" />
                 <th>Actions</th>
-                @foreach ($model::$sortColumns as $column)
-                <x-table-sort field="{{ $column }}" label="{{ formatLabel($column) }}" :sortField="$sortField" :sortDir="$sortDir" />
-                @endforeach
+                <th>Tanggal</th>
+                <th>Status</th>
+                <th>Target Product</th>
+                <th>Waste Product</th>
+                <th>Qty Hasil</th>
+                <th>Qty Waste</th>
+                <th>Penyusutan</th>
             </x-slot:head>
             <x-slot:body>
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
-                    @foreach ($model::$sortColumns as $column)
-                    <td>{{ $table->$column }}</td>
-                    @endforeach
+                    <td class="flex gap-1">
+                        <a href="{{ route('wms-split.produce') }}" class="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded-lg text-sm inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm align-middle">play_arrow</span> Produce
+                        </a>
+                        <x-table-action :model="$model" :id="$table->field_primary" />
+                    </td>
+                    <td>{{ $table->split_tanggal?->format('d M Y') ?? '-' }}</td>
+                    <td>
+                        @if ($table->split_status === 'Processed')
+                            <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs">Processed</span>
+                        @elseif ($table->split_status === 'Draft')
+                            <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs">Draft</span>
+                        @else
+                            <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">{{ $table->split_status }}</span>
+                        @endif
+                    </td>
+                    <td>{{ $table->productTarget->product_nama ?? '-' }}</td>
+                    <td>{{ $table->productWaste->product_nama ?? '-' }}</td>
+                    <td>{{ number_format($table->split_qty_hasil, 2) }}</td>
+                    <td>{{ number_format($table->split_qty_waste, 2) }}</td>
+                    <td>{{ number_format($table->split_qty_penyusutan, 2) }}</td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="{{ count($model::$sortColumns) + 2 }}" class="text-center">No data available.</td>
+                    <td colspan="9" class="text-center">No data available.</td>
                 </tr>
                 @endforelse
             </x-slot:body>
@@ -47,10 +68,11 @@
                 <x-table-mobile-list>
                     @forelse ($data as $table)
                     <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->{head($model::$sortColumns)} }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
-                        @endforeach
+                        <x-table-mobile-header title="{{ $table->productTarget->product_nama ?? 'Split' }}" />
+                        <x-table-mobile-text :label="'Tanggal'" :text="$table->split_tanggal?->format('d M Y') ?? '-'" />
+                        <x-table-mobile-text :label="'Status'" :text="$table->split_status" />
+                        <x-table-mobile-text :label="'Qty Hasil'" :text="number_format($table->split_qty_hasil, 2)" />
+                        <x-table-mobile-text :label="'Penyusutan'" :text="number_format($table->split_qty_penyusutan, 2)" />
                         <x-table-mobile-footer :label="$table->field_primary">
                             <x-table-action :model="$model" :id="$table->field_primary" />
                         </x-table-mobile-footer>
