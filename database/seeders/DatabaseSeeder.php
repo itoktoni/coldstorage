@@ -13,10 +13,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(UserSeeder::class);
-        // $this->call(CmsSeeder::class);
-        // $this->call(ContainerFieldSeeder::class);
-        // $this->call(MenuSeeder::class);
-        // $this->call(\Database\Seeders\Tables\MenusSeeder::class);
         $this->call(WmsSeeder::class);
+        $this->call(KendaraanSeeder::class);
+        $this->call(SupirSeeder::class);
     }
 }

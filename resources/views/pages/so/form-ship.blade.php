@@ -81,11 +81,7 @@
                 </h3>
 
                 <div class="grid grid-cols-12 gap-5">
-                    <div class="col-span-12 md:col-span-6">
-                        <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Nama Penerima</label>
-                        <input type="text" name="delivery_nama_penerima" value="{{ old('delivery_nama_pembali', $so->customer->customer_nama) }}"
-                               class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
-                    </div>
+
                     <div class="col-span-12 md:col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Kendaraan</label>
                         <select id="select-kendaraan" name="delivery_id_kendaraan"
@@ -122,7 +118,12 @@
                         <input type="text" id="input-kurir" name="delivery_nama_kurir" value="{{ old('delivery_nama_kurir') }}"
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                     </div>
-                    <div class="col-span-12">
+                     <div class="col-span-6 md:col-span-6">
+                        <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Nama Penerima</label>
+                        <input type="text" name="delivery_nama_penerima" value="{{ old('delivery_nama_pembali', $so->customer->customer_nama) }}"
+                               class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+                    </div>
+                    <div class="col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Alamat Tujuan</label>
                         <textarea name="delivery_alamat_tujuan" rows="3"
                                   class="w-full px-3 py-2 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none">{{ old('delivery_alamat_tujuan', $so->customer->customer_alamat) }}</textarea>

@@ -21,6 +21,7 @@ class WmsSeeder extends Seeder
             'detail_po', 'po', 'supplier',
             'stock', 'lokasi', 'gudang', 'product',
             'so_prepare_detail', 'so_prepare', 'stock_assignment', 'stock_log', 'forklift_task',
+            'invoice_detail', 'invoice',
         ] as $table) {
             DB::table($table)->truncate();
         }
