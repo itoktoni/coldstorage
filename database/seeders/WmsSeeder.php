@@ -88,6 +88,12 @@ class WmsSeeder extends Seeder
             ['product_code' => 'PROD-26', 'product_nama' => 'Tetelan Sapi (kg)', 'product_harga' => 75000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
+        // ========== CUSTOMER & SO ==========
+        DB::table('customer')->insert([
+            ['customer_id' => 1, 'customer_nama' => 'Hotel Bintang 5', 'customer_alamat' => 'Jl. Sudirman No.1'],
+            ['customer_id' => 2, 'customer_nama' => 'Restoran Seafood', 'customer_alamat' => 'Jl. Thamrin No.2'],
+        ]);
+
         // ========== SUPPLIER ==========
         DB::table('supplier')->insert([
             ['supplier_id' => 1, 'supplier_nama' => 'PT Daging Segar Indonesia'],
@@ -196,11 +202,6 @@ class WmsSeeder extends Seeder
         //     ['out_detail_code_keluar' => 'OUT-20260706-0001', 'out_detail_id_product' => 9, 'out_detail_code' => 'OUTD-002', 'out_detail_qty' => 30, 'created_at' => $now, 'updated_at' => $now],
         // ]);
 
-        // // ========== CUSTOMER & SO ==========
-        // DB::table('customer')->insert([
-        //     ['customer_id' => 1, 'customer_nama' => 'Hotel Bintang 5', 'customer_alamat' => 'Jl. Sudirman No.1'],
-        //     ['customer_id' => 2, 'customer_nama' => 'Restoran Seafood', 'customer_alamat' => 'Jl. Thamrin No.2'],
-        // ]);
 
         // DB::table('so')->insert([
         //     ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
