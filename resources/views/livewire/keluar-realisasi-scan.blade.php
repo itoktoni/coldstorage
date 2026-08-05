@@ -103,6 +103,63 @@
         @endif
     </div>
 
+    {{-- Pallet Terkait --}}
+    @if($pallets && $pallets->isNotEmpty())
+    <div class="bg-surface-container-lowest mt-4 md:mt-5 border border-outline-variant rounded-xl p-4 md:p-6 form-card">
+        <h3 class="font-headline-md text-headline-md text-on-surface pb-3 md:pb-4 mb-3 md:mb-4 border-b border-outline-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">pallet</span>
+            Pallet Terkait ({{ $pallets->count() }})
+        </h3>
+        <div class="md:hidden space-y-2">
+            @foreach($pallets as $pallet)
+            <div class="border border-outline-variant/50 rounded-lg p-3 {{ $pallet['is_staging'] ? 'bg-success/5 border-success/20' : '' }}">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-mono text-xs font-semibold text-primary">{{ $pallet['pallet_code'] }}</span>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium {{ $pallet['task_status'] === 'Done' ? 'bg-success/10 text-success' : ($pallet['task_status'] === 'Progress' ? 'bg-warning/10 text-warning' : 'bg-gray-100 text-gray-600') }}">
+                        {{ $pallet['task_status'] === 'Done' ? 'Di Staging' : ($pallet['task_status'] === 'Progress' ? 'Dipindah' : 'Belum') }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between text-xs text-on-surface-variant">
+                    <span>{{ $pallet['lokasi'] }} {{ $pallet['is_staging'] ? '✓' : '' }}</span>
+                    <span>{{ formatQty($pallet['picked_qty']) }} / {{ formatQty($pallet['total_qty']) }} kg</span>
+                </div>
+                @if($pallet['total_qty'] > 0)
+                <div class="mt-1.5 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+                    <div class="h-full bg-primary rounded-full transition-all" style="width: {{ min(100, ($pallet['picked_qty'] / max($pallet['total_qty'], 1)) * 100) }}%"></div>
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+        <div class="hidden md:block overflow-x-auto">
+            <table class="w-full text-sm text-left">
+                <thead><tr class="border-b border-outline-variant">
+                    <th class="py-2 px-3 text-on-surface-variant">Pallet</th><th class="py-2 px-3 text-on-surface-variant">Lokasi</th><th class="py-2 px-3 text-on-surface-variant">Status</th><th class="py-2 px-3 text-on-surface-variant text-right">Total</th><th class="py-2 px-3 text-on-surface-variant text-right">Terambil</th><th class="py-2 px-3 text-on-surface-variant">Progress</th>
+                </tr></thead>
+                <tbody>
+                    @foreach($pallets as $pallet)
+                    <tr class="border-b border-outline-variant/50 {{ $pallet['is_staging'] ? 'bg-success/5' : '' }}">
+                        <td class="py-2 px-3 font-mono text-xs font-semibold">{{ $pallet['pallet_code'] }}</td>
+                        <td class="py-2 px-3">@if($pallet['is_staging'])<span class="inline-flex items-center gap-1 text-success font-semibold text-xs"><span class="material-symbols-outlined text-sm">check_circle</span> {{ $pallet['lokasi'] }} (staging)</span>@else<span class="text-xs">{{ $pallet['lokasi'] }}</span>@endif</td>
+                        <td class="py-2 px-3"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium {{ $pallet['task_status'] === 'Done' ? 'bg-success/10 text-success' : ($pallet['task_status'] === 'Progress' ? 'bg-warning/10 text-warning' : 'bg-gray-100 text-gray-600') }}">{{ $pallet['task_status'] }}</span></td>
+                        <td class="py-2 px-3 text-right font-semibold">{{ formatQty($pallet['total_qty']) }}</td>
+                        <td class="py-2 px-3 text-right text-primary">{{ formatQty($pallet['picked_qty']) }}</td>
+                        <td class="py-2 px-3">
+                            @if($pallet['total_qty'] > 0)
+                            <div class="flex items-center gap-2">
+                                <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full {{ $pallet['picked_qty'] >= $pallet['total_qty'] ? 'bg-success' : 'bg-primary' }} rounded-full transition-all" style="width: {{ min(100, ($pallet['picked_qty'] / $pallet['total_qty']) * 100) }}%"></div></div>
+                                <span class="text-[10px] text-on-surface-variant whitespace-nowrap">{{ number_format(($pallet['picked_qty'] / max($pallet['total_qty'], 1)) * 100, 0) }}%</span>
+                            </div>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     {{-- Realisasi History --}}
     <div class="bg-surface-container-lowest mt-4 md:mt-5 border border-outline-variant rounded-xl p-4 md:p-6 form-card">
         <h3 class="font-headline-md text-headline-md text-on-surface pb-3 md:pb-4 mb-3 md:mb-4 border-b border-outline-variant flex items-center gap-2">

@@ -193,11 +193,25 @@ class SoController extends Controller
         $grouped = collect($details)->groupBy('so_detail_id_product')
             ->map(fn ($rows) => $rows->sum('so_detail_qty'));
 
+        $productCodes = Product::whereIn('product_id', $grouped->keys())
+            ->pluck('product_code', 'product_id');
+
+        $timestamp = now()->format('YmdHis');
+
         foreach ($grouped as $productId => $qty) {
             if ($qty <= 0) {
                 continue;
             }
+            $productCode = $productCodes[$productId] ?? 'PROD-'.str_pad($productId, 2, '0', STR_PAD_LEFT);
+            $stockCode = implode('#', [
+                $productCode,
+                $timestamp.strtoupper(uniqid()),
+                (string) $qty,
+                'RESERVE',
+            ]);
+
             Stock::create([
+                'stock_code' => $stockCode,
                 'stock_id_product' => (int) $productId,
                 'stock_qty' => (float) $qty,
                 'stock_type' => Stock::TYPE_RESERVE,
@@ -939,19 +953,19 @@ class SoController extends Controller
             ->where('out_detail_id_product', $stock->stock_id_product)
             ->first();
 
-        if (! $keluarDetail) {
-            throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+        $realisasiId = null;
+        if ($keluarDetail) {
+            $realisasi = KeluarRealisasi::create([
+                'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+                'out_realisasi_id_stock' => $stock->stock_id,
+                'out_realisasi_qty' => $qty,
+            ]);
+            $realisasiId = $realisasi->out_realisasi_id;
         }
-
-        $realisasi = KeluarRealisasi::create([
-            'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
-            'out_realisasi_id_stock' => $stock->stock_id,
-            'out_realisasi_qty' => $qty,
-        ]);
 
         SoPrepareDetail::create([
             'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
-            'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+            'so_prepare_detail_id_realisasi' => $realisasiId,
             'so_prepare_detail_id_product' => $stock->stock_id_product,
             'so_prepare_detail_id_stock' => $stock->stock_id,
             'so_prepare_detail_qty' => $qty,
@@ -1000,19 +1014,19 @@ class SoController extends Controller
             ->where('out_detail_id_product', $stock->stock_id_product)
             ->first();
 
-        if (! $keluarDetail) {
-            throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+        $realisasiId = null;
+        if ($keluarDetail) {
+            $realisasi = KeluarRealisasi::create([
+                'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+                'out_realisasi_id_stock' => $stock->stock_id,
+                'out_realisasi_qty' => $qty,
+            ]);
+            $realisasiId = $realisasi->out_realisasi_id;
         }
-
-        $realisasi = KeluarRealisasi::create([
-            'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
-            'out_realisasi_id_stock' => $stock->stock_id,
-            'out_realisasi_qty' => $qty,
-        ]);
 
         SoPrepareDetail::create([
             'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
-            'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+            'so_prepare_detail_id_realisasi' => $realisasiId,
             'so_prepare_detail_id_product' => $stock->stock_id_product,
             'so_prepare_detail_id_stock' => $stock->stock_id,
             'so_prepare_detail_qty' => $qty,

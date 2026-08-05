@@ -2,10 +2,16 @@
 
 namespace App\Livewire;
 
+use App\Models\ForkliftTask;
 use App\Models\Keluar;
 use App\Models\KeluarDetail;
 use App\Models\KeluarRealisasi;
+use App\Models\Lokasi;
+use App\Models\SoPrepare;
+use App\Models\SoPrepareDetail;
 use App\Models\Stock;
+use App\Models\StockAssignment;
+use App\Wms\SoStatusEnum;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -31,6 +37,8 @@ class KeluarRealisasiScan extends Component
 
     public $successMsg = '';
 
+    public $pallets;
+
     public function mount($detailId)
     {
         $this->detailId = $detailId;
@@ -49,8 +57,9 @@ class KeluarRealisasiScan extends Component
                 $prefix = config('scan.prefix', ['pallet' => 'P', 'location' => 'L', 'barcode' => 'B']);
 
                 // 1. Detect mode and find stocks (dari STAGING)
-                if (str_starts_with($barcodeContent, $prefix['pallet'] ?? 'P')) {
-                    $code = substr($barcodeContent, strlen($prefix['pallet']));
+                // Pallet codes = PAL-xxx, barcodes = PROD-xxx#... (starts with P but NOT PAL)
+                if (str_starts_with($barcodeContent, 'PAL-') || str_starts_with($barcodeContent, ($prefix['pallet'] ?? 'P').'AL-')) {
+                    $code = $barcodeContent; // Use full code for pallet lookup
                     $stocks = Stock::where('stock_pallet_code', $code)
                         ->where('stock_type', Stock::TYPE_STAGING)
                         ->where('stock_qty', '>', 0)
@@ -107,10 +116,32 @@ class KeluarRealisasiScan extends Component
                     throw new \RuntimeException('Item ini sudah terpenuhi.');
                 }
 
-                // 4. Process pick per stock
+                // 4. Validate: stock harus dialokasikan untuk keluar ini
+                $outCode = $detail->out_detail_code_keluar;
+                $assignedStockIds = StockAssignment::where('stock_assignment_id_keluar', $outCode)
+                    ->pluck('stock_assignment_id_stock')
+                    ->all();
+
+                $unallocated = $stocks->filter(fn ($s) => ! in_array($s->stock_id, $assignedStockIds));
+                if ($unallocated->isNotEmpty()) {
+                    $codes = $unallocated->pluck('stock_code')->implode(', ');
+                    throw new \RuntimeException("Stock {$codes} belum dialokasikan untuk keluar ini. Scan hanya boleh dari pallet yang sudah di-prepare.");
+                }
+
+                // 5. Process pick per stock
                 $pickedItems = [];
                 $left = $remaining;
                 $expiredDates = [];
+
+                // Ensure SoPrepare exists for this SO (needed by cetakDelivery / cetakInvoice / ship)
+                $so = $detail->soDetail?->so;
+                $prepare = null;
+                if ($so) {
+                    $prepare = SoPrepare::firstOrCreate(
+                        ['so_prepare_id_so' => $so->so_id],
+                        ['so_prepare_id_keluar' => $detail->out_detail_code_keluar]
+                    );
+                }
 
                 foreach ($stocks as $stock) {
                     if ($left <= 0) {
@@ -124,11 +155,22 @@ class KeluarRealisasiScan extends Component
                         $expiredDates[] = $stock->stock_expired_date;
                     }
 
-                    KeluarRealisasi::create([
+                    $realisasi = KeluarRealisasi::create([
                         'out_realisasi_id_detail' => $detail->out_detail_id,
                         'out_realisasi_id_stock' => $stock->stock_id,
                         'out_realisasi_qty' => $take,
                     ]);
+
+                    // Create so_prepare_detail so cetakDelivery / cetakInvoice / ship have real qty
+                    if ($prepare) {
+                        SoPrepareDetail::create([
+                            'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
+                            'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+                            'so_prepare_detail_id_product' => $stock->stock_id_product,
+                            'so_prepare_detail_id_stock' => $stock->stock_id,
+                            'so_prepare_detail_qty' => $take,
+                        ]);
+                    }
 
                     $pickedItems[] = [
                         'stock_code' => $stock->stock_code,
@@ -168,6 +210,9 @@ class KeluarRealisasiScan extends Component
                     if ($totalPicked + 1e-9 >= $totalQty) {
                         $keluar->update(['out_status' => Keluar::STATUS_DONE]);
                         $this->cleanupZeroStock($keluar);
+
+                        // Cek apakah semua keluar untuk SO ini sudah Done → SO Confirmed
+                        $this->checkSoConfirmation($detail);
                     } elseif ($totalPicked > 0) {
                         $keluar->update(['out_status' => 'In Progress']);
                     }
@@ -219,7 +264,8 @@ class KeluarRealisasiScan extends Component
                     }
                 }
 
-                // 4. Delete realisasi
+                // 4. Delete realisasi + linked so_prepare_detail
+                SoPrepareDetail::where('so_prepare_detail_id_realisasi', $realisasi->out_realisasi_id)->delete();
                 $realisasi->delete();
 
                 // 5. Recompute keluar status
@@ -237,6 +283,16 @@ class KeluarRealisasiScan extends Component
                         $keluar->update(['out_status' => Keluar::STATUS_PENDING]);
                     } elseif ($totalPicked + 1e-9 < $totalQty) {
                         $keluar->update(['out_status' => 'In Progress']);
+                    }
+
+                    // Jika SO sudah Confirmed, revert ke Prepare
+                    $so = $detail->soDetail?->so;
+                    if ($so && $so->so_status === SoStatusEnum::CONFIRMED) {
+                        $so->update(['so_status' => SoStatusEnum::PREPARE]);
+                        $prepare = SoPrepare::where('so_prepare_id_so', $so->so_id)->first();
+                        if ($prepare) {
+                            $prepare->update(['so_prepare_status' => SoPrepare::STATUS_PENDING]);
+                        }
                     }
                 }
             });
@@ -272,6 +328,35 @@ class KeluarRealisasiScan extends Component
         }
     }
 
+    /**
+     * Cek apakah semua keluar untuk SO ini sudah Done → SO Confirmed.
+     */
+    private function checkSoConfirmation(KeluarDetail $detail): void
+    {
+        $so = $detail->soDetail?->so;
+        if (! $so || $so->so_status === SoStatusEnum::CONFIRMED) {
+            return;
+        }
+
+        // Cek semua keluar yang terkait dengan SO ini
+        $keluarCodes = KeluarDetail::whereHas('soDetail', fn ($q) => $q->where('so_detail_id_so', $so->so_id))
+            ->pluck('out_detail_code_keluar')
+            ->unique();
+
+        $allDone = $keluarCodes->every(function ($code) {
+            return Keluar::where('out_code', $code)->value('out_status') === Keluar::STATUS_DONE;
+        });
+
+        if ($allDone && $keluarCodes->isNotEmpty()) {
+            $so->update(['so_status' => SoStatusEnum::CONFIRMED]);
+
+            $prepare = SoPrepare::where('so_prepare_id_so', $so->so_id)->first();
+            if ($prepare && $prepare->so_prepare_status !== SoPrepare::STATUS_DONE) {
+                $prepare->update(['so_prepare_status' => SoPrepare::STATUS_DONE]);
+            }
+        }
+    }
+
     private function refreshData(): void
     {
         $this->detail = KeluarDetail::with(['product', 'keluar', 'soDetail.so', 'realisasi.stock'])
@@ -287,6 +372,51 @@ class KeluarRealisasiScan extends Component
             ->with('stock')
             ->orderByDesc('out_realisasi_id')
             ->get();
+
+        // Load pallet assignments for this specific keluar detail
+        $outCode = $this->detail->out_detail_code_keluar;
+        $palletAssignments = StockAssignment::where('stock_assignment_id_keluar', $outCode)
+            ->where('stock_assignment_id_keluar_detail', $this->detailId)
+            ->with('stock')
+            ->get();
+
+        $tasks = ForkliftTask::where('forklift_reff', $outCode)
+            ->where('forklift_type', 'pick')
+            ->get()
+            ->keyBy('forklift_pallet_code');
+
+        $this->pallets = $palletAssignments
+            ->groupBy(fn ($a) => $a->stock?->stock_pallet_code ?? 'NOPALLET')
+            ->map(function ($assignments, $palletCode) use ($tasks) {
+                $firstStock = $assignments->first()->stock;
+                $rawTotal = (float) $assignments->sum('stock_assignment_qty');
+                $totalQty = min($rawTotal, $this->qtyNeeded);
+                $task = $tasks->get($palletCode);
+                $pickedQty = (float) $assignments->sum(function ($a) {
+                    return KeluarRealisasi::where('out_realisasi_id_detail', $a->stock_assignment_id_keluar_detail)
+                        ->where('out_realisasi_id_stock', $a->stock_assignment_id_stock)
+                        ->sum('out_realisasi_qty');
+                });
+
+                // Lokasi aktual dari task (jika Done) atau stock table
+                if ($task && $task->forklift_status === 'Done' && $task->forklift_lokasi_final) {
+                    $actualLocation = $task->forklift_lokasi_final;
+                } else {
+                    $actualLocation = Stock::where('stock_pallet_code', $palletCode)
+                        ->where('stock_qty', '>', 0)
+                        ->value('stock_code_lokasi');
+                }
+
+                return [
+                    'pallet_code' => $palletCode,
+                    'lokasi' => $actualLocation ?? ($firstStock?->stock_code_lokasi ?? '-'),
+                    'is_staging' => $actualLocation && Lokasi::find($actualLocation)?->lokasi_category === 'staging',
+                    'total_qty' => $totalQty,
+                    'picked_qty' => $pickedQty,
+                    'task_status' => $task?->forklift_status ?? '-',
+                ];
+            })
+            ->values();
     }
 
     public function render()

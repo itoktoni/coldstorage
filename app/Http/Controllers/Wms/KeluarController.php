@@ -10,6 +10,7 @@ use App\Models\KeluarDetail;
 use App\Models\Lokasi;
 use App\Models\Stock;
 use App\Models\StockAssignment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,13 +29,13 @@ class KeluarController extends Controller
     }
 
     /**
-     * Prepare dari keluar table — tampilkan detail keluar + alokasi stock.
+     * Prepare dari keluar table — rencana pindah pallet ke staging.
+     * FEFO: system rekomendasikan pallet expired paling cepat.
      */
     public function getPrepare(string $outCode)
     {
         $keluar = Keluar::with(['details.product', 'details.soDetail.so'])->where('out_code', $outCode)->firstOrFail();
 
-        // Build detail lines: qty needed vs assigned
         $lines = $keluar->details->map(function (KeluarDetail $detail) {
             $assigned = (float) StockAssignment::where('stock_assignment_id_keluar_detail', $detail->out_detail_id)
                 ->sum('stock_assignment_qty');
@@ -49,144 +50,159 @@ class KeluarController extends Controller
             ];
         });
 
-        // Available stock grouped by product (type=IN, qty>0)
-        $availableStock = Stock::where('stock_type', Stock::TYPE_IN)
+        // Group available stock by pallet_code — pilih pallet, bukan barcode
+        $pallets = Stock::where('stock_type', Stock::TYPE_IN)
             ->where('stock_qty', '>', 0)
+            ->with('product', 'lokasi.gudang')
             ->orderByRaw('CASE WHEN stock_expired_date IS NULL THEN 1 ELSE 0 END, stock_expired_date ASC')
-            ->with('lokasi.gudang')
             ->get()
-            ->groupBy('stock_id_product')
-            ->map(function ($stocks) {
-                return $stocks->map(function ($s) {
-                    $assignedQty = StockAssignment::where('stock_assignment_id_stock', $s->stock_id)
-                        ->whereIn('stock_assignment_status', ['Pending', 'Picked'])
-                        ->sum('stock_assignment_qty');
-                    $remaining = max(0, (float) $s->stock_qty - $assignedQty);
+            ->groupBy('stock_pallet_code')
+            ->map(function ($palletStocks) {
+                $first = $palletStocks->first();
+                $earliestExpiry = $palletStocks->pluck('stock_expired_date')->filter()->min();
 
-                    return [
-                        'stock_id' => $s->stock_id,
-                        'stock_code' => $s->stock_code,
-                        'lokasi_code' => $s->stock_code_lokasi,
-                        'lokasi_nama' => $s->lokasi?->lokasi_nama ?? '-',
-                        'gudang_nama' => $s->lokasi?->gudang?->gudang_nama ?? '-',
-                        'stock_qty' => (float) $s->stock_qty,
-                        'remaining' => $remaining,
-                        'expired' => optional($s->stock_expired_date)->format('Y-m-d'),
-                    ];
-                });
-            });
+                return [
+                    'pallet_code' => $first->stock_pallet_code ?? 'NOPALLET',
+                    'product_id' => $first->product->product_id,
+                    'product_nama' => $first->product->product_nama ?? '-',
+                    'total_qty' => (float) $palletStocks->sum('stock_qty'),
+                    'barcode_count' => $palletStocks->count(),
+                    'expired' => $earliestExpiry ? Carbon::parse($earliestExpiry)->format('Y-m-d') : null,
+                    'lokasi_nama' => $first->lokasi?->lokasi_nama ?? '-',
+                    'gudang_nama' => $first->lokasi?->gudang?->gudang_nama ?? '-',
+                    'barcodes' => $palletStocks->pluck('stock_code')->all(),
+                ];
+            })
+            ->values()
+            ->sortBy([
+                ['expired', 'asc'],
+                ['total_qty', 'asc'],
+            ])
+            ->values();
 
-        // Existing assignments grouped by keluar_detail_id
-        $existingAssignments = StockAssignment::where('stock_assignment_id_keluar', $outCode)
-            ->with('stock')
+        $recommended = $this->fefoRecommendation($lines, $pallets);
+
+        $existingTasks = ForkliftTask::where('forklift_reff', $outCode)
+            ->where('forklift_type', 'pick')
             ->get()
-            ->groupBy('stock_assignment_id_keluar_detail');
-
-        // Auto-allocate FEFO: suggest qty per (detail_id, stock_id) pair
-        $suggestions = collect();
-        foreach ($lines as $line) {
-            $need = $line['qty_remaining'];
-            $productId = $line['product']->product_id ?? null;
-            if ($need <= 0 || ! $productId) {
-                continue;
-            }
-
-            $stocks = $availableStock->get($productId, collect());
-            foreach ($stocks as $s) {
-                if ($need <= 0) {
-                    break;
+            ->map(function ($task) {
+                // Jika task Done, pakai lokasi_final (lokasi aktual setelah forklift memindah)
+                if ($task->forklift_status === 'Done' && $task->forklift_lokasi_final) {
+                    $actualLocation = $task->forklift_lokasi_final;
+                } else {
+                    // Sebelum done, ambil dari stock table
+                    $actualLocation = Stock::where('stock_pallet_code', $task->forklift_pallet_code)
+                        ->where('stock_qty', '>', 0)
+                        ->value('stock_code_lokasi') ?? $task->forklift_lokasi_asal;
                 }
-                $take = min($s['remaining'], $need);
-                $key = $line['detail']->out_detail_id.'_'.$s['stock_id'];
-                $suggestions->put($key, $take);
-                $need -= $take;
-            }
-        }
+
+                return [
+                    'task' => $task,
+                    'pallet_code' => $task->forklift_pallet_code,
+                    'dari' => $actualLocation,
+                    'status' => $task->forklift_status,
+                    'is_staging' => Lokasi::find($actualLocation)?->lokasi_category === 'staging',
+                ];
+            });
 
         return view('pages.keluar.prepare', [
             'keluar' => $keluar,
             'lines' => $lines,
-            'availableStock' => $availableStock,
-            'existingAssignments' => $existingAssignments,
-            'suggestions' => $suggestions,
+            'pallets' => $pallets,
+            'recommended' => $recommended,
+            'existingTasks' => $existingTasks,
         ]);
     }
 
+    private function fefoRecommendation($lines, $pallets): array
+    {
+        $needs = $lines->pluck('qty_remaining', 'detail.out_detail_id_product')->filter(fn ($v) => $v > 0)->all();
+        if (empty($needs)) {
+            return [];
+        }
+
+        $recommended = [];
+        $palletsByProduct = $pallets->groupBy('product_id');
+
+        foreach ($needs as $productId => $qtyNeeded) {
+            $remaining = $qtyNeeded;
+            foreach ($palletsByProduct->get($productId, collect()) as $pallet) {
+                if ($remaining <= 0) {
+                    break;
+                }
+                $recommended[] = $pallet['pallet_code'];
+                $remaining -= $pallet['total_qty'];
+            }
+        }
+
+        return $recommended;
+    }
+
     /**
-     * Simpan alokasi stock untuk keluar detail.
+     * Simpan rencana pemindahan pallet ke staging.
+     * Buat ForkliftTask per pallet yang dipilih.
      */
     public function postPrepare(Request $request, string $outCode)
     {
-        $keluar = Keluar::where('out_code', $outCode)->firstOrFail();
+        $keluar = Keluar::with('details')->where('out_code', $outCode)->firstOrFail();
 
         $data = $request->validate([
-            'assign' => ['nullable', 'array'],
-            'assign.*' => ['nullable', 'array'],
+            'pallets' => ['nullable', 'array'],
+            'pallets.*' => ['nullable', 'string'],
         ]);
 
         try {
-            DB::transaction(function () use ($outCode, $data) {
-                // Hapus assignment lama
+            DB::transaction(function () use ($outCode, $data, $keluar) {
+                ForkliftTask::where('forklift_reff', $outCode)->where('forklift_type', 'pick')->delete();
                 StockAssignment::where('stock_assignment_id_keluar', $outCode)->delete();
 
-                if (! empty($data['assign'])) {
-                    foreach ($data['assign'] as $detailId => $stocks) {
-                        foreach ($stocks as $key => $row) {
-                            if (! is_array($row)) {
-                                continue;
-                            }
-                            $stockId = $row['stock_id'] ?? $key;
-                            $keluarDetailId = $row['keluar_detail_id'] ?? $detailId;
-                            $qty = (float) ($row['qty'] ?? 0);
+                $selectedPallets = $data['pallets'] ?? [];
+                $stagingSuggest = Lokasi::where('lokasi_category', 'staging')->first()?->lokasi_code;
 
-                            if ($qty <= 0) {
-                                continue;
-                            }
+                foreach ($selectedPallets as $palletCode) {
+                    $palletStocks = Stock::where('stock_pallet_code', $palletCode)
+                        ->where('stock_type', Stock::TYPE_IN)
+                        ->where('stock_qty', '>', 0)
+                        ->get();
 
-                            $keluarDetail = KeluarDetail::findOrFail($keluarDetailId);
-                            $stock = Stock::where('stock_id', $stockId)->where('stock_type', Stock::TYPE_IN)->first();
-                            if (! $stock) {
-                                throw new \RuntimeException("Stock ID {$stockId} tidak tersedia.");
-                            }
+                    if ($palletStocks->isEmpty()) {
+                        continue;
+                    }
 
-                            StockAssignment::create([
-                                'stock_assignment_id_keluar' => $outCode,
-                                'stock_assignment_id_stock' => $stockId,
-                                'stock_assignment_id_keluar_detail' => $keluarDetailId,
-                                'stock_assignment_id_so_detail' => $keluarDetail->out_detail_id_so_detail,
-                                'stock_assignment_qty' => $qty,
-                                'stock_assignment_status' => 'Pending',
-                            ]);
+                    $firstStock = $palletStocks->first();
+
+                    ForkliftTask::firstOrCreate(
+                        ['forklift_type' => 'pick', 'forklift_pallet_code' => $palletCode, 'forklift_reff' => $outCode],
+                        [
+                            'forklift_type' => 'pick',
+                            'forklift_pallet_code' => $palletCode,
+                            'forklift_lokasi_asal' => $firstStock->stock_code_lokasi,
+                            'forklift_lokasi_tujuan' => $stagingSuggest,
+                            'forklift_reff' => $outCode,
+                            'forklift_status' => 'Pending',
+                        ]
+                    );
+
+                    foreach ($palletStocks as $stock) {
+                        $detail = $keluar->details->first(fn ($d) => $d->out_detail_id_product === $stock->stock_id_product);
+                        if (! $detail) {
+                            continue;
                         }
+
+                        StockAssignment::create([
+                            'stock_assignment_id_keluar' => $outCode,
+                            'stock_assignment_id_stock' => $stock->stock_id,
+                            'stock_assignment_id_keluar_detail' => $detail->out_detail_id,
+                            'stock_assignment_id_so_detail' => $detail->out_detail_id_so_detail,
+                            'stock_assignment_qty' => (float) $stock->stock_qty,
+                            'stock_assignment_status' => 'Pending',
+                        ]);
                     }
                 }
             });
 
-            flash()->success('Alokasi stock berhasil disimpan.');
-
-            // Auto-create pick tasks per pallet
-            $palletGroups = StockAssignment::where('stock_assignment_id_keluar', $outCode)
-                ->with('stock')
-                ->get()
-                ->groupBy(fn ($a) => $a->stock?->stock_pallet_code ?? 'NOPALLET');
-
-            foreach ($palletGroups as $palletCode => $assignments) {
-                $firstStock = $assignments->first()->stock;
-                $rackAsal = $firstStock?->stock_code_lokasi;
-                $stagingSuggest = Lokasi::where('lokasi_category', 'staging')->first()?->lokasi_code;
-
-                ForkliftTask::firstOrCreate(
-                    ['forklift_type' => 'pick', 'forklift_pallet_code' => $palletCode, 'forklift_reff' => $outCode],
-                    [
-                        'forklift_type' => 'pick',
-                        'forklift_pallet_code' => $palletCode,
-                        'forklift_lokasi_asal' => $rackAsal,
-                        'forklift_lokasi_tujuan' => $stagingSuggest,
-                        'forklift_reff' => $outCode,
-                        'forklift_status' => 'Pending',
-                    ]
-                );
-            }
+            $count = count($data['pallets'] ?? []);
+            flash()->success("Rencana pemindahan pallet berhasil. {$count} pallet akan dipindah ke staging.");
 
             return redirect()->route('wms-keluar-prepare.show', ['outCode' => $outCode]);
         } catch (\Throwable $th) {

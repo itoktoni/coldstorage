@@ -31,6 +31,10 @@ return Application::configure(basePath: dirname(__DIR__))
             // 'skip_verified' => SkipVerifiedCheck::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'wms/forklift/*',
+        ]);
+
         $middleware->append([
             HandleCors::class,
         ]);

@@ -36,7 +36,7 @@
     <div class="bg-surface-container-lowest mt-4 md:mt-5 border border-outline-variant rounded-xl p-4 md:p-6 form-card">
         <h3 class="font-headline-md text-headline-md text-on-surface pb-3 md:pb-4 mb-3 md:mb-4 border-b border-outline-variant flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-xl">qr_code_scanner</span>
-            Scan Barang Staging
+            Scan Barang (IN / Staging)
         </h3>
 
         <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-2 sm:gap-3">
@@ -45,7 +45,7 @@
                 <input type="text"
                        wire:model="barcodeInput"
                        x-on:keydown.enter.prevent="$wire.scan($el.value); $el.value = ''"
-                       placeholder="Scan barcode stock dari staging"
+                       placeholder="Scan barcode stock IN / staging"
                        class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                        autofocus />
             </div>
@@ -56,7 +56,7 @@
                 Scan
             </button>
         </div>
-        <p class="text-xs text-on-surface-variant mt-2">Scan otomatis alokasikan sisa qty SO dari stock staging.</p>
+        <p class="text-xs text-on-surface-variant mt-2">Scan otomatis alokasikan sisa qty SO dari stock IN / staging.</p>
 
         {{-- Flash Messages --}}
         @if($errorMsg)
@@ -212,11 +212,11 @@
     <div class="bg-surface-container-lowest mt-4 md:mt-5 border border-outline-variant rounded-xl p-4 md:p-6 form-card">
         <h3 class="font-headline-md text-headline-md text-on-surface pb-3 md:pb-4 mb-3 md:mb-4 border-b border-outline-variant flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-xl">inventory_2</span>
-            Stock Tersedia di Staging
+            Stock Tersedia (IN / Staging)
         </h3>
 
         @if($stockRows->isEmpty())
-        <p class="text-on-surface-variant text-sm">Tidak ada stock di staging untuk product di SO ini.</p>
+        <p class="text-on-surface-variant text-sm">Tidak ada stock IN / staging untuk product di SO ini.</p>
         @else
 
         {{-- Mobile: card list --}}
@@ -282,13 +282,17 @@
                         <td class="py-2 px-3 font-body-sm text-right text-primary">{{ formatQty($sr['qty_assigned']) }}</td>
                         <td class="py-2 px-3 font-body-sm text-right {{ $sr['qty_remaining'] <= 0 ? 'text-success' : 'text-on-surface-variant' }}">{{ formatQty($sr['qty_remaining']) }}</td>
                         <td class="py-2 px-3 text-right">
-                            @if($sr['qty_remaining'] > 0)
+                            @if($sr['qty_remaining'] > 0 && $sr['so_need_remaining'] > 0)
                             <div class="inline-flex items-center gap-2 justify-end">
+                                @php
+                                    $maxAlloc = min($sr['qty_remaining'], $sr['so_need_remaining']);
+                                    $defaultValue = rtrim(rtrim(number_format($maxAlloc, 3, '.', ''), '0'), '.');
+                                @endphp
                                 <input type="number"
                                        wire:model="assignQtys.{{ $sr['stock_id'] }}"
-                                       value="{{ rtrim(rtrim(number_format($sr['qty_remaining'], 3, '.', ''), '0'), '.') }}"
+                                       value="{{ $defaultValue }}"
                                        min="0.001"
-                                       max="{{ $sr['qty_remaining'] }}"
+                                       max="{{ $maxAlloc }}"
                                        step="0.001"
                                        class="w-24 h-9 px-3 text-right bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                                 <button type="button"
@@ -299,7 +303,9 @@
                                 </button>
                             </div>
                             @else
-                            <span class="text-xs text-success font-semibold">Habis</span>
+                            <span class="text-xs {{ $sr['qty_remaining'] <= 0 ? 'text-success' : 'text-on-surface-variant' }} font-semibold">
+                                {{ $sr['qty_remaining'] <= 0 ? 'Habis' : 'SO Terpenuhi' }}
+                            </span>
                             @endif
                         </td>
                     </tr>

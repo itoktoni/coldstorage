@@ -68,8 +68,8 @@ class SoPrepareScan extends Component
                     throw new \RuntimeException('Stock tidak ditemukan.');
                 }
 
-                // 2. Check stock type - must be staging
-                if ($stock->stock_type !== Stock::TYPE_STAGING) {
+                // 2. Check stock type - must be IN or staging
+                if (! in_array($stock->stock_type, [Stock::TYPE_IN, Stock::TYPE_STAGING], true)) {
                     throw new \RuntimeException('Barcode ini tidak di prepare untuk SO.');
                 }
 
@@ -104,31 +104,31 @@ class SoPrepareScan extends Component
 
                 $qty = min($lineRemaining, $stockRemaining);
 
-                // 4. Create keluar_realisasi
+                // 4. Create keluar_realisasi (only when a matching KeluarDetail exists)
                 $keluarDetail = KeluarDetail::where('out_detail_code_keluar', $this->keluarCodeForSo($so))
                     ->where('out_detail_id_product', $stock->stock_id_product)
                     ->first();
 
-                if (! $keluarDetail) {
-                    throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+                $realisasiId = null;
+                if ($keluarDetail) {
+                    $realisasi = KeluarRealisasi::create([
+                        'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+                        'out_realisasi_id_stock' => $stock->stock_id,
+                        'out_realisasi_qty' => $qty,
+                    ]);
+                    $realisasiId = $realisasi->out_realisasi_id;
                 }
-
-                $realisasi = KeluarRealisasi::create([
-                    'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
-                    'out_realisasi_id_stock' => $stock->stock_id,
-                    'out_realisasi_qty' => $qty,
-                ]);
 
                 // 5. Create so_prepare_detail
                 SoPrepareDetail::create([
                     'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
-                    'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+                    'so_prepare_detail_id_realisasi' => $realisasiId,
                     'so_prepare_detail_id_product' => $stock->stock_id_product,
                     'so_prepare_detail_id_stock' => $stock->stock_id,
                     'so_prepare_detail_qty' => $qty,
                 ]);
 
-                // 6. Decrement staging stock
+                // 6. Decrement stock directly (the core of the scan)
                 Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
 
                 // 7. Check fulfillment
@@ -171,11 +171,11 @@ class SoPrepareScan extends Component
         try {
             DB::transaction(function () use ($so, $prepare, $stockId, $qty) {
                 $stock = Stock::where('stock_id', $stockId)
-                    ->where('stock_type', Stock::TYPE_STAGING)
+                    ->whereIn('stock_type', [Stock::TYPE_IN, Stock::TYPE_STAGING])
                     ->first();
 
                 if (! $stock) {
-                    throw new \RuntimeException('Stock tidak ditemukan di staging.');
+                    throw new \RuntimeException('Stock tidak ditemukan di IN/staging.');
                 }
 
                 $line = $so->details->firstWhere('so_detail_id_product', $stock->stock_id_product);
@@ -205,19 +205,19 @@ class SoPrepareScan extends Component
                     ->where('out_detail_id_product', $stock->stock_id_product)
                     ->first();
 
-                if (! $keluarDetail) {
-                    throw new \RuntimeException('Keluar detail tidak ditemukan untuk product ini.');
+                $realisasiId = null;
+                if ($keluarDetail) {
+                    $realisasi = KeluarRealisasi::create([
+                        'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
+                        'out_realisasi_id_stock' => $stock->stock_id,
+                        'out_realisasi_qty' => $qty,
+                    ]);
+                    $realisasiId = $realisasi->out_realisasi_id;
                 }
-
-                $realisasi = KeluarRealisasi::create([
-                    'out_realisasi_id_detail' => $keluarDetail->out_detail_id,
-                    'out_realisasi_id_stock' => $stock->stock_id,
-                    'out_realisasi_qty' => $qty,
-                ]);
 
                 SoPrepareDetail::create([
                     'so_prepare_detail_id_prepare' => $prepare->so_prepare_id,
-                    'so_prepare_detail_id_realisasi' => $realisasi->out_realisasi_id,
+                    'so_prepare_detail_id_realisasi' => $realisasiId,
                     'so_prepare_detail_id_product' => $stock->stock_id_product,
                     'so_prepare_detail_id_stock' => $stock->stock_id,
                     'so_prepare_detail_qty' => $qty,
@@ -248,8 +248,10 @@ class SoPrepareScan extends Component
                 Stock::where('stock_id', $detail->so_prepare_detail_id_stock)
                     ->increment('stock_qty', $detail->so_prepare_detail_qty);
 
-                // 2. Delete keluar_realisasi
-                KeluarRealisasi::where('out_realisasi_id', $detail->so_prepare_detail_id_realisasi)->delete();
+                // 2. Delete keluar_realisasi (only if one was created)
+                if ($detail->so_prepare_detail_id_realisasi) {
+                    KeluarRealisasi::where('out_realisasi_id', $detail->so_prepare_detail_id_realisasi)->delete();
+                }
 
                 // 3. Delete so_prepare_detail
                 $detail->delete();
@@ -261,6 +263,11 @@ class SoPrepareScan extends Component
                 );
                 if ($prepare->so_prepare_status === SoPrepare::STATUS_DONE) {
                     $prepare->update(['so_prepare_status' => SoPrepare::STATUS_PENDING]);
+
+                    // Also revert SO status from Confirmed → Prepare
+                    if ($this->so->so_status === SoStatusEnum::CONFIRMED) {
+                        $this->so->update(['so_status' => SoStatusEnum::PREPARE]);
+                    }
                 }
             });
 
@@ -292,7 +299,7 @@ class SoPrepareScan extends Component
         // Initialize assignQtys for each stock row
         foreach ($this->stockRows as $sr) {
             if (! isset($this->assignQtys[$sr['stock_id']])) {
-                $this->assignQtys[$sr['stock_id']] = rtrim(rtrim(number_format($sr['qty_remaining'], 3, '.', ''), '0'), '.');
+                $this->assignQtys[$sr['stock_id']] = rtrim(rtrim(number_format(min($sr['qty_remaining'], $sr['so_need_remaining']), 3, '.', ''), '0'), '.');
             }
         }
     }
@@ -301,7 +308,7 @@ class SoPrepareScan extends Component
     {
         $productIds = $this->so->details->pluck('so_detail_id_product');
 
-        $stocks = Stock::where('stock_type', Stock::TYPE_STAGING)
+        $stocks = Stock::whereIn('stock_type', [Stock::TYPE_IN, Stock::TYPE_STAGING])
             ->where('stock_qty', '>', 0)
             ->whereIn('stock_id_product', $productIds)
             ->with('lokasi.gudang')
@@ -314,8 +321,18 @@ class SoPrepareScan extends Component
                 ->pluck('total', 'so_prepare_detail_id_stock')
             : collect();
 
-        return $stocks->map(function ($stock) use ($assignedByStock) {
+        // Remaining SO need per product (qty_needed − allocated)
+        $lineNeeds = [];
+        foreach ($this->so->details as $detail) {
+            $pid = $detail->so_detail_id_product;
+            $lineNeeds[$pid] = (float) $detail->so_detail_qty - (float) $this->prepare->details()
+                ->where('so_prepare_detail_id_product', $pid)
+                ->sum('so_prepare_detail_qty');
+        }
+
+        return $stocks->map(function ($stock) use ($assignedByStock, $lineNeeds) {
             $assigned = (float) ($assignedByStock->get($stock->stock_id) ?? 0);
+            $soNeed = max(0, $lineNeeds[$stock->stock_id_product] ?? 0);
 
             return [
                 'stock_id' => $stock->stock_id,
@@ -326,6 +343,7 @@ class SoPrepareScan extends Component
                 'stock_qty' => (float) $stock->stock_qty,
                 'qty_assigned' => $assigned,
                 'qty_remaining' => max(0, (float) $stock->stock_qty - $assigned),
+                'so_need_remaining' => $soNeed,
             ];
         });
     }
@@ -333,15 +351,22 @@ class SoPrepareScan extends Component
     private function prepareLineStatus(): array
     {
         return $this->so->details->map(function ($d) {
+            // Hitung dari so_prepare_detail
             $assigned = (float) $this->prepare->details()
                 ->where('so_prepare_detail_id_product', $d->so_detail_id_product)
                 ->sum('so_prepare_detail_qty');
 
+            // Hitung dari keluar-realisasi (stock sudah dipotong via warehouse scan)
+            $keluarPicked = KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_id_so_detail', $d->so_detail_id))
+                ->sum('out_realisasi_qty');
+
+            $totalAssigned = $assigned + (float) $keluarPicked;
+
             return [
                 'detail' => $d,
                 'qty_needed' => (float) $d->so_detail_qty,
-                'qty_assigned' => $assigned,
-                'qty_remaining' => max(0, (float) $d->so_detail_qty - $assigned),
+                'qty_assigned' => $totalAssigned,
+                'qty_remaining' => max(0, (float) $d->so_detail_qty - $totalAssigned),
             ];
         })->all();
     }
@@ -360,7 +385,10 @@ class SoPrepareScan extends Component
                 ->where('so_prepare_detail_id_product', $d->so_detail_id_product)
                 ->sum('so_prepare_detail_qty');
 
-            if ($assigned + 1e-9 < (float) $d->so_detail_qty) {
+            $keluarPicked = KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_id_so_detail', $d->so_detail_id))
+                ->sum('out_realisasi_qty');
+
+            if ($assigned + (float) $keluarPicked + 1e-9 < (float) $d->so_detail_qty) {
                 $fulfilled = false;
                 break;
             }

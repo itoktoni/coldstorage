@@ -34,6 +34,7 @@ class StockController extends Controller
             'product_nama',
             'lokasi_nama'
         ])->leftJoinRelationship('product')->leftJoinRelationship('lokasi')->filter()->sort();
+
         return $query;
     }
 }

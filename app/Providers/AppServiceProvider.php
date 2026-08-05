@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use App\Boost\Agents\CustomAgent;
 use App\Events\NotificationSent;
 use App\Listeners\SendNotificationViaCentrifugo;
 use App\Models\Menu;
 use App\Wms\MasukStatusEnum;
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Date;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Boost\BoostManager;
 use Livewire\Blaze\Blaze;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,7 +29,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register custom Zoo Code agent for Laravel Boost (CustomAgent)
+        // ponytail: boost doesn't natively support Zoo Code, custom agent needed. Remove if upstream adds support.
+        if (app()->bound(BoostManager::class)) {
+            try {
+                $this->app->make(BoostManager::class)->registerAgent('zoo_code', CustomAgent::class);
+            } catch (\InvalidArgumentException $e) {
+                // Already registered - ignore
+            }
+        }
     }
 
     /**
@@ -37,6 +47,17 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->registerMacros();
+
+        // Ensure Zoo Code agent (CustomAgent) registered even if register() called before BoostManager binding
+        if (app()->bound(BoostManager::class)) {
+            try {
+                $this->app->make(BoostManager::class)->registerAgent('zoo_code', CustomAgent::class);
+            } catch (\InvalidArgumentException $e) {
+                // Already registered
+            } catch (\Exception $e) {
+                // Boost disabled
+            }
+        }
 
         Event::listen(NotificationSent::class, SendNotificationViaCentrifugo::class);
 
@@ -83,13 +104,14 @@ class AppServiceProvider extends ServiceProvider
                 } elseif (is_numeric($binding)) {
                     $value = (string) $binding;
                 } else {
-                    $value = "'" . addslashes($binding) . "'";
+                    $value = "'".addslashes($binding)."'";
                 }
                 $sql = preg_replace('/\?/', $value, $sql, 1);
             }
 
             if ($callback) {
                 $callback($sql);
+
                 return $this;
             }
 

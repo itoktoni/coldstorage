@@ -15,15 +15,15 @@ return new class extends Migration
         $gudang = DB::table('gudang')->first();
 
         foreach (['A', 'B', 'C', 'D'] as $letter) {
-            $code = 'STG-' . $letter;
+            $code = 'LOC-'.$letter;
             DB::table('lokasi')->updateOrInsert(
                 ['lokasi_code' => $code],
                 [
-                    'lokasi_nama'      => 'Staging Area ' . $letter,
+                    'lokasi_nama' => 'Staging Area '.$letter,
                     'lokasi_code_gudang' => $gudang?->gudang_code ?? 'GD-01',
-                    'lokasi_category'  => 'Staging',
-                    'created_at'       => $now,
-                    'updated_at'       => $now,
+                    'lokasi_category' => 'Staging',
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ]
             );
         }
@@ -34,6 +34,6 @@ return new class extends Migration
         if (DB::getDriverName() === 'mysql') {
             DB::statement("ALTER TABLE stock MODIFY stock_type ENUM('IN','OUT','RESERVE') NOT NULL DEFAULT 'IN'");
         }
-        DB::table('lokasi')->whereIn('lokasi_code', ['STG-A', 'STG-B', 'STG-C', 'STG-D'])->delete();
+        DB::table('lokasi')->whereIn('lokasi_code', ['LOC-A', 'LOC-B', 'LOC-C', 'LOC-D'])->delete();
     }
 };

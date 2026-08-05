@@ -97,3 +97,21 @@ Untuk fitur ReLokasi di forklift (ganti rekomendasi), harus konsisten dengan ver
 - `lokasi` — `lokasi_code` (PK string), `lokasi_nama`, `lokasi_code_gudang`, `lokasi_max_qty` (nullable), `lokasi_category` (nullable).
 - `stock` — `stock_code_lokasi` FK → `lokasi_code`, `stock_qty` (hanya `> 0` dihitung).
 - `masuk_realisasi` — `in_realisasi_code_lokasi` FK → `lokasi_code`.
+
+---
+
+## 4. ATURAN PENTING — Database Jangan di-Reset & Test Tidak Boleh Mengganggu
+
+**DILARANG KERAS:**
+- Menjalankan `php artisan migrate:fresh`, `migrate:fresh --seed`, `db:flush`, atau perintah apapun yang menghapus data user.
+- Menjalankan `php artisan test` **tanpa diminta user** — test bisa reset database via `RefreshDatabase` trait.
+- Test yang mempengaruhi session login atau database production.
+
+**Aturan Testing:**
+- **Jangan run test kecuali user minta.**
+- Jika user minta test, pastikan test pakai `DatabaseTransactions` (bukan `RefreshDatabase`) agar tidak reset table.
+- Atau lebih baik: test dijalankan di environment terpisah / SQLite in-memory, bukan database production.
+- Jika perlu cek data, gunakan `php artisan tinker` atau `database-query` untuk **READ ONLY** saja.
+- Jika perlu seed untuk dev environment, tanya user dulu apakah data boleh di-reset.
+
+**Catatan:** Test Pest secara default bisa trigger `RefreshDatabase` via `TestCase`. Pastikan test file tidak mengimport trait yang reset database, atau gunakan `DatabaseTransactions` jika perlu.

@@ -18,7 +18,7 @@ class ForkliftTaskController extends Controller
         $tasks = ForkliftTask::where('forklift_status', 'Pending')
             ->orWhere(function ($q) use ($user) {
                 $q->where('forklift_status', 'Progress')
-                  ->where('forklift_operator', $user->name);
+                    ->where('forklift_operator', $user->name);
             })
             ->with(['lokasiAsal', 'lokasiTujuan'])
             ->orderBy('forklift_id')
@@ -49,10 +49,10 @@ class ForkliftTaskController extends Controller
             ->value('forklift_pallet_code');
 
         $isPallet = $matchedPallet !== null;
-        $isLocation = !$isPallet && $locationPrefix && str_starts_with($code, $locationPrefix);
+        $isLocation = ! $isPallet && $locationPrefix && str_starts_with($code, $locationPrefix);
 
         try {
-            return DB::transaction(function () use ($code, $isPallet, $isLocation, $matchedPallet, $prefix, $locationPrefix) {
+            return DB::transaction(function () use ($code, $isPallet, $isLocation, $matchedPallet, $locationPrefix) {
                 $user = Auth::user();
 
                 if ($isPallet) {
@@ -62,22 +62,22 @@ class ForkliftTaskController extends Controller
                         ->lockForUpdate()
                         ->first();
 
-                    if (!$task) {
+                    if (! $task) {
                         return response()->json(['ok' => false, 'message' => 'Task tidak ditemukan atau sudah dikerjakan operator lain.'], 422);
                     }
 
                     $task->update([
-                        'forklift_status'       => 'Progress',
-                        'forklift_operator'     => $user->name,
+                        'forklift_status' => 'Progress',
+                        'forklift_operator' => $user->name,
                         'forklift_scan_asal_at' => now(),
                     ]);
 
                     return response()->json([
                         'ok' => true,
-                        'message' => 'Pallet ' . $palletCode . ' sedang dikerjakan oleh ' . $user->name,
+                        'message' => 'Pallet '.$palletCode.' sedang dikerjakan oleh '.$user->name,
                         'task_type' => $task->forklift_type,
                         'next_scan' => 'location',
-                        'task_id'   => $task->forklift_id,
+                        'task_id' => $task->forklift_id,
                     ]);
                 }
 
@@ -85,7 +85,7 @@ class ForkliftTaskController extends Controller
                     // Location codes (LOC-xx) start with "L", so try raw then prefix-stripped.
                     $stripped = ($locationPrefix && str_starts_with($code, $locationPrefix)) ? substr($code, strlen($locationPrefix)) : $code;
                     $lokasi = Lokasi::find($code) ?? Lokasi::find($stripped);
-                    if (!$lokasi) {
+                    if (! $lokasi) {
                         return response()->json(['ok' => false, 'message' => 'Lokasi tidak ditemukan.'], 422);
                     }
                     $locationCode = $lokasi->lokasi_code;
@@ -95,43 +95,44 @@ class ForkliftTaskController extends Controller
                         ->lockForUpdate()
                         ->first();
 
-                    if (!$task) {
+                    if (! $task) {
                         return response()->json(['ok' => false, 'message' => 'Tidak ada task Progress untuk Anda. Scan pallet dulu.'], 422);
                     }
 
                     if ($task->forklift_type === 'putaway') {
                         if ($locationCode !== $task->forklift_lokasi_tujuan) {
                             $expected = $task->lokasiTujuan?->lokasi_nama ?? $task->forklift_lokasi_tujuan;
-                            return response()->json(['ok' => false, 'message' => 'Rak tidak sesuai. Harus scan "' . $expected . '".'], 422);
+
+                            return response()->json(['ok' => false, 'message' => 'Rak tidak sesuai. Harus scan "'.$expected.'".'], 422);
                         }
 
                         Stock::where('stock_reff', $task->forklift_pallet_code)
                             ->update([
-                                'stock_type'         => Stock::TYPE_IN,
-                                'stock_code_lokasi'  => $locationCode,
-                                'stock_pallet_code'  => $task->forklift_pallet_code,
+                                'stock_type' => Stock::TYPE_IN,
+                                'stock_code_lokasi' => $locationCode,
+                                'stock_pallet_code' => $task->forklift_pallet_code,
                             ]);
                     } else {
                         if (strtolower($lokasi->lokasi_category ?? '') !== 'staging') {
                             return response()->json(['ok' => false, 'message' => 'Lokasi bukan staging area.'], 422);
                         }
 
-                        Stock::where('stock_reff', $task->forklift_pallet_code)
+                        Stock::where('stock_pallet_code', $task->forklift_pallet_code)
                             ->update([
-                                'stock_type'        => Stock::TYPE_STAGING,
+                                'stock_type' => Stock::TYPE_STAGING,
                                 'stock_code_lokasi' => $locationCode,
                             ]);
                     }
 
                     $task->update([
-                        'forklift_lokasi_final'   => $locationCode,
-                        'forklift_status'         => 'Done',
+                        'forklift_lokasi_final' => $locationCode,
+                        'forklift_status' => 'Done',
                         'forklift_scan_tujuan_at' => now(),
                     ]);
 
                     return response()->json([
                         'ok' => true,
-                        'message' => 'Task ' . $task->forklift_type . ' selesai! Pallet ' . $task->forklift_pallet_code . ' di ' . $locationCode,
+                        'message' => 'Task '.$task->forklift_type.' selesai! Pallet '.$task->forklift_pallet_code.' di '.$locationCode,
                     ]);
                 }
 

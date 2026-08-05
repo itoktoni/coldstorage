@@ -35,6 +35,14 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
 - Check for existing components to reuse before writing a new one.
 
+## Code Naming Conventions
+
+- **Product**: Code harus diawali `PROD-` (contoh: `PROD-01`, `PROD-26`)
+- **Stock**: Setiap stock HARUS memiliki `stock_pallet_code` yang diawali `PAL-` (contoh: `PAL-001`, `PAL-20260804-0001`)
+- **Lokasi**: Code diawali `LOC-` untuk semua lokasi (storage maupun staging, contoh: `LOC-01`, `LOC-A`)
+- **Gudang**: Code diawali `GD-` (contoh: `GD-01`)
+- Default capacity (`lokasi_max_qty`) = 1000
+
 ## Verification Scripts
 
 - Do not create verification scripts or tinker when tests cover that functionality and prove they work. Unit and feature tests are more important.
