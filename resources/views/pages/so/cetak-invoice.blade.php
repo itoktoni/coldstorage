@@ -26,14 +26,14 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         thead th { background: #bf5b21; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         thead th:nth-child(1) { width: 40px; text-align: center; }
+        thead th:nth-child(3) { text-align: right; }
         thead th:nth-child(4) { text-align: right; }
         thead th:nth-child(5) { text-align: right; }
-        thead th:nth-child(6) { text-align: right; }
         tbody td { padding: 10px 12px; border-bottom: 1px solid #eee; }
         tbody td:nth-child(1) { text-align: center; color: #888; }
-        tbody td:nth-child(4) { text-align: right; }
-        tbody td:nth-child(5) { text-align: right; font-weight: 500; }
-        tbody td:nth-child(6) { text-align: right; font-weight: 600; }
+        tbody td:nth-child(3) { text-align: right; }
+        tbody td:nth-child(4) { text-align: right; font-weight: 500; }
+        tbody td:nth-child(5) { text-align: right; font-weight: 600; }
         tbody tr:hover { background: #f5f5f5; }
         tfoot td { padding: 10px 12px; font-weight: 700; border-top: 2px solid #333; }
         tfoot td:last-child { text-align: right; font-size: 15px; color: #bf5b21; }
@@ -99,7 +99,7 @@
             <div class="info-box">
                 <h3>Invoice Details</h3>
                 <p><span class="label">Tanggal:</span> {{ $invoice->invoice_tanggal->format('d F Y') }}</p>
-                <p><span class="label">SO Reference:</span> {{ $invoice->so->so_code ?? '-' }}</p>
+                <p><span class="label">SO:</span> {{ $invoice->so->so_code ?? '-' }}</p>
                 <p><span class="label">Status:</span> {{ $invoice->invoice_status }}</p>
             </div>
         </div>
@@ -108,7 +108,6 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Product</th>
                     <th>Nama Product</th>
                     <th>Qty Kirim</th>
                     <th>Harga Satuan</th>
@@ -117,21 +116,22 @@
             </thead>
             <tbody>
                 @foreach ($invoice->details as $i => $detail)
+                @php $subtotal = $detail->harga * $detail->invoice_detail_qty; @endphp
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ $detail->product->product_kode ?? '-' }}</td>
                     <td>{{ $detail->product->product_nama ?? '-' }}</td>
-                    <td>{{ number_format($detail->invoice_detail_qty, 3) }}</td>
-                    <td>Rp {{ number_format($detail->invoice_detail_harga, 0, ',', '.') }}</td>
-                    <td>Rp {{ number_format($detail->invoice_detail_subtotal, 0, ',', '.') }}</td>
+                    <td>{{ formatQty($detail->invoice_detail_qty) }}</td>
+                    <td>Rp {{ number_format($detail->harga, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="4">Total Item: {{ $invoice->details->count() }} &nbsp;|&nbsp; Total Qty: {{ number_format($invoice->details->sum('invoice_detail_qty'), 3) }}</td>
+                    <td colspan="2">Total Item: {{ $invoice->details->count() }} &nbsp;|&nbsp; Total Qty: {{ formatQty($invoice->details->sum('invoice_detail_qty')) }}</td>
                     <td></td>
-                    <td>Rp {{ number_format($invoice->invoice_subtotal, 0, ',', '.') }}</td>
+                    <td></td>
+                    <td>Rp {{ number_format($invoice->details->sum(fn($d) => $d->harga * $d->invoice_detail_qty), 0, ',', '.') }}</td>
                 </tr>
             </tfoot>
         </table>
@@ -139,18 +139,19 @@
         <div class="summary">
             <div></div>
             <div class="summary-box">
+                @php $subtotal = $invoice->details->sum(fn($d) => $d->harga * $d->invoice_detail_qty); @endphp
                 <h4>Ringkasan Pembayaran</h4>
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span>Rp {{ number_format($invoice->invoice_subtotal, 0, ',', '.') }}</span>
+                    <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                 </div>
                 <div class="summary-row">
                     <span>PPN (11%)</span>
-                    <span>Rp {{ number_format($invoice->invoice_ppn, 0, ',', '.') }}</span>
+                    <span>Rp {{ number_format($subtotal * 0.11, 0, ',', '.') }}</span>
                 </div>
                 <div class="summary-row total">
                     <span>TOTAL</span>
-                    <span>Rp {{ number_format($invoice->invoice_total, 0, ',', '.') }}</span>
+                    <span>Rp {{ number_format($subtotal * 1.11, 0, ',', '.') }}</span>
                 </div>
             </div>
         </div>

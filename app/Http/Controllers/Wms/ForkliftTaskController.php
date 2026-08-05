@@ -17,11 +17,23 @@ class ForkliftTaskController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $tasks = ForkliftTask::where('forklift_status', 'Pending')
-            ->orWhere(function ($q) use ($user) {
-                $q->where('forklift_status', 'Progress')
+        $tasks = ForkliftTask::where(function ($q) use ($user) {
+            // Putaway: show pending
+            $q->where(function ($q2) {
+                $q2->where('forklift_type', 'putaway')
+                    ->where('forklift_status', 'Pending');
+            });
+            // Pick: show pending (orphaned tasks cleaned up by postPrepare)
+            $q->orWhere(function ($q2) {
+                $q2->where('forklift_type', 'pick')
+                    ->where('forklift_status', 'Pending');
+            });
+            // Any: in progress by me
+            $q->orWhere(function ($q2) use ($user) {
+                $q2->where('forklift_status', 'Progress')
                     ->where('forklift_operator', $user->name);
-            })
+            });
+        })
             ->with(['lokasiAsal', 'lokasiTujuan'])
             ->orderBy('forklift_id')
             ->get();

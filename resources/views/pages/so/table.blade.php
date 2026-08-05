@@ -35,7 +35,6 @@
                     <x-table-action :model="$model" :id="$table->field_primary">
                         @if($table->so_status->value === 'Confirmed')
                         <a href="{{ route('wms-so.ship', ['id' => $table->field_primary]) }}"
-                           onclick="return confirm('Yakin ingin mengirim SO ini? Invoice akan dibuat dari qty yang benar-benar dikirim.')"
                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
                            title="Kirim SO">
                             <span class="material-symbols-outlined text-lg">local_shipping</span>
@@ -51,11 +50,6 @@
                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors"
                            title="Cetak Invoice">
                             <span class="material-symbols-outlined text-lg">receipt_long</span>
-                        </a>
-                        <a href="{{ route('wms-so.cetakPerformance', ['id' => $table->field_primary]) }}" target="_blank"
-                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 transition-colors"
-                           title="Performance Report">
-                            <span class="material-symbols-outlined text-lg">analytics</span>
                         </a>
                         @endif
                         <a href="{{ route('wms-so.cetak', ['id' => $table->field_primary]) }}" target="_blank"

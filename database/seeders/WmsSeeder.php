@@ -20,6 +20,7 @@ class WmsSeeder extends Seeder
             'detail_so', 'so', 'customer',
             'detail_po', 'po', 'supplier',
             'stock', 'lokasi', 'gudang', 'product',
+            'so_prepare_detail', 'so_prepare', 'stock_assignment', 'stock_log', 'forklift_task',
         ] as $table) {
             DB::table($table)->truncate();
         }
@@ -60,26 +61,25 @@ class WmsSeeder extends Seeder
         // product_category = slug dari tabel `categories` (daging/ayam/ikan/sayuran/dairy),
         // dipakai rekomendasi rack (canAcceptCategory) — lihat agent.md §1
         DB::table('product')->insert([
-            ['product_code' => 'PROD-01', 'product_nama' => 'Iga Sapi (kg)', 'product_harga' => 135000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-02', 'product_nama' => 'Daging Sapi Has Dalam (kg)', 'product_harga' => 180000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-03', 'product_nama' => 'Daging Sapi Tetelan (kg)', 'product_harga' => 85000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-04', 'product_nama' => 'Daging Kambing (kg)', 'product_harga' => 150000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-05', 'product_nama' => 'Ayam Utuh Frozen (kg)', 'product_harga' => 38000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-06', 'product_nama' => 'Dada Ayam Fillet (kg)', 'product_harga' => 62000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-07', 'product_nama' => 'Paha Ayam (kg)', 'product_harga' => 42000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-08', 'product_nama' => 'Sayap Ayam (kg)', 'product_harga' => 35000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-09', 'product_nama' => 'Ikan Salmon Fillet (kg)', 'product_harga' => 220000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-10', 'product_nama' => 'Kentang 10kg (karton)', 'product_harga' => 100000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-11', 'product_nama' => 'Kentang 2.5kg (Pack)', 'product_harga' => 25000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-12', 'product_nama' => 'Daging Giling (kg)', 'product_harga' => 95000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-13', 'product_nama' => 'Has Dalam Slice (kg)', 'product_harga' => 220000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-14', 'product_nama' => 'Tetelan Sapi (kg)', 'product_harga' => 75000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-01', 'product_nama' => 'Kentang 10kg (karton)', 'product_harga' => 100000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-02', 'product_nama' => 'Kentang 2.5kg (Pack)', 'product_harga' => 25000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+
+            ['product_code' => 'PROD-03', 'product_nama' => 'Daging Sapi Has Dalam (kg)', 'product_harga' => 100000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-04', 'product_nama' => 'Daging Giling (kg)', 'product_harga' => 20000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-05', 'product_nama' => 'Has Dalam Slice (kg)', 'product_harga' => 150000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+
+            ['product_code' => 'PROD-06', 'product_nama' => 'Ayam Utuh Frozen (kg)', 'product_harga' => 38000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-07', 'product_nama' => 'Dada Ayam Fillet (kg)', 'product_harga' => 62000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-08', 'product_nama' => 'Paha Ayam (kg)', 'product_harga' => 42000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-09', 'product_nama' => 'Sayap Ayam (kg)', 'product_harga' => 35000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-10', 'product_nama' => 'Ikan Salmon Fillet (kg)', 'product_harga' => 220000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== CUSTOMER & SO ==========
         DB::table('customer')->insert([
             ['customer_id' => 1, 'customer_nama' => 'Hotel Bintang 5', 'customer_alamat' => 'Jl. Sudirman No.1'],
             ['customer_id' => 2, 'customer_nama' => 'Restoran Seafood', 'customer_alamat' => 'Jl. Thamrin No.2'],
+            ['customer_id' => 3, 'customer_nama' => 'Bapak Rahmat', 'customer_alamat' => 'Jl. Bekasi raya No.2'],
         ]);
 
         // ========== SUPPLIER ==========
@@ -93,27 +93,16 @@ class WmsSeeder extends Seeder
 
         // ========== PO ==========
         DB::table('po')->insert([
-            ['po_tanggal' => '2026-07-01', 'po_code' => 'PO-20260701-0001', 'po_id_supplier' => 1, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-02', 'po_code' => 'PO-20260702-0001', 'po_id_supplier' => 2, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-03', 'po_code' => 'PO-20260703-0001', 'po_id_supplier' => 3, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-10', 'po_code' => 'PO-20260704-0001', 'po_id_supplier' => 4, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-15', 'po_code' => 'PO-20260705-0001', 'po_id_supplier' => 5, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-01', 'po_code' => 'PO-20260701-0001', 'po_id_supplier' => 4, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-02', 'po_code' => 'PO-20260702-0001', 'po_id_supplier' => 5, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            // ['po_tanggal' => '2026-07-03', 'po_code' => 'PO-20260703-0001', 'po_id_supplier' => 3, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== DETAIL PO ==========
         DB::table('detail_po')->insert([
-            ['po_detail_id_po' => 1, 'po_detail_id_product' => 1, 'po_detail_qty' => 200, 'po_detail_code' => 'POD-001', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 1, 'po_detail_id_product' => 2, 'po_detail_qty' => 150, 'po_detail_code' => 'POD-002', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 1, 'po_detail_id_product' => 3, 'po_detail_qty' => 300, 'po_detail_code' => 'POD-003', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 2, 'po_detail_id_product' => 4, 'po_detail_qty' => 500, 'po_detail_code' => 'POD-004', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 2, 'po_detail_id_product' => 5, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-005', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 3, 'po_detail_id_product' => 6,  'po_detail_qty' => 120, 'po_detail_code' => 'POD-006', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 3, 'po_detail_id_product' => 7, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-007', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 8, 'po_detail_qty' => 300, 'po_detail_code' => 'POD-008', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 9, 'po_detail_qty' => 100, 'po_detail_code' => 'POD-009', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 10, 'po_detail_qty' => 60,  'po_detail_code' => 'POD-010', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 5, 'po_detail_id_product' => 11, 'po_detail_qty' => 400, 'po_detail_code' => 'POD-011', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 5, 'po_detail_id_product' => 12, 'po_detail_qty' => 200, 'po_detail_code' => 'POD-012', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 1, 'po_detail_id_product' => 1, 'po_detail_qty' => 2, 'po_detail_code' => 'POD-001', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 2, 'po_detail_id_product' => 1, 'po_detail_qty' => 3, 'po_detail_code' => 'POD-002', 'created_at' => $now, 'updated_at' => $now],
+            // ['po_detail_id_po' => 3, 'po_detail_id_product' => 2, 'po_detail_qty' => 3, 'po_detail_code' => 'POD-003', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== STOCK ==========
@@ -124,20 +113,8 @@ class WmsSeeder extends Seeder
         // Satu pallet = gabungan total produk di lokasi yang sama (mis. PAL-20260701-000101 =
         // PROD-01 @ LOC-01, total 200+50=250).
         DB::table('stock')->insert([
-            ['stock_code' => 'PROD-01#202607010001#200#20261015', 'stock_pallet_code' => 'PAL-20260701-000101', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 200, 'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-02#202607010002#150#20261015', 'stock_pallet_code' => 'PAL-20260701-000102', 'stock_id_product' => 2,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 150, 'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-03#202607010003#300#20261020', 'stock_pallet_code' => 'PAL-20260701-000103', 'stock_id_product' => 3,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 300, 'stock_expired_date' => '2026-10-20', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-04#202607020001#80#20261010', 'stock_pallet_code' => 'PAL-20260702-000104', 'stock_id_product' => 4,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 80,  'stock_expired_date' => '2026-10-10', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-05#202607020002#500#20260930', 'stock_pallet_code' => 'PAL-20260702-000105', 'stock_id_product' => 5,  'stock_code_lokasi' => 'LOC-02', 'stock_qty' => 500, 'stock_expired_date' => '2026-09-30', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-06#202607020003#250#20260930', 'stock_pallet_code' => 'PAL-20260702-000106', 'stock_id_product' => 6,  'stock_code_lokasi' => 'LOC-02', 'stock_qty' => 250, 'stock_expired_date' => '2026-09-30', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-07#202607020004#350#20260925', 'stock_pallet_code' => 'PAL-20260702-000107', 'stock_id_product' => 7,  'stock_code_lokasi' => 'LOC-02', 'stock_qty' => 350, 'stock_expired_date' => '2026-09-25', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-08#202607020005#200#20260925', 'stock_pallet_code' => 'PAL-20260702-000108', 'stock_id_product' => 8,  'stock_code_lokasi' => 'LOC-02', 'stock_qty' => 200, 'stock_expired_date' => '2026-09-25', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-09#202607030001#120#20260915', 'stock_pallet_code' => 'PAL-20260703-000109', 'stock_id_product' => 9,  'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 120, 'stock_expired_date' => '2026-09-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-10#202607030002#180#20260920', 'stock_pallet_code' => 'PAL-20260703-000110', 'stock_id_product' => 10, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 180, 'stock_expired_date' => '2026-09-20', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-11#202607030003#250#20260910', 'stock_pallet_code' => 'PAL-20260703-000111', 'stock_id_product' => 11, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 250, 'stock_expired_date' => '2026-09-10', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-12#202607030004#160#20260910', 'stock_pallet_code' => 'PAL-20260703-000112', 'stock_id_product' => 12, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 160, 'stock_expired_date' => '2026-09-10', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-13#202607030005#300#20260920', 'stock_pallet_code' => 'PAL-20260703-000113', 'stock_id_product' => 13, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 300, 'stock_expired_date' => '2026-09-20', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-14#202607040001#400#20261201', 'stock_pallet_code' => 'PAL-20260704-000114', 'stock_id_product' => 14, 'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 400, 'stock_expired_date' => '2026-12-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
+            ['stock_code' => 'PROD-01#202608051842306A7321A632D4D#1#20270505', 'stock_pallet_code' => 'PAL-20260701-000101', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 10, 'stock_expired_date' => '2027-05-05', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
+            ['stock_code' => 'PROD-01#202608051842306A7321A633B6A#1#20270105', 'stock_pallet_code' => 'PAL-20260701-000102', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 20, 'stock_expired_date' => '2027-01-05', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== MASUK DETAIL ==========
@@ -175,13 +152,15 @@ class WmsSeeder extends Seeder
         //     ['out_detail_code_keluar' => 'OUT-20260706-0001', 'out_detail_id_product' => 9, 'out_detail_code' => 'OUTD-002', 'out_detail_qty' => 30, 'created_at' => $now, 'updated_at' => $now],
         // ]);
 
-        // DB::table('so')->insert([
-        //     ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
-        // ]);
+        DB::table('so')->insert([
+            ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['so_tanggal' => '2026-07-02', 'so_code' => 'SO-20260701-0002', 'so_id_customer' => 2, 'so_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+        ]);
 
-        // DB::table('detail_so')->insert([
-        //     ['so_detail_id_so' => 1, 'so_detail_id_product' => 1, 'so_detail_qty' => 50, 'so_detail_code' => 'SOD-001', 'created_at' => $now, 'updated_at' => $now],
-        // ]);
+        DB::table('detail_so')->insert([
+            ['so_detail_id_so' => 1, 'so_detail_id_product' => 1, 'so_detail_qty' => 2, 'so_detail_code' => 'SOD-001', 'created_at' => $now, 'updated_at' => $now],
+            ['so_detail_id_so' => 2, 'so_detail_id_product' => 1, 'so_detail_qty' => 3, 'so_detail_code' => 'SOD-002', 'created_at' => $now, 'updated_at' => $now],
+        ]);
 
         // ========== CATEGORIES ==========
         DB::table('categories')->upsert([

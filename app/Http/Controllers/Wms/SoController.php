@@ -11,6 +11,7 @@ use App\Models\InvoiceDetail;
 use App\Models\Keluar;
 use App\Models\KeluarDetail;
 use App\Models\KeluarRealisasi;
+use App\Models\Kendaraan;
 use App\Models\Product;
 use App\Models\So;
 use App\Models\SoDetail;
@@ -18,6 +19,7 @@ use App\Models\SoPrepare;
 use App\Models\SoPrepareDetail;
 use App\Models\Stock;
 use App\Models\StockAssignment;
+use App\Models\Supir;
 use App\Wms\SoStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -561,7 +563,6 @@ class SoController extends Controller
 
         $details = $delivery->so->details->map(function ($d) use ($realQtys) {
             return [
-                'product_kode' => $d->product->product_kode ?? '-',
                 'product_nama' => $d->product->product_nama ?? '-',
                 'real_qty' => (float) ($realQtys->get($d->so_detail_id_product) ?? 0),
             ];
@@ -604,13 +605,15 @@ class SoController extends Controller
                 'product_nama' => $d->product->product_nama ?? '-',
                 'order_qty' => (float) $d->so_detail_qty,
                 'real_qty' => (float) ($realQtys->get($d->so_detail_id_product) ?? 0),
-                'harga' => (float) $d->so_detail_harga,
+                'harga' => $d->harga,
             ];
         });
 
         return view('pages.so.form-ship', [
             'so' => $so,
             'details' => $details,
+            'kendaraans' => Kendaraan::where('kendaraan_aktif', true)->get(),
+            'supirs' => Supir::where('supir_aktif', true)->get(),
         ]);
     }
 
@@ -622,7 +625,8 @@ class SoController extends Controller
         $data = $request->validate([
             'delivery_nama_penerima' => ['nullable', 'string', 'max:255'],
             'delivery_alamat_tujuan' => ['nullable', 'string'],
-            'delivery_nama_driver' => ['nullable', 'string', 'max:255'],
+            'delivery_id_kendaraan' => ['nullable', 'exists:kendaraan,id'],
+            'delivery_id_supir' => ['nullable', 'exists:supir,id'],
             'delivery_plat_kendaraan' => ['nullable', 'string', 'max:50'],
             'delivery_nama_kurir' => ['nullable', 'string', 'max:255'],
             'delivery_catatan' => ['nullable', 'string'],
@@ -643,12 +647,18 @@ class SoController extends Controller
             return back();
         }
 
-        // Check if invoice already exists
+        // Check if invoice already exists with actual amounts
         $existingInvoice = Invoice::where('invoice_id_so', $so->so_id)->first();
-        if ($existingInvoice) {
+        if ($existingInvoice && (float) $existingInvoice->invoice_subtotal > 0) {
             flash()->error('Invoice sudah dibuat untuk SO ini.');
 
             return back();
+        }
+
+        // Delete zero-value invoice if exists (allows re-ship)
+        if ($existingInvoice) {
+            InvoiceDetail::where('invoice_detail_id_invoice', $existingInvoice->invoice_id)->delete();
+            $existingInvoice->delete();
         }
 
         try {
@@ -669,7 +679,7 @@ class SoController extends Controller
                     }
 
                     $soDetail = $so->details->firstWhere('so_detail_id_product', $productId);
-                    $harga = $soDetail ? (float) $soDetail->so_detail_harga : 0;
+                    $harga = $soDetail ? $soDetail->harga : 0;
                     $lineSubtotal = $realQty * $harga;
                     $subtotal += $lineSubtotal;
 
@@ -700,14 +710,31 @@ class SoController extends Controller
                 }
 
                 // 2. Create Delivery Order
-                Delivery::create(array_merge($data, [
+                $deliveryData = $data;
+                if (! empty($data['delivery_id_supir'])) {
+                    $supir = Supir::find($data['delivery_id_supir']);
+                    $deliveryData['delivery_nama_driver'] = $supir?->supir_nama ?? $data['delivery_nama_driver'] ?? null;
+                }
+                if (! empty($data['delivery_id_kendaraan'])) {
+                    $kendaraan = Kendaraan::find($data['delivery_id_kendaraan']);
+                    $deliveryData['delivery_plat_kendaraan'] = $kendaraan?->kendaraan_plat ?? $data['delivery_plat_kendaraan'] ?? null;
+                }
+                Delivery::create(array_merge($deliveryData, [
                     'delivery_tanggal' => now()->toDateString(),
                     'delivery_id_so' => $so->so_id,
                     'delivery_id_invoice' => $invoice->invoice_id,
                     'delivery_status' => 'Pending',
                 ]));
 
-                // 3. Update SO status
+                // 3. Delete staging stocks for this SO's keluar codes
+                $keluarCodes = KeluarDetail::whereHas('soDetail', fn ($q) => $q->where('so_detail_id_so', $so->so_id))
+                    ->pluck('out_detail_code_keluar')
+                    ->unique();
+                Stock::where('stock_type', Stock::TYPE_STAGING)
+                    ->whereIn('stock_reff', $keluarCodes)
+                    ->delete();
+
+                // 4. Update SO status
                 $so->update(['so_status' => SoStatusEnum::SHIPPED]);
             });
 

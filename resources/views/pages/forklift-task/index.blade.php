@@ -452,7 +452,7 @@ async function processScan(code) {
                 const dest = row ? row.dataset.to : '';
                 setBanner('go',
                     'ANTAR KE: <span id="banner-dest">' + dest + '</span>',
-                    'Sekarang scan barcode lokasi / rak tujuan (L...)');
+                    'Sekarang scan barcode lokasi / rak tujuan ');
             } else {
                 /* Scan lokasi -> task selesai */
                 const row = lastTaskId ? findRow(lastTaskId) : list.querySelector('.trow.in-progress');

@@ -237,6 +237,14 @@
                     <span class="material-symbols-outlined text-xl">arrow_back</span>
                     Kembali
                 </a>
+                @if($existingTasks->isNotEmpty())
+                <a href="{{ route('wms-keluar.pickList', ['outCode' => $keluar->out_code]) }}"
+                    target="_blank"
+                    class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-purple-100 text-purple-700 hover:bg-purple-200 shadow-sm transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-xl">print</span>
+                    Print Pick List
+                </a>
+                @endif
                 <button type="submit"
                     class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95">
                     <span class="material-symbols-outlined text-xl">check</span>

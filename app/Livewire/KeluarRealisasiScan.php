@@ -152,6 +152,10 @@ class KeluarRealisasiScan extends Component
                     $take = min((float) $stock->stock_qty, $left);
                     $stock->decrement('stock_qty', $take);
 
+                    if ((float) $stock->fresh()->stock_qty <= 0) {
+                        $stock->delete();
+                    }
+
                     if ($stock->stock_expired_date) {
                         $expiredDates[] = $stock->stock_expired_date;
                     }
@@ -183,17 +187,7 @@ class KeluarRealisasiScan extends Component
 
                 $fulfilled = $remaining - $left;
 
-                // 5. Create STAGING stock
-                Stock::create([
-                    'stock_id_product' => $detail->out_detail_id_product,
-                    'stock_code_lokasi' => 'STAGING',
-                    'stock_qty' => $fulfilled,
-                    'stock_type' => Stock::TYPE_STAGING,
-                    'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
-                    'stock_reff' => $detail->out_detail_code_keluar,
-                ]);
-
-                // 6. Consume RESERVE
+                // 5. Consume RESERVE
                 $soCode = $detail->soDetail?->so?->so_code ?? '';
                 Stock::consumeReserve($soCode, $detail->out_detail_id_product, $fulfilled);
 
@@ -384,8 +378,10 @@ class KeluarRealisasiScan extends Component
             ->with('stock')
             ->get();
 
-        $tasks = ForkliftTask::where('forklift_reff', $outCode)
-            ->where('forklift_type', 'pick')
+        // Cari ForkliftTask via pallet codes (forklift_reff sekarang berisi SO/PO codes)
+        $palletCodes = $palletAssignments->pluck('stock.stock_pallet_code')->filter()->unique()->values()->all();
+        $tasks = ForkliftTask::where('forklift_type', 'pick')
+            ->whereIn('forklift_pallet_code', $palletCodes)
             ->get()
             ->keyBy('forklift_pallet_code');
 
@@ -421,6 +417,13 @@ class KeluarRealisasiScan extends Component
                 ];
             })
             ->values();
+    }
+
+    private function getStagingLokasiCode(): string
+    {
+        $lokasi = Lokasi::where('lokasi_category', 'staging')->first();
+
+        return $lokasi?->lokasi_code ?? 'STAGING';
     }
 
     public function render()

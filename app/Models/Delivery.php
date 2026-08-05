@@ -22,6 +22,8 @@ class Delivery extends BaseModel
         'delivery_nama_kurir',
         'delivery_catatan',
         'delivery_status',
+        'delivery_id_kendaraan',
+        'delivery_id_supir',
     ];
 
     protected $casts = [
@@ -54,5 +56,15 @@ class Delivery extends BaseModel
     public function invoice()
     {
         return $this->belongsTo(Invoice::class, 'delivery_id_invoice', 'invoice_id');
+    }
+
+    public function kendaraan()
+    {
+        return $this->belongsTo(Kendaraan::class, 'delivery_id_kendaraan');
+    }
+
+    public function supir()
+    {
+        return $this->belongsTo(Supir::class, 'delivery_id_supir');
     }
 }

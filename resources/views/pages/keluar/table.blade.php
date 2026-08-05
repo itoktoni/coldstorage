@@ -35,7 +35,7 @@
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
                     <x-table-action :model="$model" :id="$table->field_primary">
-                        @if($table->so_id)
+                        @if($table->has_so_detail)
                                 <a href="{{ route('wms-keluar-prepare.show', ['outCode' => $table->field_primary]) }}"
                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
                            title="Prepare SO">
@@ -82,15 +82,15 @@
                         <x-table-mobile-text label="Detail" :text="$table->detail_count . ' item'" />
                         <x-table-mobile-text label="Status" :text="$table->out_status" />
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary">
-                                @if($table->so_id)
+                        <x-table-action :model="$model" :id="$table->field_primary">
+                                @if($table->has_so_detail)
                         <a href="{{ route('wms-keluar-prepare.show', ['outCode' => $table->field_primary]) }}"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
                                    title="Prepare SO">
                                     <span class="material-symbols-outlined text-lg">inventory</span>
                                 </a>
                                 @endif
-                            </x-table-action>
+                        </x-table-action>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty

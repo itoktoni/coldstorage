@@ -110,13 +110,13 @@
             </thead>
             <tbody>
                 @foreach ($so->details as $i => $detail)
-                @php $subtotal = $detail->so_detail_qty * $detail->so_detail_harga; @endphp
+                @php $subtotal = $detail->so_detail_qty * $detail->harga; @endphp
                 <tr>
                     <td>{{ $i + 1 }}</td>
                     <td>{{ $detail->so_detail_code }}</td>
                     <td>{{ $detail->product->product_nama ?? '-' }}</td>
                     <td>{{ number_format($detail->so_detail_qty) }}</td>
-                    <td>Rp {{ number_format($detail->so_detail_harga, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($detail->harga, 0, ',', '.') }}</td>
                     <td>Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
                 </tr>
                 @endforeach
@@ -125,7 +125,7 @@
                 <tr>
                     <td colspan="4">Total Item: {{ $so->details->count() }} &nbsp;|&nbsp; Total Qty: {{ number_format($so->details->sum('so_detail_qty')) }}</td>
                     <td></td>
-                    <td>Rp {{ number_format($so->details->sum(fn($d) => $d->so_detail_qty * $d->so_detail_harga), 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($so->details->sum(fn($d) => $d->so_detail_qty * $d->harga), 0, ',', '.') }}</td>
                 </tr>
             </tfoot>
         </table>

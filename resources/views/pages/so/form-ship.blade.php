@@ -87,18 +87,39 @@
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                     </div>
                     <div class="col-span-12 md:col-span-6">
-                        <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Nama Driver</label>
-                        <input type="text" name="delivery_nama_driver" value="{{ old('delivery_nama_driver') }}"
-                               class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
+                        <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Kendaraan</label>
+                        <select id="select-kendaraan" name="delivery_id_kendaraan"
+                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                onchange="autoFillKendaraan(this)">
+                            <option value="">-- Pilih Kendaraan --</option>
+                            @foreach($kendaraans as $k)
+                                <option value="{{ $k->id }}" data-plat="{{ $k->kendaraan_plat }}" {{ old('delivery_id_kendaraan') == $k->id ? 'selected' : '' }}>
+                                    {{ $k->kendaraan_nama }} ({{ $k->kendaraan_plat }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-span-12 md:col-span-6">
+                        <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Supir</label>
+                        <select id="select-supir" name="delivery_id_supir"
+                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+                                onchange="autoFillSupir(this)">
+                            <option value="">-- Pilih Supir --</option>
+                            @foreach($supirs as $s)
+                                <option value="{{ $s->id }}" data-nama="{{ $s->supir_nama }}" {{ old('delivery_id_supir') == $s->id ? 'selected' : '' }}>
+                                    {{ $s->supir_nama }}{{ $s->supir_telp ? ' (' . $s->supir_telp . ')' : '' }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="col-span-12 md:col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Plat Kendaraan</label>
-                        <input type="text" name="delivery_plat_kendaraan" value="{{ old('delivery_plat_kendaraan') }}"
+                        <input type="text" id="input-plat" name="delivery_plat_kendaraan" value="{{ old('delivery_plat_kendaraan') }}"
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                     </div>
                     <div class="col-span-12 md:col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Nama Kurir</label>
-                        <input type="text" name="delivery_nama_kurir" value="{{ old('delivery_nama_kurir') }}"
+                        <input type="text" id="input-kurir" name="delivery_nama_kurir" value="{{ old('delivery_nama_kurir') }}"
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                     </div>
                     <div class="col-span-12">
@@ -129,4 +150,18 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function autoFillKendaraan(select) {
+            const option = select.options[select.selectedIndex];
+            const plat = option.getAttribute('data-plat') || '';
+            document.getElementById('input-plat').value = plat;
+        }
+
+        function autoFillSupir(select) {
+            const option = select.options[select.selectedIndex];
+            const nama = option.getAttribute('data-nama') || '';
+            document.getElementById('input-kurir').value = nama;
+        }
+    </script>
 </x-layouts::app>

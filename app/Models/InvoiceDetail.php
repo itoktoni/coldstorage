@@ -33,4 +33,11 @@ class InvoiceDetail extends BaseModel
     {
         return $this->belongsTo(Product::class, 'invoice_detail_id_product', 'product_id');
     }
+
+    public function getHargaAttribute(): float
+    {
+        $harga = (float) $this->invoice_detail_harga;
+
+        return $harga > 0 ? $harga : (float) ($this->product->product_harga ?? 0);
+    }
 }

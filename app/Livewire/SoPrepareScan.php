@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\KeluarDetail;
 use App\Models\KeluarRealisasi;
+use App\Models\Lokasi;
 use App\Models\So;
 use App\Models\SoPrepare;
 use App\Models\SoPrepareDetail;
@@ -131,11 +132,15 @@ class SoPrepareScan extends Component
                 // 6. Decrement source stock
                 Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
 
+                if ((float) Stock::where('stock_id', $stock->stock_id)->value('stock_qty') <= 0) {
+                    Stock::where('stock_id', $stock->stock_id)->delete();
+                }
+
                 // 6b. Create STAGING stock for this allocation
                 $keluarCode = $this->keluarCodeForSo($so);
                 Stock::create([
                     'stock_id_product' => $stock->stock_id_product,
-                    'stock_code_lokasi' => 'STAGING',
+                    'stock_code_lokasi' => $this->getStagingLokasiCode(),
                     'stock_qty' => $qty,
                     'stock_type' => Stock::TYPE_STAGING,
                     'stock_expired_date' => $stock->stock_expired_date,
@@ -239,11 +244,15 @@ class SoPrepareScan extends Component
 
                 Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
 
+                if ((float) Stock::where('stock_id', $stock->stock_id)->value('stock_qty') <= 0) {
+                    Stock::where('stock_id', $stock->stock_id)->delete();
+                }
+
                 // Create STAGING stock for this allocation
                 $keluarCode = $this->keluarCodeForSo($so);
                 Stock::create([
                     'stock_id_product' => $stock->stock_id_product,
-                    'stock_code_lokasi' => 'STAGING',
+                    'stock_code_lokasi' => $this->getStagingLokasiCode(),
                     'stock_qty' => $qty,
                     'stock_type' => Stock::TYPE_STAGING,
                     'stock_expired_date' => $stock->stock_expired_date,
@@ -400,22 +409,17 @@ class SoPrepareScan extends Component
     private function prepareLineStatus(): array
     {
         return $this->so->details->map(function ($d) {
-            // Hitung dari so_prepare_detail
+            // Teralokasi = SoPrepareDetail saja (sudah include scan dari flow ini)
+            // Tidak perlu jumlahkan KeluarRealisasi karena keduanya dibuat bersamaan saat scan
             $assigned = (float) $this->prepare->details()
                 ->where('so_prepare_detail_id_product', $d->so_detail_id_product)
                 ->sum('so_prepare_detail_qty');
 
-            // Hitung dari keluar-realisasi (stock sudah dipotong via warehouse scan)
-            $keluarPicked = KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_id_so_detail', $d->so_detail_id))
-                ->sum('out_realisasi_qty');
-
-            $totalAssigned = $assigned + (float) $keluarPicked;
-
             return [
                 'detail' => $d,
                 'qty_needed' => (float) $d->so_detail_qty,
-                'qty_assigned' => $totalAssigned,
-                'qty_remaining' => max(0, (float) $d->so_detail_qty - $totalAssigned),
+                'qty_assigned' => $assigned,
+                'qty_remaining' => max(0, (float) $d->so_detail_qty - $assigned),
             ];
         })->all();
     }
@@ -434,10 +438,7 @@ class SoPrepareScan extends Component
                 ->where('so_prepare_detail_id_product', $d->so_detail_id_product)
                 ->sum('so_prepare_detail_qty');
 
-            $keluarPicked = KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_id_so_detail', $d->so_detail_id))
-                ->sum('out_realisasi_qty');
-
-            if ($assigned + (float) $keluarPicked + 1e-9 < (float) $d->so_detail_qty) {
+            if ($assigned + 1e-9 < (float) $d->so_detail_qty) {
                 $fulfilled = false;
                 break;
             }
@@ -484,5 +485,12 @@ class SoPrepareScan extends Component
 
         $this->successMsg = 'Prepare diselesaikan. SO sudah Confirmed dan siap dikirim.';
         $this->refreshData();
+    }
+
+    private function getStagingLokasiCode(): string
+    {
+        $lokasi = Lokasi::where('lokasi_category', 'staging')->first();
+
+        return $lokasi?->lokasi_code ?? 'STAGING';
     }
 }

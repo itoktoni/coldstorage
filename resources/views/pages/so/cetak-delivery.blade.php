@@ -17,7 +17,7 @@
         .do-badge h2 { font-size: 16px; font-weight: 700; color: #4a7fb5; border: 2px solid #4a7fb5; padding: 4px 16px; display: inline-block; }
         .do-badge p { font-size: 11px; color: #555; margin-top: 4px; }
 
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
         .info-box { border: 1px solid #e8e8e8; border-radius: 6px; padding: 12px 16px; background: #fcfcfc; }
         .info-box h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; margin-bottom: 6px; font-weight: 600; }
         .info-box p { font-size: 13px; font-weight: 500; }
@@ -26,10 +26,10 @@
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         thead th { background: #4a7fb5; color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
         thead th:nth-child(1) { width: 40px; text-align: center; }
-        thead th:nth-child(4) { text-align: right; }
+        thead th:nth-child(3) { text-align: right; }
         tbody td { padding: 10px 12px; border-bottom: 1px solid #eee; }
         tbody td:nth-child(1) { text-align: center; color: #888; }
-        tbody td:nth-child(4) { text-align: right; }
+        tbody td:nth-child(3) { text-align: right; }
         tbody tr:hover { background: #f5f5f5; }
         tfoot td { padding: 10px 12px; font-weight: 700; border-top: 2px solid #333; }
 
@@ -81,8 +81,11 @@
             <div class="info-box">
                 <h3>Delivery Details</h3>
                 <p><span class="label">Tanggal:</span> {{ $delivery->delivery_tanggal->format('d F Y') }}</p>
-                <p><span class="label">SO Reference:</span> {{ $delivery->so->so_code ?? '-' }}</p>
+                <p><span class="label">SO:</span> {{ $delivery->so->so_code ?? '-' }}</p>
                 <p><span class="label">Invoice:</span> {{ $delivery->invoice->invoice_code ?? '-' }}</p>
+            </div>
+            <div class="info-box">
+                <h3>Ship Information</h3>
                 @if($delivery->delivery_nama_driver)
                     <p><span class="label">Driver:</span> {{ $delivery->delivery_nama_driver }}</p>
                 @endif
@@ -99,7 +102,6 @@
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Product</th>
                     <th>Nama Product</th>
                     <th>Qty Kirim</th>
                 </tr>
@@ -108,16 +110,15 @@
                 @foreach ($details as $i => $detail)
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ $detail['product_kode'] ?? '-' }}</td>
                     <td>{{ $detail['product_nama'] ?? '-' }}</td>
-                    <td>{{ number_format($detail['real_qty'], 3) }}</td>
+                    <td>{{ formatQty($detail['real_qty']) }}</td>
                 </tr>
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3">Total Item: {{ count($details) }} &nbsp;|&nbsp; Total Qty:</td>
-                    <td>{{ number_format($details->sum('real_qty'), 3) }}</td>
+                    <td colspan="2">Total Item: {{ count($details) }} &nbsp;|&nbsp; Total Qty:</td>
+                    <td style="text-align: right;">{{ formatQty($details->sum('real_qty')) }}</td>
                 </tr>
             </tfoot>
         </table>

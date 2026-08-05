@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ForkliftTask;
 use App\Models\Lokasi;
 use App\Models\Stock;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -41,9 +42,12 @@ class StagingRecapScan extends Component
         $this->successMsg = '';
 
         $stock = Stock::where('stock_code', $barcode)
-            ->where('stock_code_lokasi', $this->lokasiCode)
             ->where('stock_type', Stock::TYPE_STAGING)
             ->where('stock_qty', '>', 0)
+            ->where(function ($q) {
+                $q->where('stock_code_lokasi', $this->lokasiCode)
+                    ->orWhere('stock_code_lokasi', 'STAGING');
+            })
             ->with('product')
             ->first();
 
@@ -77,7 +81,7 @@ class StagingRecapScan extends Component
             'product_nama' => $stock->product->product_nama ?? '-',
             'product_category' => $stock->product->product_category ?? null,
             'stock_qty' => (float) $stock->stock_qty,
-            'stock_expired' => $stock->stock_expired_date?->format('d M Y'),
+            'stock_expired' => $stock->stock_expired_date ? Carbon::parse($stock->stock_expired_date)->format('d M Y') : null,
             'stock_pallet_code' => $stock->stock_pallet_code,
             'rack_code' => $suggestedRack?->lokasi_code ?? '',
             'removed' => false,
@@ -125,7 +129,6 @@ class StagingRecapScan extends Component
         DB::transaction(function () use ($activeItems) {
             foreach ($activeItems as $item) {
                 $stock = Stock::where('stock_id', $item['stock_id'])
-                    ->where('stock_code_lokasi', $this->lokasiCode)
                     ->where('stock_type', Stock::TYPE_STAGING)
                     ->first();
 
@@ -159,9 +162,12 @@ class StagingRecapScan extends Component
 
     private function loadItems(): void
     {
-        $stocks = Stock::where('stock_code_lokasi', $this->lokasiCode)
-            ->where('stock_type', Stock::TYPE_STAGING)
+        $stocks = Stock::where('stock_type', Stock::TYPE_STAGING)
             ->where('stock_qty', '>', 0)
+            ->where(function ($q) {
+                $q->where('stock_code_lokasi', $this->lokasiCode)
+                    ->orWhere('stock_code_lokasi', 'STAGING');
+            })
             ->with('product')
             ->get();
 
@@ -174,7 +180,7 @@ class StagingRecapScan extends Component
                 'product_nama' => $stock->product->product_nama ?? '-',
                 'product_category' => $stock->product->product_category ?? null,
                 'stock_qty' => (float) $stock->stock_qty,
-                'stock_expired' => $stock->stock_expired_date?->format('d M Y'),
+                'stock_expired' => $stock->stock_expired_date ? Carbon::parse($stock->stock_expired_date)->format('d M Y') : null,
                 'stock_pallet_code' => $stock->stock_pallet_code,
                 'rack_code' => $suggestedRack?->lokasi_code ?? '',
                 'removed' => false,

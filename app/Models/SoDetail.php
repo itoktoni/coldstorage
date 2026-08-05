@@ -23,13 +23,20 @@ class SoDetail extends BaseModel
     ];
 
     protected $casts = [
-        'so_detail_qty'   => 'integer',
+        'so_detail_qty' => 'integer',
         'so_detail_harga' => 'decimal:2',
     ];
 
     public function so()
     {
         return $this->belongsTo(So::class, 'so_detail_id_so', 'so_id');
+    }
+
+    public function getHargaAttribute(): float
+    {
+        $harga = (float) $this->so_detail_harga;
+
+        return $harga > 0 ? $harga : (float) ($this->product->product_harga ?? 0);
     }
 
     public function product()

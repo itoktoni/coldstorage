@@ -5,17 +5,24 @@ namespace App\Models;
 class Keluar extends BaseModel
 {
     protected $table = 'keluar';
+
     protected $primaryKey = 'out_code';
+
     public $keyType = 'string';
+
     public $incrementing = false;
+
     public $timestamps = true;
 
-    const STATUS_PENDING     = 'Pending';
+    const STATUS_PENDING = 'Pending';
+
     const STATUS_IN_PROGRESS = 'In Progress';
-    const STATUS_DONE        = 'Done';
+
+    const STATUS_DONE = 'Done';
 
     public static $filterColumns = ['out_code', 'out_reff', 'out_status'];
-    public static $sortColumns   = ['out_code', 'out_tanggal', 'out_reff', 'out_qty', 'out_status'];
+
+    public static $sortColumns = ['out_code', 'out_tanggal', 'out_reff', 'out_qty', 'out_status'];
 
     protected $fillable = [
         'out_code',
@@ -30,8 +37,8 @@ class Keluar extends BaseModel
     ];
 
     protected $casts = [
-        'out_tanggal'    => 'date',
-        'out_qty'        => 'double',
+        'out_tanggal' => 'date',
+        'out_qty' => 'double',
         'out_created_at' => 'datetime',
     ];
 
@@ -63,14 +70,9 @@ class Keluar extends BaseModel
         return $this->hasMany(StockAssignment::class, 'stock_assignment_id_keluar', 'out_code');
     }
 
-    public function getDetailCountAttribute(): int
-    {
-        return $this->relationLoaded('details') ? $this->details->count() : $this->details()->count();
-    }
-
     public function getPickedQtyAttribute(): float
     {
-        if (!$this->relationLoaded('details')) {
+        if (! $this->relationLoaded('details')) {
             return (float) KeluarRealisasi::whereHas('detail', fn ($q) => $q->where('out_detail_code_keluar', $this->out_code))
                 ->sum('out_realisasi_qty');
         }
@@ -90,7 +92,7 @@ class Keluar extends BaseModel
             }
         }
 
-        return \App\Models\KeluarDetail::where('out_detail_code_keluar', $this->out_code)
+        return KeluarDetail::where('out_detail_code_keluar', $this->out_code)
             ->whereNotNull('out_detail_id_so_detail')
             ->join('detail_so', 'out_detail_id_so_detail', '=', 'so_detail_id')
             ->value('so_detail_id_so');

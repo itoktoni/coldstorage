@@ -831,16 +831,6 @@ class ForkliftController extends Controller
 
                 $fulfilled = $remaining - $left;
 
-                // Create STAGING stock
-                Stock::create([
-                    'stock_id_product' => $detail->out_detail_id_product,
-                    'stock_code_lokasi' => 'STAGING',
-                    'stock_qty' => $fulfilled,
-                    'stock_type' => Stock::TYPE_STAGING,
-                    'stock_expired_date' => $expiredDates ? min($expiredDates) : null,
-                    'stock_reff' => $keluar->out_code,
-                ]);
-
                 // Consume RESERVE
                 $soCode = $detail->soDetail?->so?->so_code ?? '';
                 Stock::consumeReserve($soCode, $detail->out_detail_id_product, $fulfilled);
@@ -912,5 +902,12 @@ class ForkliftController extends Controller
                 ->where('stock_qty', '<=', 0)
                 ->delete();
         }
+    }
+
+    private function getStagingLokasiCode(): string
+    {
+        $lokasi = Lokasi::where('lokasi_category', 'staging')->first();
+
+        return $lokasi?->lokasi_code ?? 'STAGING';
     }
 }
