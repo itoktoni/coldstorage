@@ -1,7 +1,7 @@
 <?php /** @var App\Models\MasukDetail $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -36,15 +36,24 @@
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary">
-                        @if ($table->in_detail_status !== \App\Wms\MasukStatusEnum::COMPLETE)
-                        <a href="{{ route('wms-masuk-detail.realisasikan', ['id' => $table->field_primary]) }}"
-                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
-                           title="Realisasikan">
-                            <span class="material-symbols-outlined text-lg">inventory_2</span>
-                        </a>
-                        @endif
-                    </x-table-action>
+                    <td class="w-24 whitespace-nowrap">
+                        <div class="flex gap-2">
+                            @if ($table->in_detail_status !== \App\Wms\MasukStatusEnum::COMPLETE)
+                            <a href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" onclick="return confirm('Are you sure you want to delete?')" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </a>
+                            <a href="{{ route('wms-masuk-detail.realisasikan', ['id' => $table->field_primary]) }}"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
+                               title="Realisasikan">
+                                <span class="material-symbols-outlined text-lg">inventory_2</span>
+                            </a>
+                            @else
+                            <span class="inline-flex items-center px-2 py-1 text-xs text-on-surface-variant bg-surface-container rounded-lg">
+                                <span class="material-symbols-outlined text-sm mr-1">lock</span> Done
+                            </span>
+                            @endif
+                        </div>
+                    </td>
                     <td>{{ $table->in_detail_code }}</td>
                     <td>{{ $table->product->product_nama ?? '-' }}</td>
                     <td>{{ $table->in_detail_reff }}</td>
@@ -78,15 +87,22 @@
                         <x-table-mobile-text label="Qty" :text="$table->in_detail_qty" />
                         <x-table-mobile-text label="Lokasi" :text="$table->lokasi->lokasi_nama ?? '-'" />
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary">
+                            <div class="flex gap-2">
                                 @if ($table->in_detail_status !== \App\Wms\MasukStatusEnum::COMPLETE)
+                                <a href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" onclick="return confirm('Are you sure you want to delete?')" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </a>
                                 <a href="{{ route('wms-masuk-detail.realisasikan', ['id' => $table->field_primary]) }}"
                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
                                    title="Realisasikan">
                                     <span class="material-symbols-outlined text-lg">inventory_2</span>
                                 </a>
+                                @else
+                                <span class="inline-flex items-center px-2 py-1 text-xs text-on-surface-variant bg-surface-container rounded-lg">
+                                    <span class="material-symbols-outlined text-sm mr-1">lock</span> Done
+                                </span>
                                 @endif
-                            </x-table-action>
+                            </div>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty

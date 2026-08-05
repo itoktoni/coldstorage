@@ -5,3 +5,18 @@
 - Develops on Windows using PowerShell. Confidence: 0.9
 - Project path convention: `D:\laravel\{project}\`. Confidence: 0.85
 - Prefers dynamic config values (e.g. `config('app.name')`) over hardcoded strings in Blade views. Confidence: 0.8
+- Prefers responsive grid layouts: desktop = 4 columns for card grids; mobile = 1 column for large cards, 2 columns for smaller cards. Confidence: 0.9
+- Page titles and breadcrumbs should display human-readable menu labels (e.g. "Purchase Order") rather than technical module names (e.g. "Wms-po", "Wms"). Confidence: 0.9
+- Prefers informative, contextual error messages that name the relevant entity (e.g. operator name) over generic "not found or already taken" messages. Confidence: 0.85
+- Expects automatic cascading status updates across related entities (e.g. PO auto-closes when all dependent forklift tasks complete). Confidence: 0.8
+- Iterates quickly on workflow requirements — may reverse or adjust business rules mid-conversation; expects the assistant to adapt without friction. Confidence: 0.8
+- In allocation/quantity calculations, only count items that have been actively processed (e.g. scanned, prepared, ready, complete) — pending/created items should not reduce available quantities. Confidence: 0.85
+- Expects dual-layer protection when records reach terminal status (Done/Complete/Close): server-side validation in controllers (block edit/delete) AND client-side UI hiding (remove action buttons from table views). Confidence: 0.9
+- When action buttons are hidden due to status, wants a visual indicator (e.g. check_circle icon + "Selesai"/"Done" text, non-clickable) shown in place of the buttons. Confidence: 0.9
+- Prefers a dedicated Status column with colored pill badges (e.g. bg-success/10 text-success for "Confirmed", bg-warning/10 text-warning for "Prepare") in list/table views so state is visually scannable at a glance. Confidence: 0.8
+- Progress bars and percentage labels should change color based on completion state (e.g. green/success for done, primary/blue for in-progress) rather than staying a single color. Confidence: 0.8
+- Prefers comprehensive multi-file changes handled systematically (tracked with todo lists) when a requirement spans controllers, models, and views. Confidence: 0.8
+- Sub-routes (e.g. keluar-prepare, keluar-realisasi-scan) must activate the parent menu item in the sidebar via `match` arrays in config/menu.php. Confidence: 0.85
+- Expects code changes to be validated with comprehensive scenario-based tests covering multiple workflow permutations (e.g. 1 SO × 1 product, 1 SO × 2 products, 2 SOs × same product, 2 SOs × different products) — not just happy-path single-case testing. Confidence: 0.85
+- Expects end-to-end workflow testing that covers the full business cycle (SO → prepare → keluar → scan → return to rack), not isolated unit tests on individual methods. Confidence: 0.8
+- When debugging stock/inventory issues, wants the assistant to create dedicated test scripts or feature tests that simulate multiple parallel workflows to catch concurrency and data-collision bugs. Confidence: 0.8

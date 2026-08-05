@@ -10,7 +10,6 @@ use App\Models\MasukRealisasi;
 use App\Models\Po;
 use App\Models\PoDetail;
 use App\Models\Product;
-use App\Models\Stock;
 use App\Wms\MasukStatusEnum;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,9 +26,9 @@ class PoDetailController extends Controller
     protected function share($data = [])
     {
         return array_merge([
-            'model'          => $this->model,
+            'model' => $this->model,
             'productOptions' => Product::pluck('product_nama', 'product_id'),
-            'poOptions'      => Po::pluck('po_code', 'po_id'),
+            'poOptions' => Po::pluck('po_code', 'po_id'),
         ], $data);
     }
 
@@ -53,6 +52,7 @@ class PoDetailController extends Controller
         $totalQty = (float) $poDetail->po_detail_qty;
 
         $alreadyConverted = (float) MasukDetail::where('in_detail_reff', $poDetail->po_detail_code)
+            ->whereIn('in_detail_status', [MasukStatusEnum::PROCESS, MasukStatusEnum::READY, MasukStatusEnum::COMPLETE])
             ->sum('in_detail_qty');
         $remainingQty = max(0, $totalQty - $alreadyConverted);
 
@@ -109,7 +109,7 @@ class PoDetailController extends Controller
             ];
         });
 
-        $stagingOptions = \App\Models\Lokasi::where('lokasi_category', 'staging')->pluck('lokasi_nama', 'lokasi_code');
+        $stagingOptions = Lokasi::where('lokasi_category', 'staging')->pluck('lokasi_nama', 'lokasi_code');
 
         return view('pages.podetail.convert', [
             'poDetail' => $poDetail,
@@ -145,7 +145,7 @@ class PoDetailController extends Controller
         $totalAllocated = array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations));
 
         if (abs($totalAllocated - $remainingQty) > 0.001) {
-            return redirect()->back()->withErrors(['error' => 'Total alokasi qty harus sama dengan sisa qty (' . $remainingQty . ')']);
+            return redirect()->back()->withErrors(['error' => 'Total alokasi qty harus sama dengan sisa qty ('.$remainingQty.')']);
         }
 
         $validated = validator(['rows' => $allocations], [
@@ -155,25 +155,25 @@ class PoDetailController extends Controller
 
         try {
             DB::transaction(function () use ($poDetail, $allocations) {
-                    $masukDetail = MasukDetail::create([
-                        'in_detail_code'       => MasukDetail::generateCode(),
-                        'in_detail_reff'       => $poDetail->po_detail_code,
-                        'in_detail_tanggal'    => now()->toDateString(),
-                        'in_detail_status'     => MasukStatusEnum::PENDING,
-                        'in_detail_id_product' => $poDetail->po_detail_id_product,
-                        'in_detail_id_lokasi'  => $allocations[0]['lokasi_code'] ?? null,
-                        'in_detail_qty'        => array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations)),
-                        'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
-                        'in_detail_id_staging' => $allocations[0]['staging_code'] ?? null,
-                    ]);
+                $masukDetail = MasukDetail::create([
+                    'in_detail_code' => MasukDetail::generateCode(),
+                    'in_detail_reff' => $poDetail->po_detail_code,
+                    'in_detail_tanggal' => now()->toDateString(),
+                    'in_detail_status' => MasukStatusEnum::PENDING,
+                    'in_detail_id_product' => $poDetail->po_detail_id_product,
+                    'in_detail_id_lokasi' => $allocations[0]['lokasi_code'] ?? null,
+                    'in_detail_qty' => array_sum(array_map(fn ($row) => (float) $row['qty'], $allocations)),
+                    'in_detail_catatan' => 'Dikonversi dari PO '.$poDetail->po->po_code,
+                    'in_detail_id_staging' => $allocations[0]['staging_code'] ?? null,
+                ]);
 
                 foreach ($allocations as $allocation) {
                     MasukRealisasi::create([
                         'in_realisasi_masuk_code' => $masukDetail->in_detail_code,
                         'in_realisasi_id_product' => $poDetail->po_detail_id_product,
-                        'in_realisasi_qty'        => $allocation['qty'],
+                        'in_realisasi_qty' => $allocation['qty'],
                         'in_realisasi_code_lokasi' => $allocation['lokasi_code'],
-                        'in_realisasi_barcode'    => $this->generateBarcodeContent($poDetail, $allocation['qty']),
+                        'in_realisasi_barcode' => $this->generateBarcodeContent($poDetail, $allocation['qty']),
                     ]);
                 }
             });
@@ -192,7 +192,7 @@ class PoDetailController extends Controller
 
         $request->validate([
             'lokasi_code' => ['required', 'string', 'exists:lokasi,lokasi_code'],
-            'qty'        => ['required', 'numeric', 'min:0.001'],
+            'qty' => ['required', 'numeric', 'min:0.001'],
         ]);
 
         $lokasi = Lokasi::findOrFail($request->lokasi_code);
@@ -202,36 +202,37 @@ class PoDetailController extends Controller
             try {
                 $validator = validator($request->all(), [
                     'lokasi_code' => ['required', 'string', 'exists:lokasi,lokasi_code'],
-                    'qty'         => ['required', 'numeric', 'min:0.001'],
+                    'qty' => ['required', 'numeric', 'min:0.001'],
                 ]);
                 if ($validator->fails()) {
                     return response()->json(['ok' => false, 'message' => $validator->errors()->first()], 422);
                 }
 
-                if (!is_null($lokasi->lokasi_max_qty) && $qty > (float) $lokasi->lokasi_max_qty) {
-                    return response()->json(['ok' => false, 'message' => 'Qty melebihi max capacity lokasi (' . $lokasi->lokasi_max_qty . ')'], 422);
+                if (! is_null($lokasi->lokasi_max_qty) && $qty > (float) $lokasi->lokasi_max_qty) {
+                    return response()->json(['ok' => false, 'message' => 'Qty melebihi max capacity lokasi ('.$lokasi->lokasi_max_qty.')'], 422);
                 }
 
                 $alreadyConverted = (float) MasukRealisasi::whereHas('masukDetail', function ($q) use ($poDetail) {
-                        $q->where('in_detail_reff', $poDetail->po_detail_code);
-                    })
+                    $q->where('in_detail_reff', $poDetail->po_detail_code);
+                })
                     ->sum('in_realisasi_qty');
 
                 if (($alreadyConverted + $qty) > ((float) $poDetail->po_detail_qty + 0.001)) {
                     $sisa = max(0, (float) $poDetail->po_detail_qty - $alreadyConverted);
+
                     return response()->json(['ok' => false, 'message' => "Qty melebihi sisa PO. Sisa yang bisa dikonversi: {$sisa}"], 422);
                 }
 
                 $masukDetail = DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
                     $detail = MasukDetail::create([
-                        'in_detail_code'       => MasukDetail::generateCode(),
-                        'in_detail_reff'       => $poDetail->po_detail_code,
-                        'in_detail_tanggal'    => now()->toDateString(),
-                        'in_detail_status'     => MasukStatusEnum::PENDING,
+                        'in_detail_code' => MasukDetail::generateCode(),
+                        'in_detail_reff' => $poDetail->po_detail_code,
+                        'in_detail_tanggal' => now()->toDateString(),
+                        'in_detail_status' => MasukStatusEnum::PENDING,
                         'in_detail_id_product' => $poDetail->po_detail_id_product,
-                        'in_detail_id_lokasi'  => $lokasi->lokasi_code,
-                        'in_detail_qty'        => $qty,
-                        'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
+                        'in_detail_id_lokasi' => $lokasi->lokasi_code,
+                        'in_detail_qty' => $qty,
+                        'in_detail_catatan' => 'Dikonversi dari PO '.$poDetail->po->po_code,
                         'in_detail_id_staging' => $request->input('staging_code'),
                     ]);
 
@@ -256,40 +257,41 @@ class PoDetailController extends Controller
             }
         }
 
-        if (!is_null($lokasi->lokasi_max_qty) && $qty > (float) $lokasi->lokasi_max_qty) {
-            return redirect()->back()->withErrors(['error' => 'Qty melebihi max capacity lokasi (' . $lokasi->lokasi_max_qty . ')']);
+        if (! is_null($lokasi->lokasi_max_qty) && $qty > (float) $lokasi->lokasi_max_qty) {
+            return redirect()->back()->withErrors(['error' => 'Qty melebihi max capacity lokasi ('.$lokasi->lokasi_max_qty.')']);
         }
 
         $alreadyConverted = (float) MasukRealisasi::whereHas('masukDetail', function ($q) use ($poDetail) {
-                $q->where('in_detail_reff', $poDetail->po_detail_code);
-            })
+            $q->where('in_detail_reff', $poDetail->po_detail_code);
+        })
             ->sum('in_realisasi_qty');
 
         if (($alreadyConverted + $qty) > ((float) $poDetail->po_detail_qty + 0.001)) {
             $sisa = max(0, (float) $poDetail->po_detail_qty - $alreadyConverted);
+
             return redirect()->back()->withErrors(['error' => "Qty melebihi sisa PO. Sisa yang bisa dikonversi: {$sisa}"]);
         }
 
         try {
-DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
+            DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
                 $masukDetail = MasukDetail::create([
-                    'in_detail_code'       => MasukDetail::generateCode(),
-                    'in_detail_reff'       => $poDetail->po_detail_code,
-                    'in_detail_tanggal'    => now()->toDateString(),
-                    'in_detail_status'     => MasukStatusEnum::PENDING,
+                    'in_detail_code' => MasukDetail::generateCode(),
+                    'in_detail_reff' => $poDetail->po_detail_code,
+                    'in_detail_tanggal' => now()->toDateString(),
+                    'in_detail_status' => MasukStatusEnum::PENDING,
                     'in_detail_id_product' => $poDetail->po_detail_id_product,
-                    'in_detail_id_lokasi'  => $lokasi->lokasi_code,
-                    'in_detail_qty'        => $qty,
-                    'in_detail_catatan'    => 'Dikonversi dari PO ' . $poDetail->po->po_code,
+                    'in_detail_id_lokasi' => $lokasi->lokasi_code,
+                    'in_detail_qty' => $qty,
+                    'in_detail_catatan' => 'Dikonversi dari PO '.$poDetail->po->po_code,
                     'in_detail_id_staging' => $request->input('staging_code'),
                 ]);
 
                 MasukRealisasi::create([
                     'in_realisasi_masuk_code' => $masukDetail->in_detail_code,
                     'in_realisasi_id_product' => $poDetail->po_detail_id_product,
-                    'in_realisasi_qty'        => $qty,
+                    'in_realisasi_qty' => $qty,
                     'in_realisasi_code_lokasi' => $lokasi->lokasi_code,
-                    'in_realisasi_barcode'    => $this->generateBarcodeContent($poDetail, $qty),
+                    'in_realisasi_barcode' => $this->generateBarcodeContent($poDetail, $qty),
                 ]);
             });
 
@@ -304,7 +306,7 @@ DB::transaction(function () use ($poDetail, $lokasi, $qty, $request) {
     protected function generateBarcodeContent(PoDetail $poDetail, float $qty): string
     {
         $productCode = $poDetail->product->product_code ?? 'PROD';
-        $timestamp   = now()->format('YmdHis');
+        $timestamp = now()->format('YmdHis');
 
         return implode('#', [
             $productCode,

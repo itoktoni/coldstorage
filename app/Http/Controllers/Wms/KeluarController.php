@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Models\ForkliftTask;
 use App\Models\Keluar;
 use App\Models\KeluarDetail;
+use App\Models\KeluarRealisasi;
 use App\Models\Lokasi;
+use App\Models\SoPrepareDetail;
 use App\Models\Stock;
 use App\Models\StockAssignment;
 use Carbon\Carbon;
@@ -37,8 +39,23 @@ class KeluarController extends Controller
         $keluar = Keluar::with(['details.product', 'details.soDetail.so'])->where('out_code', $outCode)->firstOrFail();
 
         $lines = $keluar->details->map(function (KeluarDetail $detail) {
-            $assigned = (float) StockAssignment::where('stock_assignment_id_keluar_detail', $detail->out_detail_id)
+            // StockAssignment (dari keluar-prepare pallet selection)
+            $assignedFromAssignment = (float) StockAssignment::where('stock_assignment_id_keluar_detail', $detail->out_detail_id)
                 ->sum('stock_assignment_qty');
+
+            // KeluarRealisasi (dari scan di halaman realisasi)
+            $assignedFromRealisasi = (float) KeluarRealisasi::where('out_realisasi_id_detail', $detail->out_detail_id)
+                ->sum('out_realisasi_qty');
+
+            // SoPrepareDetail (dari SO prepare scan)
+            $assignedFromSoPrepare = 0;
+            if ($detail->out_detail_id_so_detail) {
+                $assignedFromSoPrepare = (float) SoPrepareDetail::where('so_prepare_detail_id_product', $detail->out_detail_id_product)
+                    ->whereHas('prepare', fn ($q) => $q->where('so_prepare_id_so', $detail->soDetail?->so?->so_id))
+                    ->sum('so_prepare_detail_qty');
+            }
+
+            $assigned = max($assignedFromAssignment, $assignedFromRealisasi, $assignedFromSoPrepare);
 
             return [
                 'detail' => $detail,

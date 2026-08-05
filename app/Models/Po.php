@@ -7,16 +7,22 @@ use App\Wms\PoStatusEnum;
 class Po extends BaseModel
 {
     protected $table = 'po';
+
     protected $primaryKey = 'po_id';
+
     public $timestamps = true;
 
     const STATUS_PENDING = 'Pending';
-    const STATUS_ORDERED = 'Ordered';
-    const STATUS_PARTIAL = 'Partial';
-    const STATUS_CLOSED  = 'Closed';
+
+    const STATUS_PROCESS = 'Process';
+
+    const STATUS_READY = 'Ready';
+
+    const STATUS_DONE = 'Done';
 
     public static $filterColumns = ['po_code', 'po_tanggal', 'po_status'];
-    public static $sortColumns   = ['po_code', 'po_tanggal', 'po_status'];
+
+    public static $sortColumns = ['po_code', 'po_tanggal', 'po_status'];
 
     protected $fillable = [
         'po_tanggal',
@@ -32,7 +38,7 @@ class Po extends BaseModel
 
     protected $casts = [
         'po_tanggal' => 'date',
-        'po_status'  => PoStatusEnum::class,
+        'po_status' => PoStatusEnum::class,
     ];
 
     public function supplier()
@@ -72,24 +78,24 @@ class Po extends BaseModel
     {
         return [
             self::STATUS_PENDING => self::STATUS_PENDING,
-            self::STATUS_ORDERED => self::STATUS_ORDERED,
-            self::STATUS_PARTIAL => self::STATUS_PARTIAL,
-            self::STATUS_CLOSED  => self::STATUS_CLOSED,
+            self::STATUS_PROCESS => self::STATUS_PROCESS,
+            self::STATUS_READY => self::STATUS_READY,
+            self::STATUS_DONE => self::STATUS_DONE,
         ];
     }
 
     public function rules(): array
     {
         return [
-            'po_code'             => ['nullable', 'string', 'max:50'],
-            'po_tanggal'          => ['required'],
-            'po_id_supplier'      => ['required', 'integer', 'exists:supplier,supplier_id'],
-            'po_status'           => ['nullable', 'string', 'in:'.implode(',', array_column(PoStatusEnum::cases(), 'value'))],
-            'po_keterangan'       => ['nullable', 'string'],
-            'details'                          => ['required', 'array', 'min:1'],
-            'details.*.po_detail_id'           => ['nullable', 'integer'],
-            'details.*.po_detail_id_product'   => ['required', 'integer', 'exists:product,product_id'],
-            'details.*.po_detail_qty'          => ['required', 'integer', 'min:1'],
+            'po_code' => ['nullable', 'string', 'max:50'],
+            'po_tanggal' => ['required'],
+            'po_id_supplier' => ['required', 'integer', 'exists:supplier,supplier_id'],
+            'po_status' => ['nullable', 'string', 'in:'.implode(',', array_column(PoStatusEnum::cases(), 'value'))],
+            'po_keterangan' => ['nullable', 'string'],
+            'details' => ['required', 'array', 'min:1'],
+            'details.*.po_detail_id' => ['nullable', 'integer'],
+            'details.*.po_detail_id_product' => ['required', 'integer', 'exists:product,product_id'],
+            'details.*.po_detail_qty' => ['required', 'integer', 'min:1'],
         ];
     }
 

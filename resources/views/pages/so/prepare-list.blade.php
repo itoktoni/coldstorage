@@ -10,8 +10,7 @@
                 Prepare SO - Petugas Warehouse
             </h3>
             <p class="text-on-surface-variant text-sm">
-                Daftar Sales Order berstatus <strong>Prepare</strong>. Forklift sudah mengambil barang ke staging,
-                sekarang petugas warehouse tinggal scan SO lalu scan barang staging untuk tiap SO.
+                Daftar Sales Order. Status <strong>Prepare</strong> = bisa di-scan, <strong>Confirmed</strong> = sudah selesai diproses.
             </p>
         </div>
 
@@ -37,6 +36,7 @@
                             <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Staging</th>
                             <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Teralokasi</th>
                             <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Progress</th>
+                            <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Status</th>
                             <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -52,21 +52,35 @@
                             <td class="py-2 px-3 font-body-sm text-right text-primary">{{ $row['assigned_qty'] }}</td>
                             <td class="py-2 px-3 font-body-sm">
                                 <div class="w-32 h-2 bg-outline-variant/40 border border-outline-variant rounded-full overflow-hidden">
-                                    <div class="h-full bg-primary" style="width: {{ $row['progress'] }}%"></div>
+                                    <div class="h-full {{ $row['is_done'] ? 'bg-success' : 'bg-primary' }}" style="width: {{ $row['progress'] }}%"></div>
                                 </div>
-                                <div class="text-xs text-on-surface-variant mt-1">{{ $row['progress'] }}%</div>
+                                <div class="text-xs {{ $row['is_done'] ? 'text-success' : 'text-on-surface-variant' }} mt-1">{{ $row['progress'] }}%</div>
+                            </td>
+                            <td class="py-2 px-3">
+                                @if($row['is_done'])
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">Confirmed</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning">Prepare</span>
+                                @endif
                             </td>
                             <td class="py-2 px-3 text-right">
-                                <a href="{{ route('wms-so-prepare.show', ['soId' => $so->so_id]) }}"
-                                   class="inline-flex items-center gap-1 h-9 px-3 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 transition-all">
-                                    <span class="material-symbols-outlined text-base">qr_code_scanner</span>
-                                    Scan
-                                </a>
+                                @if($row['is_done'])
+                                    <span class="inline-flex items-center gap-1 h-9 px-3 text-sm font-semibold rounded-lg bg-success/10 text-success cursor-not-allowed">
+                                        <span class="material-symbols-outlined text-base">check_circle</span>
+                                        Selesai
+                                    </span>
+                                @else
+                                    <a href="{{ route('wms-so-prepare.show', ['soId' => $so->so_id]) }}"
+                                       class="inline-flex items-center gap-1 h-9 px-3 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 transition-all">
+                                        <span class="material-symbols-outlined text-base">qr_code_scanner</span>
+                                        Scan
+                                    </a>
+                                @endif
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-6 text-on-surface-variant">Tidak ada SO berstatus Prepare.</td>
+                            <td colspan="9" class="text-center py-6 text-on-surface-variant">Tidak ada data SO.</td>
                         </tr>
                         @endforelse
                     </tbody>

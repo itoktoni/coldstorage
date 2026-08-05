@@ -1,7 +1,7 @@
 <?php /** @var App\Models\Po $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -33,13 +33,23 @@
                 @forelse ($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary">
-                        <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
-                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
-                           title="Cetak PO">
-                            <span class="material-symbols-outlined text-lg">print</span>
-                        </a>
-                    </x-table-action>
+                    <td class="w-24 whitespace-nowrap">
+                        <div class="flex gap-2">
+                            @if($table->po_status !== \App\Wms\PoStatusEnum::DONE)
+                            <a href="{{ moduleRoute('getUpdate', ['id' => $table->field_primary]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </a>
+                            <a onclick="return confirm('Are you sure you want to delete?')" href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </a>
+                            @endif
+                            <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                               title="Cetak PO">
+                                <span class="material-symbols-outlined text-lg">print</span>
+                            </a>
+                        </div>
+                    </td>
                     <td>{{ $table->po_code }}</td>
                     <td>{{ formatDate($table->po_tanggal) }}</td>
                     <td>{{ $table->supplier->supplier_nama ?? 'N/A' }}</td>
@@ -61,13 +71,21 @@
                         <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
                         @endforeach
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary">
-                        <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
-                           class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
-                           title="Cetak PO">
-                            <span class="material-symbols-outlined text-lg">print</span>
-                        </a>
-                    </x-table-action>
+                            <div class="flex gap-2">
+                                @if($table->po_status !== \App\Wms\PoStatusEnum::DONE)
+                                <a href="{{ moduleRoute('getUpdate', ['id' => $table->field_primary]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">edit</span>
+                                </a>
+                                <a onclick="return confirm('Are you sure you want to delete?')" href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </a>
+                                @endif
+                                <a href="{{ route('wms-po.cetak', ['id' => $table->field_primary]) }}" target="_blank"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-info/10 text-info hover:bg-info/20 transition-colors"
+                                   title="Cetak PO">
+                                    <span class="material-symbols-outlined text-lg">print</span>
+                                </a>
+                            </div>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty

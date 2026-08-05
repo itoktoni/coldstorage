@@ -128,8 +128,22 @@ class SoPrepareScan extends Component
                     'so_prepare_detail_qty' => $qty,
                 ]);
 
-                // 6. Decrement stock directly (the core of the scan)
+                // 6. Decrement source stock
                 Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
+
+                // 6b. Create STAGING stock for this allocation
+                $keluarCode = $this->keluarCodeForSo($so);
+                Stock::create([
+                    'stock_id_product' => $stock->stock_id_product,
+                    'stock_code_lokasi' => 'STAGING',
+                    'stock_qty' => $qty,
+                    'stock_type' => Stock::TYPE_STAGING,
+                    'stock_expired_date' => $stock->stock_expired_date,
+                    'stock_reff' => $keluarCode ?? $so->so_code,
+                ]);
+
+                // 6c. Consume RESERVE for this SO
+                Stock::consumeReserve($so->so_code, $stock->stock_id_product, $qty);
 
                 // 7. Check fulfillment
                 $this->checkFulfillment($so, $prepare);
@@ -225,6 +239,20 @@ class SoPrepareScan extends Component
 
                 Stock::where('stock_id', $stock->stock_id)->decrement('stock_qty', $qty);
 
+                // Create STAGING stock for this allocation
+                $keluarCode = $this->keluarCodeForSo($so);
+                Stock::create([
+                    'stock_id_product' => $stock->stock_id_product,
+                    'stock_code_lokasi' => 'STAGING',
+                    'stock_qty' => $qty,
+                    'stock_type' => Stock::TYPE_STAGING,
+                    'stock_expired_date' => $stock->stock_expired_date,
+                    'stock_reff' => $keluarCode ?? $so->so_code,
+                ]);
+
+                // Consume RESERVE for this SO
+                Stock::consumeReserve($so->so_code, $stock->stock_id_product, $qty);
+
                 $this->checkFulfillment($so, $prepare);
             });
 
@@ -244,9 +272,30 @@ class SoPrepareScan extends Component
             DB::transaction(function () use ($detailId) {
                 $detail = SoPrepareDetail::findOrFail($detailId);
 
-                // 1. Restore staging stock
+                // 1. Restore source stock (IN)
                 Stock::where('stock_id', $detail->so_prepare_detail_id_stock)
                     ->increment('stock_qty', $detail->so_prepare_detail_qty);
+
+                // 1b. Remove STAGING stock created for this allocation
+                $so = $this->so;
+                $keluarCode = $this->keluarCodeForSo($so);
+                Stock::where('stock_type', Stock::TYPE_STAGING)
+                    ->where('stock_id_product', $detail->so_prepare_detail_id_product)
+                    ->where('stock_reff', $keluarCode ?? $so->so_code)
+                    ->where('stock_qty', '>=', $detail->so_prepare_detail_qty)
+                    ->limit(1)
+                    ->decrement('stock_qty', $detail->so_prepare_detail_qty);
+
+                // 1c. Restore RESERVE for this SO
+                if ($so) {
+                    $reserve = Stock::where('stock_type', Stock::TYPE_RESERVE)
+                        ->where('stock_reff', $so->so_code)
+                        ->where('stock_id_product', $detail->so_prepare_detail_id_product)
+                        ->first();
+                    if ($reserve) {
+                        $reserve->increment('stock_qty', $detail->so_prepare_detail_qty);
+                    }
+                }
 
                 // 2. Delete keluar_realisasi (only if one was created)
                 if ($detail->so_prepare_detail_id_realisasi) {

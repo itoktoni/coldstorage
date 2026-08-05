@@ -115,6 +115,23 @@ function module($action = null)
     return $module;
 }
 
+function moduleLabel()
+{
+    $module = module();
+    $menu = config('menu.sidebar', []);
+
+    foreach ($menu as $section) {
+        foreach ($section['items'] ?? [] as $item) {
+            $routeName = $item['route'] ?? '';
+            if (Str::startsWith($routeName, $module.'.')) {
+                return $item['label'] ?? ucfirst($module);
+            }
+        }
+    }
+
+    return ucfirst($module);
+}
+
 function moduleRoute($action = null, $params = [])
 {
     $route = route(module($action), $params);

@@ -9,17 +9,17 @@ enum PoStatusEnum: string
     use EnumTrait;
 
     case PENDING = 'Pending';
-    case ORDERED = 'Ordered';
-    case PARTIAL = 'Partial';
-    case CLOSED  = 'Closed';
+    case PROCESS = 'Process';
+    case READY = 'Ready';
+    case DONE = 'Done';
 
     public function description(): string
     {
         return match ($this) {
             self::PENDING => 'Pending',
-            self::ORDERED => 'Ordered',
-            self::PARTIAL => 'Partial',
-            self::CLOSED  => 'Closed',
+            self::PROCESS => 'Process',
+            self::READY => 'Ready',
+            self::DONE => 'Done',
         };
     }
 
@@ -27,9 +27,9 @@ enum PoStatusEnum: string
     {
         return match ($this) {
             self::PENDING => 'neutral',
-            self::ORDERED => 'info',
-            self::PARTIAL => 'warning',
-            self::CLOSED  => 'success',
+            self::PROCESS => 'info',
+            self::READY => 'warning',
+            self::DONE => 'success',
         };
     }
 }

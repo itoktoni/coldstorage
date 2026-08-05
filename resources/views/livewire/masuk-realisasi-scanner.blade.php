@@ -133,7 +133,7 @@
                             x-on:click="$dispatch('open-camera-scanner')"
                             class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
                         <span class="material-symbols-outlined text-lg mr-1">photo_camera</span>
-                        Scan Camera
+                        Scan
                     </button>
                 </div>
             </div>
@@ -159,10 +159,16 @@
                         1 barcode ini mewakili seluruh realisasi pada {{ $masukDetail->in_detail_code }}.
                     </div>
                 </div>
-                <a href="{{ route('wms-forklift.printQr', ['groupCode' => $palletCode]) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
-                    <span class="material-symbols-outlined text-lg mr-1">picture_as_pdf</span>
-                    Print PDF Pallet
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('wms-forklift.printQr', ['groupCode' => $palletCode]) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-lg mr-1">picture_as_pdf</span>
+                        Print PDF
+                    </a>
+                    <button type="button" wire:click="regeneratePallet" wire:confirm="Yakin ingin regenerate pallet code?" class="inline-flex items-center px-4 py-2 bg-warning text-on-warning rounded-lg hover:bg-warning/90 transition-colors">
+                        <span class="material-symbols-outlined text-lg mr-1">refresh</span>
+                        Regenerate Code
+                    </button>
+                </div>
             </div>
         </div>
         @endif
@@ -220,7 +226,6 @@
                             <tr>
                                 <th class="px-4 py-3">Qty</th>
                                 <th class="px-4 py-3">Barcode</th>
-                                <th class="px-4 py-3">Lokasi</th>
                                 <th class="px-4 py-3">Actions</th>
                             </tr>
                         </thead>
@@ -229,7 +234,6 @@
                             <tr class="border-b">
                                 <td class="px-4 py-3">{{ (float) $scan->in_realisasi_qty }}</td>
                                 <td class="px-4 py-3 text-xs">{{ $scan->in_realisasi_barcode }}</td>
-                                <td class="px-4 py-3 text-xs">{{ $scan->in_realisasi_code_lokasi }}</td>
                                 <td class="px-4 py-3">
                                     <button wire:click="deleteScan({{ $scan->in_realisasi_id }})"
                                             wire:confirm="Hapus scan ini?"
@@ -258,19 +262,30 @@
         @endif
 
         {{-- Camera Scanner Modal --}}
-        <div x-data="{ show: false }"
-             x-on:open-camera-scanner.window="show = true"
-             x-on:close-camera-scanner.window="show = false"
+        <div x-data="cameraScanner()"
+             x-on:open-camera-scanner.window="open()"
+             x-on:close-camera-scanner.window="close()"
              x-show="show"
              x-cloak
              class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div class="bg-surface-container-lowest rounded-xl p-6 max-w-lg w-full mx-4" x-on:click.stop>
                 <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant">
-                    Scan QR Code
+                    Scan Barcode / QR Code
                 </h3>
-                <div id="camera-scanner" class="w-full h-64 bg-gray-200 rounded-lg mb-4"></div>
-                <div class="flex justify-end">
-                    <button x-on:click="show = false; $dispatch('close-camera-scanner')"
+                <div x-ref="scannerRegion" id="camera-scanner" class="w-full rounded-lg overflow-hidden mb-4" style="min-height: 300px;"></div>
+                <template x-if="error">
+                    <div class="bg-error/10 border border-error rounded-lg p-3 mb-4">
+                        <p class="text-error text-sm" x-text="error"></p>
+                    </div>
+                </template>
+                <div class="flex justify-between items-center">
+                    <button x-on:click="switchCamera()"
+                            x-show="cameras.length > 1"
+                            class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                        <span class="material-symbols-outlined text-lg mr-1">cameraswitch</span>
+                        Ganti Kamera
+                    </button>
+                    <button x-on:click="close()"
                             class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
                         Tutup
                     </button>
@@ -282,33 +297,124 @@
     {{-- Camera Scanner Script --}}
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script>
-        document.addEventListener('livewire:initialized', () => {
-            let html5QrcodeScanner = null;
+        function cameraScanner() {
+            return {
+                show: false,
+                scanner: null,
+                cameras: [],
+                currentCameraIndex: 0,
+                error: null,
 
-            Livewire.on('open-camera-scanner', () => {
-                const scannerDiv = document.getElementById('camera-scanner');
-                if (!scannerDiv) return;
+                open() {
+                    this.show = true;
+                    this.error = null;
+                    this.$nextTick(() => this.startScanner());
+                },
 
-                html5QrcodeScanner = new Html5QrcodeScanner("camera-scanner", {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 }
-                });
+                close() {
+                    this.stopScanner();
+                    this.show = false;
+                },
 
-                html5QrcodeScanner.render((decodedText) => {
-                    @this.scan(decodedText);
-                    html5QrcodeScanner.clear();
-                    Livewire.dispatch('close-camera-scanner');
-                }, (error) => {
-                    // Ignore scan errors
-                });
-            });
+                startScanner() {
+                    if (this.scanner) {
+                        this.stopScanner();
+                    }
 
-            Livewire.on('close-camera-scanner', () => {
-                if (html5QrcodeScanner) {
-                    html5QrcodeScanner.clear();
-                    html5QrcodeScanner = null;
+                    this.scanner = new Html5Qrcode('camera-scanner');
+
+                    const config = {
+                        fps: 15,
+                        qrbox: { width: 280, height: 150 },
+                        aspectRatio: 1.5,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.QR_CODE,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.ITF,
+                        ]
+                    };
+
+                    Html5Qrcode.getCameras().then(devices => {
+                        this.cameras = devices || [];
+                        if (this.cameras.length === 0) {
+                            this.error = 'Kamera tidak ditemukan. Pastikan izin kamera diizinkan.';
+                            return;
+                        }
+
+                        // Prefer back camera on mobile
+                        this.currentCameraIndex = this.cameras.findIndex(d =>
+                            d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')
+                        );
+                        if (this.currentCameraIndex === -1) this.currentCameraIndex = 0;
+
+                        this.startWithCamera(this.cameras[this.currentCameraIndex].id, config);
+                    }).catch(err => {
+                        this.error = 'Tidak bisa mengakses kamera. Pastikan izin kamera diizinkan di browser.';
+                        console.error('Camera error:', err);
+                    });
+                },
+
+                startWithCamera(cameraId, config) {
+                    this.scanner.start(
+                        cameraId,
+                        config,
+                        (decodedText) => {
+                            this.onScanSuccess(decodedText);
+                        },
+                        (errorMessage) => {
+                            // Scan frame errors are expected, ignore
+                        }
+                    ).catch(err => {
+                        this.error = 'Gagal memulai kamera: ' + (err.message || err);
+                        console.error('Start camera error:', err);
+                    });
+                },
+
+                onScanSuccess(decodedText) {
+                    this.stopScanner();
+                    this.show = false;
+
+                    // Send to Livewire component
+                    if (window.Livewire) {
+                        Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('scan', decodedText);
+                    }
+                },
+
+                switchCamera() {
+                    if (this.cameras.length <= 1) return;
+                    this.currentCameraIndex = (this.currentCameraIndex + 1) % this.cameras.length;
+                    this.stopScanner();
+                    const config = {
+                        fps: 15,
+                        qrbox: { width: 280, height: 150 },
+                        aspectRatio: 1.5,
+                    };
+                    this.$nextTick(() => {
+                        this.scanner = new Html5Qrcode('camera-scanner');
+                        this.startWithCamera(this.cameras[this.currentCameraIndex].id, config);
+                    });
+                },
+
+                stopScanner() {
+                    if (this.scanner) {
+                        try {
+                            this.scanner.stop().then(() => {
+                                this.scanner.clear();
+                                this.scanner = null;
+                            }).catch(() => {
+                                this.scanner = null;
+                            });
+                        } catch (e) {
+                            this.scanner = null;
+                        }
+                    }
                 }
-            });
-        });
+            };
+        }
     </script>
 </div>

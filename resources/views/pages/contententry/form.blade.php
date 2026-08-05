@@ -86,7 +86,7 @@ $layoutColors = [
 
 ?>
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
         {{-- Main Content Card --}}

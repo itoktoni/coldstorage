@@ -1,10 +1,10 @@
 <?php /** @var App\Models\Stock $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="moduleLabel()">
             @bind($model ?? null)
                 @if(isset($model) && $model->exists)
                     <x-input col="6" name="stock_code" readonly />

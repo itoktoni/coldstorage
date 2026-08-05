@@ -8,6 +8,7 @@ use App\Http\Requests\GeneralRequest;
 use App\Models\Po;
 use App\Models\PoDetail;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PoController extends Controller
@@ -22,10 +23,10 @@ class PoController extends Controller
     protected function share($data = [])
     {
         return array_merge([
-            'model'           => $this->model,
-            'productOptions'  => Product::pluck('product_nama', 'product_id'),
+            'model' => $this->model,
+            'productOptions' => Product::pluck('product_nama', 'product_id'),
             'supplierOptions' => Po::supplierOptions(),
-            'statusOptions'   => Po::statusOptions(),
+            'statusOptions' => Po::statusOptions(),
         ], $data);
     }
 
@@ -37,6 +38,12 @@ class PoController extends Controller
     public function getUpdate(GeneralRequest $request, $id)
     {
         $data = $this->model->with('details')->findOrFail($id);
+
+        if ($data->po_status === Po::STATUS_DONE) {
+            flash()->error('PO sudah Done, tidak bisa di-edit.');
+
+            return redirect()->route('wms-po.getTable');
+        }
 
         return $this->views($this->template(), [
             'model' => $data,
@@ -63,11 +70,16 @@ class PoController extends Controller
 
     public function postUpdate(GeneralRequest $request, $id)
     {
+        $po = Po::findOrFail($id);
+
+        if ($po->po_status === Po::STATUS_DONE) {
+            return $this->response($this->payload(TOAST_FAILED, 'PO sudah Done, tidak bisa di-edit.'));
+        }
+
         $data = $request->validate((new Po)->rules());
 
         try {
-            $po = DB::transaction(function () use ($data, $id) {
-                $po = Po::findOrFail($id);
+            $po = DB::transaction(function () use ($data, $po) {
                 $po->update(collect($data)->except('details')->toArray());
                 $this->syncDetails($po, $data['details']);
 
@@ -88,9 +100,9 @@ class PoController extends Controller
 
         foreach ($details as $row) {
             $attrs = [
-                'po_detail_id_po'      => $po->po_id,
+                'po_detail_id_po' => $po->po_id,
                 'po_detail_id_product' => (int) $row['po_detail_id_product'],
-                'po_detail_qty'        => (int) $row['po_detail_qty'],
+                'po_detail_qty' => (int) $row['po_detail_qty'],
             ];
 
             $id = $row['po_detail_id'] ?? null;
@@ -128,5 +140,21 @@ class PoController extends Controller
         $po = $this->model->with(['details.product', 'supplier'])->findOrFail($id);
 
         return view('pages.po.cetak', ['po' => $po]);
+    }
+
+    public function getDelete(Request $request, string $id)
+    {
+        $po = $this->model->findOrFail($id);
+
+        if ($po->po_status === Po::STATUS_DONE) {
+            flash()->error('PO sudah Done, tidak bisa dihapus.');
+
+            return redirect()->route('wms-po.getTable');
+        }
+
+        $po->delete();
+        flash()->success('PO berhasil dihapus.');
+
+        return redirect()->route('wms-po.getTable');
     }
 }

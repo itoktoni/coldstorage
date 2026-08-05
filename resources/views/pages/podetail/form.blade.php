@@ -1,10 +1,10 @@
 <?php /** @var App\Models\PoDetail $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="moduleLabel()">
             @bind($model ?? null)
                 <x-select col="6" name="po_detail_id_po" :options="$poOptions" />
                 <x-select col="6" name="po_detail_id_product" :options="$productOptions" />

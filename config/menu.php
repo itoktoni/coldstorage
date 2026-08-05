@@ -33,6 +33,7 @@ return [
                 ['route' => 'category.getTable', 'icon' => 'category', 'label' => 'Categories'],
                 ['route' => 'tag.getTable', 'icon' => 'label', 'label' => 'Tags'],
                 ['route' => 'wms-customer.getTable', 'icon' => 'groups', 'label' => 'Customer'],
+                ['route' => 'wms-supplier.getTable', 'icon' => 'business', 'label' => 'Supplier'],
                 ['route' => 'wms-gudang.getTable', 'icon' => 'warehouse', 'label' => 'Gudang'],
                 ['route' => 'wms-lokasi.getTable', 'icon' => 'place', 'label' => 'Lokasi'],
                 ['route' => 'wms-product.getTable', 'icon' => 'inventory_2', 'label' => 'Product'],
@@ -54,15 +55,14 @@ return [
             'label' => 'Procurement',
             'items' => [
                 ['route' => 'wms-po.getTable', 'icon' => 'shopping_cart', 'label' => 'Purchase Order'],
-                ['route' => 'wms-po-detail.getTable', 'icon' => 'list_alt', 'label' => 'PO Detail'],
-                ['route' => 'wms-supplier.getTable', 'icon' => 'business', 'label' => 'Supplier'],
+                ['route' => 'wms-po-detail.getTable', 'icon' => 'list_alt', 'label' => 'PO Detail', 'match' => ['wms-po-detail-convert', 'wms-po-detail.*']],
             ],
         ],
         [
             'label' => 'Inbound',
             'items' => [
-                ['route' => 'wms-masuk-detail.getTable', 'icon' => 'input', 'label' => 'Masuk Detail'],
-                ['route' => 'wms-masuk-realisasi.getTable', 'icon' => 'check_circle', 'label' => 'Masuk Realisasi'],
+                ['route' => 'wms-masuk-detail.getTable', 'icon' => 'input', 'label' => 'Prepare Masuk'],
+                ['route' => 'wms-masuk-realisasi.getTable', 'icon' => 'check_circle', 'label' => 'Realisasi Masuk'],
                 ['route' => 'wms-forklift.index', 'icon' => 'local_shipping', 'label' => 'Forklift'],
             ],
         ],
@@ -76,8 +76,8 @@ return [
         [
             'label' => 'Outbound',
             'items' => [
-                ['route' => 'wms-keluar.getTable', 'icon' => 'output', 'label' => 'Keluar'],
-                ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail', 'match' => ['wms-keluar-realisasi-scan.*']],
+                ['route' => 'wms-keluar.getTable', 'icon' => 'output', 'label' => 'Keluar', 'match' => ['wms-keluar-prepare.*', 'wms-keluar.*']],
+                ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail', 'match' => ['wms-keluar-realisasi-scan.*', 'wms-keluar-detail.*']],
                 ['route' => 'wms-keluar-realisasi.getTable', 'icon' => 'task_alt', 'label' => 'Keluar Realisasi'],
             ],
         ],

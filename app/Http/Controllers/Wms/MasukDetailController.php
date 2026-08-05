@@ -8,6 +8,7 @@ use App\Models\ForkliftTask;
 use App\Models\Lokasi;
 use App\Models\MasukDetail;
 use App\Models\MasukRealisasi;
+use App\Models\Po;
 use App\Models\Product;
 use App\Models\Stock;
 use App\Wms\MasukStatusEnum;
@@ -26,22 +27,30 @@ class MasukDetailController extends Controller
     protected function share($data = [])
     {
         return array_merge([
-            'model'          => $this->model,
+            'model' => $this->model,
             'productOptions' => Product::pluck('product_nama', 'product_id'),
-            'lokasiOptions'  => Lokasi::pluck('lokasi_nama', 'lokasi_code'),
+            'lokasiOptions' => Lokasi::pluck('lokasi_nama', 'lokasi_code'),
         ], $data);
     }
 
     protected function getData()
     {
         return $this->model->with(['lokasi', 'product', 'poDetail.po.supplier'])
-          ->filter()
-          ->sort();
+            ->filter()
+            ->sort();
     }
 
     public function getDelete(Request $request, string $id)
     {
         $masukDetail = $this->model->findOrFail($id);
+
+        if ($masukDetail->in_detail_status === MasukStatusEnum::COMPLETE) {
+            flash()->error('Masuk detail sudah Complete, tidak bisa dihapus.');
+
+            return redirect()->route('wms-masuk-detail.getTable');
+        }
+
+        $poDetail = $masukDetail->poDetail;
 
         DB::transaction(function () use ($masukDetail) {
             // Cari group code dari masuk_realisasi terkait
@@ -60,9 +69,35 @@ class MasukDetailController extends Controller
             $masukDetail->delete();
         });
 
+        // Update PO status setelah delete
+        if ($poDetail) {
+            $this->updatePoStatus($poDetail);
+        }
+
         flash()->success('Masuk detail dan stock terkait berhasil dihapus.');
 
         return redirect()->route('wms-masuk-detail.getTable');
+    }
+
+    protected function updatePoStatus($poDetail): void
+    {
+        $po = $poDetail->po;
+        if (! $po) {
+            return;
+        }
+
+        $poDetailCodes = $po->details()->pluck('po_detail_code')->all();
+        $totalMasukQty = MasukDetail::whereIn('in_detail_reff', $poDetailCodes)
+            ->whereIn('in_detail_status', [MasukStatusEnum::PROCESS, MasukStatusEnum::READY, MasukStatusEnum::COMPLETE])
+            ->sum('in_detail_qty');
+
+        $totalPoQty = $po->details()->sum('po_detail_qty');
+
+        if (abs($totalMasukQty - $totalPoQty) > 0.001) {
+            if ($po->po_status === Po::STATUS_DONE || $po->po_status === Po::STATUS_READY) {
+                $po->update(['po_status' => Po::STATUS_PROCESS]);
+            }
+        }
     }
 
     public function getRealisasikan(Request $request, string $id)
@@ -77,11 +112,11 @@ class MasukDetailController extends Controller
         $masukDetail = $this->model->findOrFail($id);
 
         $data = $request->validate([
-            'realisasi_qty'   => ['required', 'numeric', 'min:0.001', 'lte:'.$masukDetail->in_detail_qty],
+            'realisasi_qty' => ['required', 'numeric', 'min:0.001', 'lte:'.$masukDetail->in_detail_qty],
         ]);
 
         $lokasiCode = $masukDetail->in_detail_id_lokasi;
-        if (!$lokasiCode) {
+        if (! $lokasiCode) {
             return redirect()->back()->withErrors(['error' => 'Masuk detail belum memiliki lokasi tujuan']);
         }
 
@@ -100,9 +135,9 @@ class MasukDetailController extends Controller
                 MasukRealisasi::create([
                     'in_realisasi_masuk_code' => $masukDetail->in_detail_code,
                     'in_realisasi_id_product' => $masukDetail->in_detail_id_product,
-                    'in_realisasi_qty'        => $data['realisasi_qty'],
+                    'in_realisasi_qty' => $data['realisasi_qty'],
                     'in_realisasi_code_lokasi' => $lokasiCode,
-                    'in_realisasi_group'      => $groupCode,
+                    'in_realisasi_group' => $groupCode,
                 ]);
 
                 // Hitung total yang sudah direalisasi
@@ -115,10 +150,10 @@ class MasukDetailController extends Controller
                     ForkliftTask::firstOrCreate(
                         ['forklift_type' => 'putaway', 'forklift_pallet_code' => $groupCode],
                         [
-                            'forklift_lokasi_asal'   => $masukDetail->in_detail_id_staging,
+                            'forklift_lokasi_asal' => $masukDetail->in_detail_id_staging,
                             'forklift_lokasi_tujuan' => $masukDetail->in_detail_id_lokasi,
-                            'forklift_reff'          => $masukDetail->in_detail_code,
-                            'forklift_status'        => 'Pending',
+                            'forklift_reff' => $masukDetail->in_detail_code,
+                            'forklift_status' => 'Pending',
                         ]
                     );
                 } else {
@@ -127,13 +162,13 @@ class MasukDetailController extends Controller
 
                 // Tambah stok dengan pallet_code = group code (PAL-xxx)
                 Stock::create([
-                    'stock_id_product'   => $masukDetail->in_detail_id_product,
-                    'stock_code_lokasi'  => $data['realisasi_lokasi'],
-                    'stock_qty'          => $data['realisasi_qty'],
-                    'stock_type'         => 'IN',
+                    'stock_id_product' => $masukDetail->in_detail_id_product,
+                    'stock_code_lokasi' => $data['realisasi_lokasi'],
+                    'stock_qty' => $data['realisasi_qty'],
+                    'stock_type' => 'IN',
                     'stock_expired_date' => now()->addDays(30),
-                    'stock_reff'         => $groupCode,
-                    'stock_pallet_code'  => $groupCode,
+                    'stock_reff' => $groupCode,
+                    'stock_pallet_code' => $groupCode,
                 ]);
             });
 

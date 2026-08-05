@@ -1,7 +1,7 @@
 <?php /** @var App\Models\MasukRealisasi $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -33,7 +33,19 @@
                 @forelse($data as $table)
                 <tr>
                     <x-table-row-checkbox :model="$model" :value="$table->field_primary" />
-                    <x-table-action :model="$model" :id="$table->field_primary" />
+                    <td class="w-24 whitespace-nowrap">
+                        <div class="flex gap-2">
+                            @if ($table->in_detail_status !== 'complete')
+                            <a href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" onclick="return confirm('Are you sure you want to delete?')" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                <span class="material-symbols-outlined text-lg">delete</span>
+                            </a>
+                            @else
+                            <span class="inline-flex items-center px-2 py-1 text-xs text-on-surface-variant bg-surface-container rounded-lg">
+                                <span class="material-symbols-outlined text-sm mr-1">lock</span> Done
+                            </span>
+                            @endif
+                        </div>
+                    </td>
                     <td>{{ $table->in_realisasi_code }}</td>
                     <td>{{ $table->product->product_nama ?? '-' }}</td>
                     <td>{{ $table->in_realisasi_qty }}</td>
@@ -62,7 +74,17 @@
                             <x-badge :type="$table->status_badge">{{ ucfirst($table->in_detail_status) }}</x-badge>
                         </div>
                         <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
+                            <div class="flex gap-2">
+                                @if ($table->in_detail_status !== 'complete')
+                                <a href="{{ moduleRoute('getDelete', ['id' => $table->field_primary]) }}" onclick="return confirm('Are you sure you want to delete?')" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </a>
+                                @else
+                                <span class="inline-flex items-center px-2 py-1 text-xs text-on-surface-variant bg-surface-container rounded-lg">
+                                    <span class="material-symbols-outlined text-sm mr-1">lock</span> Done
+                                </span>
+                                @endif
+                            </div>
                         </x-table-mobile-footer>
                     </x-table-mobile-item>
                     @empty

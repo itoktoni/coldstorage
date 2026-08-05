@@ -14,10 +14,10 @@
 @endphp
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())" icon="receipt_long">
+        <x-card :label="moduleLabel()" icon="receipt_long">
             @bind($model ?? null)
 
                 @if($isEdit)

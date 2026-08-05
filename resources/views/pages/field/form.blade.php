@@ -1,14 +1,14 @@
-﻿<?php /** @var App\Models\Field $model */ ?>
+<?php /** @var App\Models\Field $model */ ?>
 <?php
 $typeOptions = \App\Models\Field::getTypeOptions();
 $isEdit = isset($model) && $model->exists;
 ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => $isEdit ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="moduleLabel()">
             @bind($model ?? null)
                 <x-input col="6" name="label" />
                 <x-input col="6" name="name" />

@@ -8,4 +8,5 @@ return [
     AppServiceProvider::class,
     FortifyServiceProvider::class,
     ModelAliasServiceProvider::class,
+    Laravel\Dusk\DuskServiceProvider::class,
 ];

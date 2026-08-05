@@ -1,7 +1,7 @@
 <?php /** @var App\Models\Category $table */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -25,8 +25,6 @@
                 <th>Actions</th>
                 <th>Name</th>
                 <th>Slug</th>
-                <th>Parent</th>
-                <th>Sort</th>
             </x-slot:head>
             <x-slot:body>
                 @foreach($data as $table)
@@ -35,8 +33,6 @@
                     <x-table-action :model="$model" :id="$table->field_primary" />
                     <td>{{ $table->name }}</td>
                     <td>{{ $table->slug }}</td>
-                    <td>{{ $table->parent->name ?? '-' }}</td>
-                    <td>{{ $table->sort_order }}</td>
                 </tr>
                 @endforeach
             </x-slot:body>

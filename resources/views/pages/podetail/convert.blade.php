@@ -8,7 +8,7 @@
         <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 form-card">
             <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-xl">swap_horiz</span>
-                Convert to Masuk Detail
+                Prepare Barang Masuk
             </h3>
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-4">
@@ -23,7 +23,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
                     <div class="flex items-center h-10">
                         @if($productCategory)
-                        <span class="badge badge-warning">{{ $productCategory }}</span>
+                        <span class="badge badge-primary">{{ $productCategory }}</span>
                         @else
                         <span class="text-sm text-on-surface-variant">-</span>
                         @endif
@@ -93,9 +93,9 @@
                             </td>
                             <td class="px-4 py-3">
                                 @if($lokasi['lokasi_category'])
-                                <span class="badge badge-info text-xs">{{ $lokasi['lokasi_category'] }}</span>
+                                <span class="badge badge-primary text-xs">{{ $lokasi['lokasi_category'] }}</span>
                                 @else
-                                <span class="text-xs text-on-surface-variant">Semua</span>
+                                <span class="text-xs badge badge-warning text-on-surface-variant">Semua</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3">{{ (float) $lokasi['current_qty'] }}</td>
@@ -123,7 +123,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <select name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][staging_code]"
-                                        class="w-32 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                        class="w-48 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                     <option value="">Pilih Staging</option>
                                     @foreach($stagingOptions as $sc => $sn)
                                     <option value="{{ $sc }}">{{ $sn }}</option>

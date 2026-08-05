@@ -728,7 +728,8 @@ class SoController extends Controller
     public function getPrepareList()
     {
         $sos = So::with(['customer', 'details.product', 'prepare'])
-            ->where('so_status', SoStatusEnum::PREPARE)
+            ->whereIn('so_status', [SoStatusEnum::PREPARE, SoStatusEnum::CONFIRMED])
+            ->orderBy('so_status')
             ->orderBy('so_tanggal')
             ->get()
             ->map(function (So $so) {
@@ -745,6 +746,7 @@ class SoController extends Controller
                     'picked_qty' => $pickedQty,
                     'assigned_qty' => $assignedQty,
                     'progress' => $totalQty > 0 ? (int) min(100, round($assignedQty / $totalQty * 100)) : 0,
+                    'is_done' => $so->so_status === SoStatusEnum::CONFIRMED,
                 ];
             });
 

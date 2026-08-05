@@ -69,23 +69,11 @@ class WmsSeeder extends Seeder
             ['product_code' => 'PROD-07', 'product_nama' => 'Paha Ayam (kg)', 'product_harga' => 42000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
             ['product_code' => 'PROD-08', 'product_nama' => 'Sayap Ayam (kg)', 'product_harga' => 35000, 'product_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
             ['product_code' => 'PROD-09', 'product_nama' => 'Ikan Salmon Fillet (kg)', 'product_harga' => 220000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-10', 'product_nama' => 'Ikan Kakap (kg)', 'product_harga' => 75000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-11', 'product_nama' => 'Udang Vannamei (kg)', 'product_harga' => 120000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-12', 'product_nama' => 'Cumi-cumi (kg)', 'product_harga' => 95000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-13', 'product_nama' => 'Ikan Tongkol (kg)', 'product_harga' => 45000, 'product_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-14', 'product_nama' => 'Kentang Import (kg)', 'product_harga' => 28000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-15', 'product_nama' => 'Wortel (kg)', 'product_harga' => 18000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-16', 'product_nama' => 'Bawang Bombai (kg)', 'product_harga' => 22000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-17', 'product_nama' => 'Susu UHT 1L', 'product_harga' => 16000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-18', 'product_nama' => 'Keju Cheddar (kg)', 'product_harga' => 120000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-19', 'product_nama' => 'Mentega Unsalted (kg)', 'product_harga' => 95000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-20', 'product_nama' => 'Yoghurt Plain 1L', 'product_harga' => 28000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-21', 'product_nama' => 'Krim Kental Manis (kg)', 'product_harga' => 45000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-22', 'product_nama' => 'Keju Mozarella (kg)', 'product_harga' => 110000, 'product_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-23', 'product_nama' => 'Sirloin Slice (kg)', 'product_harga' => 210000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-24', 'product_nama' => 'Daging Giling (kg)', 'product_harga' => 95000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-25', 'product_nama' => 'Has Dalam Slice (kg)', 'product_harga' => 220000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['product_code' => 'PROD-26', 'product_nama' => 'Tetelan Sapi (kg)', 'product_harga' => 75000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-10', 'product_nama' => 'Kentang 10kg (karton)', 'product_harga' => 100000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-11', 'product_nama' => 'Kentang 2.5kg (Pack)', 'product_harga' => 25000, 'product_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-12', 'product_nama' => 'Daging Giling (kg)', 'product_harga' => 95000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-13', 'product_nama' => 'Has Dalam Slice (kg)', 'product_harga' => 220000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['product_code' => 'PROD-14', 'product_nama' => 'Tetelan Sapi (kg)', 'product_harga' => 75000, 'product_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== CUSTOMER & SO ==========
@@ -105,11 +93,11 @@ class WmsSeeder extends Seeder
 
         // ========== PO ==========
         DB::table('po')->insert([
-            ['po_tanggal' => '2026-07-01', 'po_code' => 'PO-20260701-0001', 'po_id_supplier' => 1, 'po_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-02', 'po_code' => 'PO-20260702-0001', 'po_id_supplier' => 2, 'po_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-03', 'po_code' => 'PO-20260703-0001', 'po_id_supplier' => 3, 'po_status' => 'Ordered', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-10', 'po_code' => 'PO-20260710-0001', 'po_id_supplier' => 4, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
-            ['po_tanggal' => '2026-07-15', 'po_code' => 'PO-20260715-0001', 'po_id_supplier' => 5, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-01', 'po_code' => 'PO-20260701-0001', 'po_id_supplier' => 1, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-02', 'po_code' => 'PO-20260702-0001', 'po_id_supplier' => 2, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-03', 'po_code' => 'PO-20260703-0001', 'po_id_supplier' => 3, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-10', 'po_code' => 'PO-20260704-0001', 'po_id_supplier' => 4, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
+            ['po_tanggal' => '2026-07-15', 'po_code' => 'PO-20260705-0001', 'po_id_supplier' => 5, 'po_status' => 'Pending', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== DETAIL PO ==========
@@ -117,15 +105,15 @@ class WmsSeeder extends Seeder
             ['po_detail_id_po' => 1, 'po_detail_id_product' => 1, 'po_detail_qty' => 200, 'po_detail_code' => 'POD-001', 'created_at' => $now, 'updated_at' => $now],
             ['po_detail_id_po' => 1, 'po_detail_id_product' => 2, 'po_detail_qty' => 150, 'po_detail_code' => 'POD-002', 'created_at' => $now, 'updated_at' => $now],
             ['po_detail_id_po' => 1, 'po_detail_id_product' => 3, 'po_detail_qty' => 300, 'po_detail_code' => 'POD-003', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 2, 'po_detail_id_product' => 5, 'po_detail_qty' => 500, 'po_detail_code' => 'POD-004', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 2, 'po_detail_id_product' => 6, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-005', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 3, 'po_detail_id_product' => 9,  'po_detail_qty' => 120, 'po_detail_code' => 'POD-006', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 3, 'po_detail_id_product' => 11, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-007', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 17, 'po_detail_qty' => 300, 'po_detail_code' => 'POD-008', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 18, 'po_detail_qty' => 100, 'po_detail_code' => 'POD-009', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 4, 'po_detail_id_product' => 21, 'po_detail_qty' => 60,  'po_detail_code' => 'POD-010', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 5, 'po_detail_id_product' => 14, 'po_detail_qty' => 400, 'po_detail_code' => 'POD-011', 'created_at' => $now, 'updated_at' => $now],
-            ['po_detail_id_po' => 5, 'po_detail_id_product' => 15, 'po_detail_qty' => 200, 'po_detail_code' => 'POD-012', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 2, 'po_detail_id_product' => 4, 'po_detail_qty' => 500, 'po_detail_code' => 'POD-004', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 2, 'po_detail_id_product' => 5, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-005', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 3, 'po_detail_id_product' => 6,  'po_detail_qty' => 120, 'po_detail_code' => 'POD-006', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 3, 'po_detail_id_product' => 7, 'po_detail_qty' => 250, 'po_detail_code' => 'POD-007', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 4, 'po_detail_id_product' => 8, 'po_detail_qty' => 300, 'po_detail_code' => 'POD-008', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 4, 'po_detail_id_product' => 9, 'po_detail_qty' => 100, 'po_detail_code' => 'POD-009', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 4, 'po_detail_id_product' => 10, 'po_detail_qty' => 60,  'po_detail_code' => 'POD-010', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 5, 'po_detail_id_product' => 11, 'po_detail_qty' => 400, 'po_detail_code' => 'POD-011', 'created_at' => $now, 'updated_at' => $now],
+            ['po_detail_id_po' => 5, 'po_detail_id_product' => 12, 'po_detail_qty' => 200, 'po_detail_code' => 'POD-012', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== STOCK ==========
@@ -150,21 +138,6 @@ class WmsSeeder extends Seeder
             ['stock_code' => 'PROD-12#202607030004#160#20260910', 'stock_pallet_code' => 'PAL-20260703-000112', 'stock_id_product' => 12, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 160, 'stock_expired_date' => '2026-09-10', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
             ['stock_code' => 'PROD-13#202607030005#300#20260920', 'stock_pallet_code' => 'PAL-20260703-000113', 'stock_id_product' => 13, 'stock_code_lokasi' => 'LOC-03', 'stock_qty' => 300, 'stock_expired_date' => '2026-09-20', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
             ['stock_code' => 'PROD-14#202607040001#400#20261201', 'stock_pallet_code' => 'PAL-20260704-000114', 'stock_id_product' => 14, 'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 400, 'stock_expired_date' => '2026-12-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-15#202607040002#200#20261115', 'stock_pallet_code' => 'PAL-20260704-000115', 'stock_id_product' => 15, 'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 200, 'stock_expired_date' => '2026-11-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-16#202607040003#150#20261101', 'stock_pallet_code' => 'PAL-20260704-000116', 'stock_id_product' => 16, 'stock_code_lokasi' => 'LOC-07', 'stock_qty' => 150, 'stock_expired_date' => '2026-11-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-17#202607050001#300#20260815', 'stock_pallet_code' => 'PAL-20260705-000117', 'stock_id_product' => 17, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 300, 'stock_expired_date' => '2026-08-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-18#202607050002#100#20260901', 'stock_pallet_code' => 'PAL-20260705-000118', 'stock_id_product' => 18, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 100, 'stock_expired_date' => '2026-09-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-19#202607050003#80#20261001', 'stock_pallet_code' => 'PAL-20260705-000119', 'stock_id_product' => 19, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 80,  'stock_expired_date' => '2026-10-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-20#202607050004#150#20260810', 'stock_pallet_code' => 'PAL-20260705-000120', 'stock_id_product' => 20, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 150, 'stock_expired_date' => '2026-08-10', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-21#202607050005#60#20260901', 'stock_pallet_code' => 'PAL-20260705-000121', 'stock_id_product' => 21, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 60,  'stock_expired_date' => '2026-09-01', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-22#202607050006#45#20260820', 'stock_pallet_code' => 'PAL-20260705-000122', 'stock_id_product' => 22, 'stock_code_lokasi' => 'LOC-04', 'stock_qty' => 45,  'stock_expired_date' => '2026-08-20', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-05#202607060001#100#20260930', 'stock_pallet_code' => 'PAL-20260706-000123', 'stock_id_product' => 5,  'stock_code_lokasi' => 'LOC-05', 'stock_qty' => 100, 'stock_expired_date' => '2026-09-30', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-09#202607060002#50#20260915', 'stock_pallet_code' => 'PAL-20260706-000124', 'stock_id_product' => 9,  'stock_code_lokasi' => 'LOC-05', 'stock_qty' => 50,  'stock_expired_date' => '2026-09-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-17#202607060003#80#20260815', 'stock_pallet_code' => 'PAL-20260706-000125', 'stock_id_product' => 17, 'stock_code_lokasi' => 'LOC-06', 'stock_qty' => 80,  'stock_expired_date' => '2026-08-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-01#202607060004#60#20261015', 'stock_pallet_code' => 'PAL-20260706-000126', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-05', 'stock_qty' => 60,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            // Source stock for split testing (satu pallet dgn stok utama PROD-01/PROD-02 di LOC-01)
-            ['stock_code' => 'PROD-01#202608040001#50#20261015', 'stock_pallet_code' => 'PAL-20260701-000101', 'stock_id_product' => 1,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 50,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
-            ['stock_code' => 'PROD-02#202608040002#30#20261015', 'stock_pallet_code' => 'PAL-20260701-000102', 'stock_id_product' => 2,  'stock_code_lokasi' => 'LOC-01', 'stock_qty' => 30,  'stock_expired_date' => '2026-10-15', 'stock_type' => 'IN', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== MASUK DETAIL ==========
@@ -201,7 +174,6 @@ class WmsSeeder extends Seeder
         //     ['out_detail_code_keluar' => 'OUT-20260705-0001', 'out_detail_id_product' => 1, 'out_detail_code' => 'OUTD-001', 'out_detail_qty' => 50, 'created_at' => $now, 'updated_at' => $now],
         //     ['out_detail_code_keluar' => 'OUT-20260706-0001', 'out_detail_id_product' => 9, 'out_detail_code' => 'OUTD-002', 'out_detail_qty' => 30, 'created_at' => $now, 'updated_at' => $now],
         // ]);
-
 
         // DB::table('so')->insert([
         //     ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],

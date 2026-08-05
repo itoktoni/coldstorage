@@ -1,10 +1,10 @@
 <?php /** @var App\Models\Lokasi $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => ucfirst(module())], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
+    <x-breadcrumb :items="[['url' => moduleRoute('getTable'), 'label' => moduleLabel()], ['url' => '', 'label' => isset($model) && $model->exists ? 'Update' : 'Create']]" />
 
     <x-form :model="$model">
-        <x-card :label="ucfirst(module())">
+        <x-card :label="moduleLabel()">
             @bind($model ?? null)
             <x-input col="6" name="lokasi_code" />
             <x-select col="6" name="lokasi_code_gudang" :options="$gudangOptions" />

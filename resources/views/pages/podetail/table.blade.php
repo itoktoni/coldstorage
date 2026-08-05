@@ -1,7 +1,7 @@
 <?php /** @var App\Models\PoDetail $model */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => ucfirst(module())]]" />
+    <x-breadcrumb :items="[['url' => '/dashboard', 'label' => 'Home'], ['url' => '', 'label' => moduleLabel()]]" />
     <div class="content mt-4 lg:mt-0">
         <x-filter :per-page="25" :fields="$fields">
             <x-slot:advanced>
@@ -40,7 +40,7 @@
                         <a href="{{ route('wms-po-detail-convert', ['id' => $table->field_primary]) }}"
                            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success text-white hover:bg-success/80 transition-colors"
                            title="Convert to Masuk">
-                            <span class="material-symbols-outlined text-lg">swap_horiz</span>
+                            <span class="material-symbols-outlined text-lg">assignment</span>
                         </a>
                     </x-table-action>
                     <td>{{ $table->po->po_code }}</td>
