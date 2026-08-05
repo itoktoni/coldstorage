@@ -1,7 +1,7 @@
 <x-layouts::auth :title="__('Log in')">
     <div class="flex flex-col gap-6">
         <div class="flex w-full flex-col text-center">
-            <h1 class="text-xl font-semibold">{{ __('Log in to your account') }}</h1>
+            <h1 class="text-xl font-semibold">{{ __('Log in to') }} {{ config('app.name') }}</h1>
             <p class="text-sm text-base-content/60">{{ __('Enter your email and password below to log in') }}</p>
         </div>
 
