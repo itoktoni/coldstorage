@@ -27,30 +27,33 @@ class WmsSeeder extends Seeder
 
         // ========== GUDANG ==========
         DB::table('gudang')->insert([
-            ['gudang_code' => 'GD-01', 'gudang_nama' => 'Cold Storage Utama', 'created_at' => $now, 'updated_at' => $now],
-            ['gudang_code' => 'GD-02', 'gudang_nama' => 'Cold Storage Cabang', 'created_at' => $now, 'updated_at' => $now],
+            ['gudang_code' => 'GD-01', 'gudang_nama' => 'Cold Storage A', 'created_at' => $now, 'updated_at' => $now],
+            ['gudang_code' => 'GD-02', 'gudang_nama' => 'Cold Storage B', 'created_at' => $now, 'updated_at' => $now],
             ['gudang_code' => 'GD-03', 'gudang_nama' => 'Dry Storage', 'created_at' => $now, 'updated_at' => $now],
+            ['gudang_code' => 'GD-04', 'gudang_nama' => 'Retail Area', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== LOKASI ==========
         DB::table('lokasi')->insert([
-            // Gudang Utama (Frozen Zone) — lokasi berkategori membatasi produk yang bisa disimpan
-            // (lihat canAcceptCategory/hasCapacity di agent.md §1.1)
-            ['lokasi_code' => 'LOC-01', 'lokasi_nama' => 'Freezer A-1 (Daging)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-02', 'lokasi_nama' => 'Freezer A-2 (Ayam)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-03', 'lokasi_nama' => 'Freezer B-1 (Ikan)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-04', 'lokasi_nama' => 'Chiller C-1 (Dairy)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
-            // Lokasi generik tanpa kategori → menerima semua kategori (stock di sini campur)
-            ['lokasi_code' => 'LOC-05', 'lokasi_nama' => 'Freezer D-1', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-06', 'lokasi_nama' => 'Chiller D-2', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            // Cold Storage A
+            ['lokasi_code' => 'LOC-01', 'lokasi_nama' => 'RACK A1 (Daging)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'daging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-02', 'lokasi_nama' => 'RACK A2 (Ayam)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'ayam', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-03', 'lokasi_nama' => 'RACK A3 (Ikan)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'ikan', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-04', 'lokasi_nama' => 'RACK A4 (Dairy)', 'lokasi_code_gudang' => 'GD-01', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'dairy', 'created_at' => $now, 'updated_at' => $now],
+            // Cold Storage B
+            ['lokasi_code' => 'LOC-05', 'lokasi_nama' => 'RACK B1', 'lokasi_code_gudang' => 'GD-02', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-06', 'lokasi_nama' => 'RACK B2', 'lokasi_code_gudang' => 'GD-02', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             // Dry Storage
-            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'Rak E-1 (Sayuran)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-08', 'lokasi_nama' => 'Rak E-2 (Bumbu)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
-            // Staging Areas (kode lokasi ikut konvensi prefix LOC-, lihat AGENTS.md)
-            ['lokasi_code' => 'LOC-A', 'lokasi_nama' => 'Staging Area A', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-B', 'lokasi_nama' => 'Staging Area B', 'lokasi_code_gudang' => 'GD-01', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-C', 'lokasi_nama' => 'Staging Area C', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
-            ['lokasi_code' => 'LOC-D', 'lokasi_nama' => 'Staging Area D', 'lokasi_code_gudang' => 'GD-02', 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'RACK C1 (Sayuran)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-08', 'lokasi_nama' => 'RACK C2', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            // Retail Area
+            ['lokasi_code' => 'LOC-09', 'lokasi_nama' => 'RACK D1', 'lokasi_code_gudang' => 'GD-04', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-10', 'lokasi_nama' => 'RACK D2', 'lokasi_code_gudang' => 'GD-04', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
+            // Staging Areas
+            ['lokasi_code' => 'LOC-A', 'lokasi_nama' => 'Staging Area A', 'lokasi_code_gudang' => 'GD-01', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-B', 'lokasi_nama' => 'Staging Area B', 'lokasi_code_gudang' => 'GD-02', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-C', 'lokasi_nama' => 'Staging Area C', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-D', 'lokasi_nama' => 'Staging Area D', 'lokasi_code_gudang' => 'GD-04', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'staging', 'created_at' => $now, 'updated_at' => $now],
         ]);
 
         // ========== PRODUCT ==========
@@ -160,52 +163,52 @@ class WmsSeeder extends Seeder
 
         // ========== MASUK DETAIL ==========
         // in_detail_status uses MasukStatusEnum (pending/process/ready/complete)
-        DB::table('masuk_detail')->insert([
-            ['in_detail_code' => 'IN-20260701-0001', 'in_detail_reff' => 'POD-001', 'in_detail_tanggal' => '2026-07-01', 'in_detail_status' => 'complete', 'in_detail_id_product' => 1,  'in_detail_qty' => 200, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260701-0002', 'in_detail_reff' => 'POD-002', 'in_detail_tanggal' => '2026-07-01', 'in_detail_status' => 'complete', 'in_detail_id_product' => 2,  'in_detail_qty' => 150, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260702-0001', 'in_detail_reff' => 'POD-004', 'in_detail_tanggal' => '2026-07-02', 'in_detail_status' => 'complete', 'in_detail_id_product' => 5,  'in_detail_qty' => 500, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260702-0002', 'in_detail_reff' => 'POD-005', 'in_detail_tanggal' => '2026-07-02', 'in_detail_status' => 'complete', 'in_detail_id_product' => 6,  'in_detail_qty' => 250, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260703-0001', 'in_detail_reff' => 'POD-006', 'in_detail_tanggal' => '2026-07-03', 'in_detail_status' => 'complete', 'in_detail_id_product' => 9,  'in_detail_qty' => 120, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260705-0001', 'in_detail_reff' => null,     'in_detail_tanggal' => '2026-07-05', 'in_detail_status' => 'pending',  'in_detail_id_product' => 14, 'in_detail_qty' => 400, 'created_at' => $now, 'updated_at' => $now],
-            ['in_detail_code' => 'IN-20260705-0002', 'in_detail_reff' => null,     'in_detail_tanggal' => '2026-07-05', 'in_detail_status' => 'process',  'in_detail_id_product' => 17, 'in_detail_qty' => 300, 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // DB::table('masuk_detail')->insert([
+        //     ['in_detail_code' => 'IN-20260701-0001', 'in_detail_reff' => 'POD-001', 'in_detail_tanggal' => '2026-07-01', 'in_detail_status' => 'complete', 'in_detail_id_product' => 1,  'in_detail_qty' => 200, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260701-0002', 'in_detail_reff' => 'POD-002', 'in_detail_tanggal' => '2026-07-01', 'in_detail_status' => 'complete', 'in_detail_id_product' => 2,  'in_detail_qty' => 150, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260702-0001', 'in_detail_reff' => 'POD-004', 'in_detail_tanggal' => '2026-07-02', 'in_detail_status' => 'complete', 'in_detail_id_product' => 5,  'in_detail_qty' => 500, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260702-0002', 'in_detail_reff' => 'POD-005', 'in_detail_tanggal' => '2026-07-02', 'in_detail_status' => 'complete', 'in_detail_id_product' => 6,  'in_detail_qty' => 250, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260703-0001', 'in_detail_reff' => 'POD-006', 'in_detail_tanggal' => '2026-07-03', 'in_detail_status' => 'complete', 'in_detail_id_product' => 9,  'in_detail_qty' => 120, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260705-0001', 'in_detail_reff' => null,     'in_detail_tanggal' => '2026-07-05', 'in_detail_status' => 'pending',  'in_detail_id_product' => 14, 'in_detail_qty' => 400, 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_detail_code' => 'IN-20260705-0002', 'in_detail_reff' => null,     'in_detail_tanggal' => '2026-07-05', 'in_detail_status' => 'process',  'in_detail_id_product' => 17, 'in_detail_qty' => 300, 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
-        // ========== MASUK REALISASI ==========
-        // in_realisasi_group = kode pallet (PAL-xxx), konsisten dengan stock_pallet_code.
-        // in_realisasi_barcode = barcode scanned → jadi stock_code (format: PROD-xx#ts#qty#exp).
-        DB::table('masuk_realisasi')->insert([
-            ['in_realisasi_masuk_code' => 'IN-20260701-0001', 'in_realisasi_code' => 'INR-001', 'in_realisasi_id_product' => 1, 'in_realisasi_qty' => 200, 'in_realisasi_code_lokasi' => 'LOC-01', 'in_realisasi_barcode' => 'PROD-01#202607010001#200#20261015', 'in_realisasi_group' => 'PAL-20260701-000101', 'created_at' => $now, 'updated_at' => $now],
-            ['in_realisasi_masuk_code' => 'IN-20260701-0002', 'in_realisasi_code' => 'INR-002', 'in_realisasi_id_product' => 2, 'in_realisasi_qty' => 150, 'in_realisasi_code_lokasi' => 'LOC-01', 'in_realisasi_barcode' => 'PROD-02#202607010002#150#20261015', 'in_realisasi_group' => 'PAL-20260701-000102', 'created_at' => $now, 'updated_at' => $now],
-            ['in_realisasi_masuk_code' => 'IN-20260702-0001', 'in_realisasi_code' => 'INR-003', 'in_realisasi_id_product' => 5, 'in_realisasi_qty' => 500, 'in_realisasi_code_lokasi' => 'LOC-02', 'in_realisasi_barcode' => 'PROD-05#202607020002#500#20260930', 'in_realisasi_group' => 'PAL-20260702-000105', 'created_at' => $now, 'updated_at' => $now],
-            ['in_realisasi_masuk_code' => 'IN-20260702-0002', 'in_realisasi_code' => 'INR-004', 'in_realisasi_id_product' => 6, 'in_realisasi_qty' => 250, 'in_realisasi_code_lokasi' => 'LOC-02', 'in_realisasi_barcode' => 'PROD-06#202607020003#250#20260930', 'in_realisasi_group' => 'PAL-20260702-000106', 'created_at' => $now, 'updated_at' => $now],
-            ['in_realisasi_masuk_code' => 'IN-20260703-0001', 'in_realisasi_code' => 'INR-005', 'in_realisasi_id_product' => 9, 'in_realisasi_qty' => 120, 'in_realisasi_code_lokasi' => 'LOC-03', 'in_realisasi_barcode' => 'PROD-09#202607030001#120#20260915', 'in_realisasi_group' => 'PAL-20260703-000109', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // // ========== MASUK REALISASI ==========
+        // // in_realisasi_group = kode pallet (PAL-xxx), konsisten dengan stock_pallet_code.
+        // // in_realisasi_barcode = barcode scanned → jadi stock_code (format: PROD-xx#ts#qty#exp).
+        // DB::table('masuk_realisasi')->insert([
+        //     ['in_realisasi_masuk_code' => 'IN-20260701-0001', 'in_realisasi_code' => 'INR-001', 'in_realisasi_id_product' => 1, 'in_realisasi_qty' => 200, 'in_realisasi_code_lokasi' => 'LOC-01', 'in_realisasi_barcode' => 'PROD-01#202607010001#200#20261015', 'in_realisasi_group' => 'PAL-20260701-000101', 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_realisasi_masuk_code' => 'IN-20260701-0002', 'in_realisasi_code' => 'INR-002', 'in_realisasi_id_product' => 2, 'in_realisasi_qty' => 150, 'in_realisasi_code_lokasi' => 'LOC-01', 'in_realisasi_barcode' => 'PROD-02#202607010002#150#20261015', 'in_realisasi_group' => 'PAL-20260701-000102', 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_realisasi_masuk_code' => 'IN-20260702-0001', 'in_realisasi_code' => 'INR-003', 'in_realisasi_id_product' => 5, 'in_realisasi_qty' => 500, 'in_realisasi_code_lokasi' => 'LOC-02', 'in_realisasi_barcode' => 'PROD-05#202607020002#500#20260930', 'in_realisasi_group' => 'PAL-20260702-000105', 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_realisasi_masuk_code' => 'IN-20260702-0002', 'in_realisasi_code' => 'INR-004', 'in_realisasi_id_product' => 6, 'in_realisasi_qty' => 250, 'in_realisasi_code_lokasi' => 'LOC-02', 'in_realisasi_barcode' => 'PROD-06#202607020003#250#20260930', 'in_realisasi_group' => 'PAL-20260702-000106', 'created_at' => $now, 'updated_at' => $now],
+        //     ['in_realisasi_masuk_code' => 'IN-20260703-0001', 'in_realisasi_code' => 'INR-005', 'in_realisasi_id_product' => 9, 'in_realisasi_qty' => 120, 'in_realisasi_code_lokasi' => 'LOC-03', 'in_realisasi_barcode' => 'PROD-09#202607030001#120#20260915', 'in_realisasi_group' => 'PAL-20260703-000109', 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
-        // ========== KELUAR ==========
-        DB::table('keluar')->insert([
-            ['out_code' => 'OUT-20260705-0001', 'out_tanggal' => '2026-07-05', 'out_status' => 'Done', 'out_catatan' => 'Pengiriman ke Hotel Bintang 5', 'created_at' => $now, 'updated_at' => $now],
-            ['out_code' => 'OUT-20260706-0001', 'out_tanggal' => '2026-07-06', 'out_status' => 'Pending', 'out_catatan' => 'Restoran seafood Jakarta', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // // ========== KELUAR ==========
+        // DB::table('keluar')->insert([
+        //     ['out_code' => 'OUT-20260705-0001', 'out_tanggal' => '2026-07-05', 'out_status' => 'Done', 'out_catatan' => 'Pengiriman ke Hotel Bintang 5', 'created_at' => $now, 'updated_at' => $now],
+        //     ['out_code' => 'OUT-20260706-0001', 'out_tanggal' => '2026-07-06', 'out_status' => 'Pending', 'out_catatan' => 'Restoran seafood Jakarta', 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
-        // ========== KELUAR DETAIL ==========
-        DB::table('keluar_detail')->insert([
-            ['out_detail_code_keluar' => 'OUT-20260705-0001', 'out_detail_id_product' => 1, 'out_detail_code' => 'OUTD-001', 'out_detail_qty' => 50, 'created_at' => $now, 'updated_at' => $now],
-            ['out_detail_code_keluar' => 'OUT-20260706-0001', 'out_detail_id_product' => 9, 'out_detail_code' => 'OUTD-002', 'out_detail_qty' => 30, 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // // ========== KELUAR DETAIL ==========
+        // DB::table('keluar_detail')->insert([
+        //     ['out_detail_code_keluar' => 'OUT-20260705-0001', 'out_detail_id_product' => 1, 'out_detail_code' => 'OUTD-001', 'out_detail_qty' => 50, 'created_at' => $now, 'updated_at' => $now],
+        //     ['out_detail_code_keluar' => 'OUT-20260706-0001', 'out_detail_id_product' => 9, 'out_detail_code' => 'OUTD-002', 'out_detail_qty' => 30, 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
-        // ========== CUSTOMER & SO ==========
-        DB::table('customer')->insert([
-            ['customer_id' => 1, 'customer_nama' => 'Hotel Bintang 5', 'customer_alamat' => 'Jl. Sudirman No.1'],
-            ['customer_id' => 2, 'customer_nama' => 'Restoran Seafood', 'customer_alamat' => 'Jl. Thamrin No.2'],
-        ]);
+        // // ========== CUSTOMER & SO ==========
+        // DB::table('customer')->insert([
+        //     ['customer_id' => 1, 'customer_nama' => 'Hotel Bintang 5', 'customer_alamat' => 'Jl. Sudirman No.1'],
+        //     ['customer_id' => 2, 'customer_nama' => 'Restoran Seafood', 'customer_alamat' => 'Jl. Thamrin No.2'],
+        // ]);
 
-        DB::table('so')->insert([
-            ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // DB::table('so')->insert([
+        //     ['so_tanggal' => '2026-07-01', 'so_code' => 'SO-20260701-0001', 'so_id_customer' => 1, 'so_status' => 'Closed', 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
-        DB::table('detail_so')->insert([
-            ['so_detail_id_so' => 1, 'so_detail_id_product' => 1, 'so_detail_qty' => 50, 'so_detail_code' => 'SOD-001', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+        // DB::table('detail_so')->insert([
+        //     ['so_detail_id_so' => 1, 'so_detail_id_product' => 1, 'so_detail_qty' => 50, 'so_detail_code' => 'SOD-001', 'created_at' => $now, 'updated_at' => $now],
+        // ]);
 
         // ========== CATEGORIES ==========
         DB::table('categories')->upsert([

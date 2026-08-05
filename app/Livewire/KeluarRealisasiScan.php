@@ -7,6 +7,7 @@ use App\Models\Keluar;
 use App\Models\KeluarDetail;
 use App\Models\KeluarRealisasi;
 use App\Models\Lokasi;
+use App\Models\SoDetail;
 use App\Models\SoPrepare;
 use App\Models\SoPrepareDetail;
 use App\Models\Stock;
@@ -210,12 +211,12 @@ class KeluarRealisasiScan extends Component
                     if ($totalPicked + 1e-9 >= $totalQty) {
                         $keluar->update(['out_status' => Keluar::STATUS_DONE]);
                         $this->cleanupZeroStock($keluar);
-
-                        // Cek apakah semua keluar untuk SO ini sudah Done → SO Confirmed
-                        $this->checkSoConfirmation($detail);
                     } elseif ($totalPicked > 0) {
                         $keluar->update(['out_status' => 'In Progress']);
                     }
+
+                    // Selalu cek apakah semua produk SO sudah terpenuhi → SO Confirmed
+                    $this->checkSoConfirmation($detail);
                 }
 
                 return $fulfilled;
@@ -338,16 +339,19 @@ class KeluarRealisasiScan extends Component
             return;
         }
 
-        // Cek semua keluar yang terkait dengan SO ini
-        $keluarCodes = KeluarDetail::whereHas('soDetail', fn ($q) => $q->where('so_detail_id_so', $so->so_id))
-            ->pluck('out_detail_code_keluar')
-            ->unique();
+        // Cek semua SO detail untuk SO ini — apakah semua qty sudah terpenuhi?
+        $soDetails = SoDetail::where('so_detail_id_so', $so->so_id)->get();
 
-        $allDone = $keluarCodes->every(function ($code) {
-            return Keluar::where('out_code', $code)->value('out_status') === Keluar::STATUS_DONE;
+        $allFulfilled = $soDetails->isNotEmpty() && $soDetails->every(function ($sd) {
+            $totalNeeded = (float) $sd->so_detail_qty;
+            $totalPicked = (float) KeluarDetail::where('out_detail_id_so_detail', $sd->so_detail_id)
+                ->get()
+                ->sum(fn ($kd) => KeluarRealisasi::where('out_realisasi_id_detail', $kd->out_detail_id)->sum('out_realisasi_qty'));
+
+            return $totalPicked + 1e-9 >= $totalNeeded;
         });
 
-        if ($allDone && $keluarCodes->isNotEmpty()) {
+        if ($allFulfilled) {
             $so->update(['so_status' => SoStatusEnum::CONFIRMED]);
 
             $prepare = SoPrepare::where('so_prepare_id_so', $so->so_id)->first();
