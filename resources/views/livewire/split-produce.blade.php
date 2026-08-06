@@ -73,7 +73,7 @@
                             </select>
                         </div>
                         <div class="col-span-5 sm:col-span-3">
-                            <label class="block text-xs text-on-surface-variant mb-1">Qty per Item (kg)</label>
+                            <label class="block text-xs text-on-surface-variant mb-1">Qty per Item</label>
                             <input type="number" wire:model="generateQty" step="0.01" min="0"
                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
                                    placeholder="2.5" />
