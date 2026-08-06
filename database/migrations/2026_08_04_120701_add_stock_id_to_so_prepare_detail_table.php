@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('so_prepare_detail', function (Blueprint $table) {
             $table->unsignedBigInteger('so_prepare_detail_id_stock')->nullable()
                 ->after('so_prepare_detail_id_product')
-                ->comment('Stock row dari staging yang di-allocate');
+                ;
         });
     }
 

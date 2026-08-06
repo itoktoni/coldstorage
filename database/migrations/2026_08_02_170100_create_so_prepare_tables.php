@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id('so_prepare_id');
             $table->foreignId('so_prepare_id_so')->constrained('so', 'so_id')->cascadeOnDelete();
             $table->string('so_prepare_code', 50)->unique();
-            $table->string('so_prepare_id_keluar', 50)->nullable()->comment('Keluar batch hasil prepare');
+            $table->string('so_prepare_id_keluar', 50)->nullable();
             $table->enum('so_prepare_status', ['Pending', 'Done'])->default('Pending');
             $table->timestamps();
         });

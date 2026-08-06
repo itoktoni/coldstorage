@@ -15,8 +15,8 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('location')->nullable()->comment('header, footer, sidebar');
-            $table->json('items')->nullable()->comment('Nested menu items JSON');
+            $table->string('location')->nullable();
+            $table->json('items')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
