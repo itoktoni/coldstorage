@@ -61,9 +61,9 @@ return [
         [
             'label' => 'Inbound',
             'items' => [
-                ['route' => 'wms-masuk-detail.getTable', 'icon' => 'input', 'label' => 'Prepare Masuk'],
+                ['route' => 'wms-masuk-detail.getTable', 'icon' => 'package_2', 'label' => 'Prepare Masuk'],
                 ['route' => 'wms-masuk-realisasi.getTable', 'icon' => 'check_circle', 'label' => 'Realisasi Masuk'],
-                ['route' => 'wms-forklift.index', 'icon' => 'local_shipping', 'label' => 'Forklift'],
+                ['route' => 'wms-forklift.index', 'icon' => 'forklift', 'label' => 'Forklift'],
             ],
         ],
         [
@@ -76,7 +76,7 @@ return [
         [
             'label' => 'Outbound',
             'items' => [
-                ['route' => 'wms-keluar.getTable', 'icon' => 'output', 'label' => 'Keluar', 'match' => ['wms-keluar-prepare.*', 'wms-keluar.*']],
+                ['route' => 'wms-keluar.getTable', 'icon' => 'local_shipping', 'label' => 'Keluar', 'match' => ['wms-keluar-prepare.*', 'wms-keluar.*']],
                 ['route' => 'wms-keluar-detail.getTable', 'icon' => 'description', 'label' => 'Keluar Detail', 'match' => ['wms-keluar-realisasi-scan.*', 'wms-keluar-detail.*']],
                 ['route' => 'wms-keluar-realisasi.getTable', 'icon' => 'task_alt', 'label' => 'Keluar Realisasi'],
             ],

@@ -223,7 +223,7 @@
             <span class="text-[10px] font-semibold uppercase">Inbound</span>
         </a>
         <a class="flex flex-col items-center justify-center text-[#444653] hover:text-[#0058be] active:scale-95 transition-all" href="#">
-            <span class="material-symbols-outlined">output</span>
+            <span class="material-symbols-outlined">local_shipping</span>
             <span class="text-[10px] font-semibold uppercase">Outbound</span>
         </a>
         <a class="flex flex-col items-center justify-center text-[#444653] hover:text-[#0058be] active:scale-95 transition-all" href="#">
