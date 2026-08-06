@@ -2,15 +2,16 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="theme-color" content="#2563eb">
 <title>Forklift Worklist</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
     :root{
-        --bg:#eef2f7; --surface:#ffffff; --border:#dbe3ec;
+        --bg:#0f172a; --bg2:#1e293b;
+        --surface:#ffffff; --border:#e2e8f0;
         --text:#0f172a; --muted:#64748b;
         --blue:#2563eb;  --blue-soft:#e8effe;
         --amber:#d97706; --amber-soft:#fef3c7;
@@ -19,199 +20,124 @@
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html,body{height:100%}
-    body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
-        -webkit-tap-highlight-color:transparent;overflow-x:hidden}
+    body{font-family:'Inter',system-ui,sans-serif;background:#eef2f7;color:var(--text);min-height:100vh;
+        -webkit-tap-highlight-color:transparent;overflow-x:hidden;-webkit-user-select:none;user-select:none}
 
-    /* ── HEADER (mobile: 1 baris, subtitle/clock/name hidden) ── */
-    .header{position:sticky;top:0;z-index:60;background:var(--surface);border-bottom:1px solid var(--border);
-        box-shadow:0 1px 8px rgba(15,23,42,.05);
-        padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));
-        display:flex;align-items:center;gap:8px;flex-wrap:nowrap}
-    .brand{display:flex;align-items:center;gap:8px;min-width:0;flex:1}
-    .brand-icon{width:30px;height:30px;border-radius:8px;background:var(--blue-soft);color:var(--blue);
-        display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
-    .brand h1{font-size:13px;font-weight:800;letter-spacing:.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brand p{display:none}
-    .header-right{display:flex;align-items:center;gap:6px;flex:none}
-    .clock{display:none}
-    .pill{background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:11px;padding:4px 10px;border-radius:999px;white-space:nowrap}
-    .pill b{font-size:13px}
+    /* ── HEADER ── */
+    .header{position:sticky;top:0;z-index:60;
+        background:linear-gradient(135deg,var(--bg),var(--bg2));color:#fff;
+        padding:12px 16px;padding-top:calc(10px + env(safe-area-inset-top));
+        display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
+    .brand-icon{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.14);
+        display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+    .brand h1{font-size:16px;font-weight:900;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+    .brand .clock{font-size:12px;font-weight:700;color:#93c5fd;font-variant-numeric:tabular-nums;margin-top:2px}
+    .header-right{display:flex;align-items:center;gap:10px;flex:none}
+    .pill{background:rgba(255,255,255,.14);color:#fff;font-weight:700;font-size:11px;padding:6px 12px;border-radius:999px;white-space:nowrap;text-align:center;line-height:1.2}
+    .pill b{font-size:18px;display:block;font-weight:900}
     .operator{display:flex;align-items:center}
-    .avatar{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex:none}
+    .avatar{width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;
+        display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex:none;
+        box-shadow:0 0 0 2px rgba(255,255,255,.25)}
     .operator span{display:none}
 
     /* ── BANNER ── */
-    .banner{margin:10px 12px 0;border-radius:11px;padding:11px 13px;display:flex;align-items:center;gap:10px;
-        border:2px solid var(--blue);background:var(--blue-soft);transition:background .25s,border-color .25s}
-    .banner .b-icon{font-size:22px;flex:none}
-    .banner > div{min-width:0}
-    .banner .b-text{font-size:clamp(14px,4.2vw,20px);font-weight:800;letter-spacing:.2px;line-height:1.25;word-break:break-word}
-    .banner .b-sub{font-size:11px;font-weight:600;color:var(--muted);margin-top:2px}
+    .banner{margin:14px 14px 0;border-radius:16px;padding:18px 18px;display:flex;align-items:center;gap:14px;
+        border:2px solid var(--blue);background:var(--blue-soft);transition:background .25s,border-color .25s;
+        box-shadow:0 6px 18px rgba(37,99,235,.12)}
+    .banner .b-icon{font-size:34px;flex:none;line-height:1}
+    .banner > div{min-width:0;flex:1}
+    .banner .b-text{font-size:clamp(17px,5vw,24px);font-weight:900;letter-spacing:.2px;line-height:1.25;word-break:break-word}
+    .banner .b-sub{font-size:13px;font-weight:600;color:var(--muted);margin-top:4px;line-height:1.35}
     .banner.go{border-color:var(--amber);background:var(--amber-soft)}
     .banner.go .b-sub{color:#92400e}
     .banner.done{border-color:var(--green);background:var(--green-soft)}
     .banner.done .b-sub{color:#065f46}
-    #banner-dest{font-size:clamp(19px,5.5vw,28px);text-transform:uppercase}
+    #banner-dest{display:block;font-size:clamp(30px,10vw,30px);text-transform:uppercase;line-height:1.1;margin-top:2px;color:var(--amber)}
 
     /* ── SCAN BAR ── */
-    .scan-area{margin:10px 12px 0;background:var(--surface);border:2px solid var(--blue);border-radius:11px;
-        padding:11px;box-shadow:0 4px 16px rgba(37,99,235,.07);
-        display:grid;grid-template-columns:auto 1fr;grid-template-areas:"pulse input" "hints hints";
-        gap:7px 10px;align-items:center}
-    .scan-pulse{grid-area:pulse;width:12px;height:12px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;justify-self:center}
+    .scan-area{margin:12px 14px 0;background:var(--surface);border:2px solid var(--blue);border-radius:16px;
+        padding:14px;box-shadow:0 4px 16px rgba(37,99,235,.08)}
+    .scan-top{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px}
+    .scan-pulse{width:12px;height:12px;border-radius:50%;background:var(--green);animation:pulse 1.4s infinite;flex:none}
     @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(5,150,105,.5)}70%{box-shadow:0 0 0 12px rgba(5,150,105,0)}100%{box-shadow:0 0 0 0 rgba(5,150,105,0)}}
-    .scan-hints{grid-area:hints;display:flex;justify-content:center;gap:16px}
-    .hint{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:var(--muted);white-space:nowrap}
-    .hint code{background:#f1f5f9;border:1px solid var(--border);border-radius:5px;padding:1px 6px;font-weight:800;color:var(--text)}
-    .scan-input{grid-area:input;width:100%;min-width:0;height:54px;font-size:18px;font-weight:800;letter-spacing:1.5px;text-align:center;text-transform:uppercase;
-        border:2px solid #cbd5e1;border-radius:10px;outline:none;background:#f8fafc;color:var(--text)}
+    .scan-top .lbl{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--green);text-transform:uppercase}
+    .scan-input{width:100%;height:60px;font-size:24px;font-weight:900;letter-spacing:2px;text-align:center;text-transform:uppercase;
+        border:2px solid #cbd5e1;border-radius:14px;outline:none;background:#f8fafc;color:var(--text)}
     .scan-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.12)}
-    .scan-input::placeholder{color:#cbd5e1;letter-spacing:1px;font-size:13px}
+    .scan-input::placeholder{color:#cbd5e1;letter-spacing:1px;font-size:15px}
+    .scan-hints{display:flex;justify-content:center;gap:18px;margin-top:10px}
+    .hint{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}
+    .hint code{background:#f1f5f9;border:1px solid var(--border);border-radius:6px;padding:2px 8px;font-weight:900;color:var(--text);font-size:12px}
 
     /* ── TASK LIST ── */
-    .main{padding:12px 12px calc(32px + env(safe-area-inset-bottom));max-width:1200px;margin:0 auto}
-    .group-head{display:flex;align-items:center;gap:7px;margin:14px 2px 6px;flex-wrap:nowrap}
-    .group-head:first-child{margin-top:0}
-    .group-dot{width:10px;height:10px;border-radius:3px;flex:none}
-    .group-name{font-size:12px;font-weight:800;letter-spacing:1px}
-    .group-label{display:none}
-    .group-count{margin-left:auto;flex:none;font-size:10px;font-weight:700;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:2px 8px}
-    .rows{display:flex;flex-direction:column;gap:6px}
+    .main{padding:14px 14px calc(40px + env(safe-area-inset-bottom));max-width:900px;margin:0 auto}
+    .group-head{display:flex;align-items:center;gap:8px;margin:18px 2px 10px}
+    .group-head:first-child{margin-top:4px}
+    .group-dot{width:12px;height:12px;border-radius:4px;flex:none}
+    .group-name{font-size:14px;font-weight:900;letter-spacing:1.2px}
+    .group-count{margin-left:auto;flex:none;font-size:11px;font-weight:800;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:4px 12px}
+    .rows{display:flex;flex-direction:column;gap:10px}
 
-    /* ── TASK CARD MOBILE: 2 area, no num, no op ── */
-    .trow{display:grid;grid-template-columns:1fr auto;grid-template-areas:"main status" "route route";
-        align-items:start;
-        background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--muted);
-        border-radius:10px;padding:10px 11px;transition:opacity .3s,transform .3s}
-    .trow.in-progress{background:var(--amber-soft);border-color:var(--amber);border-left-color:var(--amber);animation:glow 1.6s infinite}
-    @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.3)}50%{box-shadow:0 0 0 6px rgba(217,119,6,.08)}}
-    .trow.done{opacity:0;transform:translateX(40px) scale(.97)}
-    .num{display:none}
-    .main-cell{grid-area:main;display:flex;flex-direction:column;gap:2px;min-width:0}
-    .pallet{font-size:16px;font-weight:800;letter-spacing:.3px;word-break:break-all;line-height:1.2}
-    .badge{display:inline-flex;font-size:9px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;padding:2px 6px;border-radius:4px;vertical-align:middle}
-    .reff{font-size:10px;font-weight:600;color:var(--muted);word-break:break-word}
-    .route{grid-area:route;display:flex;align-items:center;gap:6px;padding:7px 0 0;margin-top:4px;border-top:1px solid #edf1f6}
-    .loc{display:flex;flex-direction:column;gap:0;min-width:0}
-    .loc .lbl{font-size:8px;font-weight:800;letter-spacing:1px;color:var(--muted);line-height:1.4}
-    .loc .val{font-size:13px;font-weight:800;word-break:break-word;line-height:1.2}
-    .loc.to .val{color:var(--green)}
-    .arrow{font-size:13px;color:#94a3b8;flex:none}
-    .status-cell{grid-area:status;display:flex;align-items:flex-start;justify-content:flex-end;padding-top:1px}
-    .chip{font-size:9px;font-weight:800;letter-spacing:.7px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+    /* ── TASK CARD ── */
+    .trow{background:var(--surface);border:2px solid var(--border);border-left:6px solid var(--muted);
+        border-radius:16px;padding:16px;transition:opacity .35s,transform .35s;
+        box-shadow:0 2px 10px rgba(15,23,42,.08)}
+    .trow.in-progress{background:var(--amber-soft);border-color:var(--amber);border-left-color:var(--amber)!important;animation:glow 1.6s infinite}
+    @keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.3)}50%{box-shadow:0 0 0 7px rgba(217,119,6,.08)}}
+    .trow.done{opacity:0;transform:translateX(50px) scale(.96)}
+
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .pallet{font-size:26px;font-weight:900;letter-spacing:.3px;word-break:break-all;line-height:1.15;flex:1;min-width:0}
+    .chip{font-size:11px;font-weight:900;letter-spacing:.7px;padding:6px 11px;border-radius:999px;white-space:nowrap;flex:none}
     .chip.Pending{background:#f1f5f9;color:var(--muted);border:1px solid var(--border)}
     .chip.Progress{background:var(--amber);color:#fff}
-    .op{display:none}
-    .empty{background:var(--surface);border:2px dashed #cbd5e1;border-radius:12px;text-align:center;padding:32px 14px;color:var(--muted);font-size:13px;font-weight:700}
 
-    /* ── TABLET >=640px ── */
+    .card-info{display:flex;gap:16px;margin-top:10px;justify-content:space-between;align-items:flex-start;
+        padding:10px 12px;background:#f8fafc;border:1px solid var(--border);border-radius:12px}
+    .info-item{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .info-item.qty{text-align:right;flex:none}
+    .info-item .k{font-size:10px;font-weight:800;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+    .info-item .v{font-size:15px;font-weight:800;word-break:break-word;line-height:1.2}
+
+    .route{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;border-top:1px dashed #dbe3ec}
+    .loc{display:flex;flex-direction:column;gap:1px;min-width:0;flex:1}
+    .loc .lbl{font-size:10px;font-weight:900;letter-spacing:1px;color:var(--muted)}
+    .loc .val{font-size:18px;font-weight:900;word-break:break-word;line-height:1.2}
+    .loc.to{text-align:right}
+    .loc.to .val{color:var(--green)}
+    .arrow{font-size:20px;color:#94a3b8;flex:none}
+
+    .status-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+    .op{font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+    .op.has{color:var(--blue)}
+
+    .empty{background:var(--surface);border:2px dashed #cbd5e1;border-radius:16px;text-align:center;padding:48px 16px;color:var(--muted);font-size:16px;font-weight:800;line-height:1.5}
+
+    /* ── TABLET / DESKTOP ── */
     @media (min-width:640px){
-        .header{padding:10px 18px;padding-top:calc(10px + env(safe-area-inset-top));gap:10px}
-        .brand{flex:none;gap:10px}
-        .brand-icon{width:40px;height:40px;font-size:24px;border-radius:10px}
-        .brand h1{font-size:16px}
-        .brand p{display:block;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
-        .header-right{margin-left:auto;gap:10px}
-        .clock{display:block;font-variant-numeric:tabular-nums;font-weight:800;font-size:15px;background:#f8fafc;border:1px solid var(--border);padding:6px 11px;border-radius:9px}
-        .pill{font-size:12px;padding:6px 12px}
-        .pill b{font-size:15px}
-        .operator{gap:7px;background:#f8fafc;border:1px solid var(--border);padding:4px 11px 4px 4px;border-radius:999px}
-        .operator span{display:block;font-weight:700;font-size:12px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .avatar{width:30px;height:30px;font-size:13px}
-        .banner{margin:14px 18px 0;padding:14px 16px;gap:12px;border-radius:13px}
-        .banner .b-icon{font-size:28px}
-        .banner .b-sub{font-size:12px}
-        .scan-area{margin:14px 18px 0;padding:13px 16px;
-            grid-template-columns:auto auto 1fr;grid-template-areas:"pulse hints input";gap:14px;border-radius:13px}
-        .scan-hints{flex-direction:column;justify-content:center;gap:4px}
-        .hint{font-size:11px}
-        .scan-input{height:58px;font-size:22px}
-        .main{padding:16px 18px calc(32px + env(safe-area-inset-bottom))}
-        .group-head{gap:8px;margin:16px 2px 8px}
-        .group-dot{width:12px;height:12px;border-radius:4px}
-        .group-name{font-size:13px;letter-spacing:1.2px}
-        .group-label{display:inline;font-size:12px;font-weight:600;color:var(--muted)}
-        .group-count{font-size:11px;padding:3px 11px}
-        .rows{gap:8px}
-        .trow{grid-template-columns:auto 1fr auto;grid-template-areas:"num main status" "num route route";
-            padding:11px 13px;border-left-width:5px;border-radius:11px}
-        .trow:hover{box-shadow:0 2px 10px rgba(15,23,42,.06)}
-        .num{display:block;grid-area:num;font-size:14px;font-weight:800;color:#cbd5e1;text-align:center;padding-top:2px;min-width:18px}
-        .main-cell{gap:3px}
-        .pallet{font-size:18px}
-        .badge{font-size:9px;padding:2px 7px}
-        .reff{font-size:11px}
-        .route{gap:8px;padding:6px 8px 0;margin-top:4px;border-top:1px solid #edf1f6}
-        .loc .lbl{font-size:9px}
-        .loc .val{font-size:15px}
-        .arrow{font-size:14px}
-        .chip{font-size:10px;padding:4px 10px}
-        .op{display:inline;font-size:10px;font-weight:700;color:var(--muted);max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .op.has{color:var(--blue)}
-        .empty{font-size:15px;padding:40px 16px}
-    }
-
-    /* ── DESKTOP >=900px ── */
-    @media (min-width:900px){
-        .header{padding:14px 24px;gap:16px}
-        .brand-icon{width:48px;height:48px;font-size:28px;border-radius:12px}
-        .brand h1{font-size:22px}
-        .brand p{font-size:13px}
-        .header-right{gap:12px}
-        .clock{font-size:20px;padding:8px 14px;border-radius:12px}
-        .pill{font-size:14px;padding:8px 16px}
-        .pill b{font-size:18px}
-        .operator{padding:6px 14px 6px 6px;gap:10px}
-        .avatar{width:34px;height:34px;font-size:16px}
-        .operator span{font-size:14px;max-width:none}
-        .banner{margin:18px auto 0;padding:18px 24px;gap:16px;border-radius:16px;max-width:calc(1200px - 48px)}
-        .banner .b-icon{font-size:36px}
-        .banner .b-sub{font-size:14px}
-        .scan-area{margin:16px auto 0;padding:18px 24px;gap:20px;border-radius:16px;max-width:calc(1200px - 48px)}
-        .scan-hints{min-width:160px}
-        .hint{font-size:13px}
-        .scan-input{height:66px;font-size:30px;letter-spacing:2px}
-        .scan-input::placeholder{letter-spacing:3px;font-size:30px}
-        .main{padding:20px 24px 40px}
-        .group-head{gap:10px;margin:20px 4px 10px}
-        .group-dot{width:14px;height:14px}
-        .group-name{font-size:16px;letter-spacing:1.5px}
-        .group-label{font-size:14px}
-        .group-count{font-size:13px;padding:3px 14px}
-        .rows{gap:10px}
-        .trow{grid-template-columns:40px minmax(200px,1fr) 1.5fr 170px;
-            grid-template-areas:"num main route status";
-            align-items:center;gap:16px;padding:14px 18px;border-left-width:6px;border-radius:12px}
-        .trow:hover{box-shadow:0 3px 12px rgba(15,23,42,.07)}
-        .num{font-size:20px;padding-top:0}
-        .main-cell{gap:5px}
-        .pallet{font-size:23px}
-        .badge{font-size:11px;padding:3px 10px}
-        .reff{font-size:12px}
-        .route{gap:16px;background:transparent;border:none;padding:0;margin-top:0}
-        .loc .lbl{font-size:11px}
-        .loc .val{font-size:19px}
-        .arrow{font-size:22px}
-        .status-cell{flex-direction:column;align-items:flex-end;gap:6px}
-        .chip{font-size:12px;padding:5px 14px}
-        .op{font-size:12px;max-width:none}
-        .empty{padding:56px 20px;font-size:19px}
+        .header{padding:14px 22px;padding-top:calc(12px + env(safe-area-inset-top))}
+        .brand-icon{width:46px;height:46px;font-size:26px}
+        .brand h1{font-size:20px}
+        .operator span{display:block;font-weight:800;font-size:14px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:8px}
+        .banner{margin:16px auto 0;max-width:calc(900px - 0px);width:calc(100% - 44px);padding:22px 24px}
+        .scan-area{margin:14px auto 0;max-width:900px;width:calc(100% - 44px);padding:18px 20px}
+        .scan-input{height:66px;font-size:28px}
+        .main{padding:18px 22px calc(44px + env(safe-area-inset-bottom))}
+        .pallet{font-size:28px}
+        .loc .val{font-size:20px}
     }
 
     /* ── OVERLAY ── */
-    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100;background:rgba(15,23,42,.28);backdrop-filter:blur(2px);padding:24px}
+    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100;background:rgba(15,23,42,.4);backdrop-filter:blur(3px);padding:24px}
     .overlay.show{display:flex}
-    .overlay-box{width:100%;max-width:520px;text-align:center;border-radius:20px;padding:28px 24px;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+    .overlay-box{width:100%;max-width:460px;text-align:center;border-radius:24px;padding:40px 28px;color:#fff;box-shadow:0 24px 60px rgba(0,0,0,.3)}
     .overlay.success .overlay-box{background:var(--green)}
     .overlay.error .overlay-box{background:var(--red);animation:shake .35s}
-    .ov-icon{font-size:52px;line-height:1}
-    .ov-msg{font-size:20px;font-weight:800;margin-top:12px}
-    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}
-    @media (min-width:640px){
-        .overlay-box{padding:34px 44px}
-        .ov-icon{font-size:60px}
-        .ov-msg{font-size:24px}
-    }
+    .ov-icon{font-size:72px;line-height:1}
+    .ov-msg{font-size:24px;font-weight:900;margin-top:16px;line-height:1.3}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
 </style>
 </head>
 <body>
@@ -220,14 +146,13 @@
 <div class="header">
     <div class="brand">
         <div class="brand-icon">🚜</div>
-        <div>
+        <div style="min-width:0">
             <h1>FORKLIFT WORKLIST</h1>
-            <p>Scan saja — tidak perlu menyentuh layar</p>
+            <div class="clock" id="clock">--:--:--</div>
         </div>
     </div>
     <div class="header-right">
-        <div class="clock" id="clock">--:--:--</div>
-        <div class="pill"><b id="task-count">{{ $tasks->count() }}</b>&nbsp;task aktif</div>
+        <div class="pill"><b id="task-count">{{ $tasks->count() }}</b>task</div>
         <div class="operator">
             <div class="avatar">{{ strtoupper(substr($operatorName, 0, 1)) }}</div>
             <span>{{ $operatorName }}</span>
@@ -244,12 +169,15 @@
 </div>
 
 <div class="scan-area">
-    <div class="scan-pulse"></div>
-    <div class="scan-hints">
-        <div class="hint"><code>P…</code> = PALLET</div>
-        <div class="hint"><code>L…</code> = LOKASI / RAK</div>
+    <div class="scan-top">
+        <span class="scan-pulse"></span>
+        <span class="lbl">Scanner siap</span>
     </div>
-    <input type="text" id="scan-input" class="scan-input" placeholder="SCAN DI SINI…" autofocus autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go">
+    <input type="text" id="scan-input" class="scan-input" placeholder="SCAN DI SINI…" autofocus autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" inputmode="none" readonly onfocus="this.removeAttribute('readonly')">
+    <div class="scan-hints">
+        <div class="hint"><code>P…</code> PALLET</div>
+        <div class="hint"><code>L…</code> LOKASI / RAK</div>
+    </div>
 </div>
 
 <div class="main">
@@ -267,7 +195,6 @@
             <div class="group-head">
                 <span class="group-dot" style="background:{{ $cfg['color'] }}"></span>
                 <span class="group-name" style="color:{{ $cfg['color'] }}">{{ strtoupper($type) }}</span>
-                <span class="group-label">{{ $cfg['label'] }}</span>
                 <span class="group-count">{{ $rows->count() }} task</span>
             </div>
 
@@ -278,17 +205,22 @@
                      data-to="{{ $task->lokasiTujuan?->lokasi_nama ?? $task->forklift_lokasi_tujuan ?? '-' }}"
                      style="border-left-color:{{ $cfg['color'] }}">
 
-                    <div class="num">{{ $i + 1 }}</div>
-
-                    <div class="main-cell">
+                    <div class="card-top">
                         <div class="pallet">{{ $task->forklift_pallet_code }}</div>
-                        <div>
-                            <span class="badge" style="background:{{ $cfg['color'] }}1a;color:{{ $cfg['color'] }}">{{ $type }}</span>
-                            @if($task->forklift_reff)
-                                <span class="reff">&nbsp;·&nbsp;{{ $task->forklift_reff }}</span>
-                            @endif
-                        </div>
                     </div>
+
+                    @if($task->realisasiGroup->count())
+                        <div class="card-info">
+                            <div class="info-item">
+                                <span class="k">Produk</span>
+                                <span class="v">{{ $task->realisasiGroup->first()->product->product_nama ?? '-' }}</span>
+                            </div>
+                            <div class="info-item qty">
+                                <span class="k">Qty</span>
+                                <span class="v">{{ number_format($task->realisasiGroup->sum('in_realisasi_qty'), 3) }}</span>
+                            </div>
+                        </div>
+                    @endif
 
                     <div class="route">
                         <div class="loc from">
@@ -302,7 +234,7 @@
                         </div>
                     </div>
 
-                    <div class="status-cell">
+                    <div class="status-bar">
                         <span class="chip {{ $task->forklift_status }}">{{ $task->forklift_status === 'Progress' ? 'PROGRESS' : 'MENUNGGU' }}</span>
                         <span class="op {{ $task->forklift_operator ? 'has' : '' }}">{{ $task->forklift_operator ? '👤 ' . $task->forklift_operator : '—' }}</span>
                     </div>
@@ -310,7 +242,7 @@
                 @endforeach
             </div>
         @empty
-            <div class="empty">✅ &nbsp;Semua pekerjaan selesai — tidak ada task aktif.</div>
+            <div class="empty">✅<br>Semua pekerjaan selesai<br>tidak ada task aktif.</div>
         @endforelse
     </div>
 </div>

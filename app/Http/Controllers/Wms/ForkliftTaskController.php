@@ -34,7 +34,7 @@ class ForkliftTaskController extends Controller
                     ->where('forklift_operator', $user->name);
             });
         })
-            ->with(['lokasiAsal', 'lokasiTujuan'])
+            ->with(['lokasiAsal', 'lokasiTujuan', 'realisasiGroup.product'])
             ->orderBy('forklift_id')
             ->get();
 

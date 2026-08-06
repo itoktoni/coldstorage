@@ -38,18 +38,33 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @foreach($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->name }}" />
-                            <x-table-mobile-text :text="$table->slug" size="sm" color="primary" />
-                            <x-table-mobile-footer :label="$table->field_primary">
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $table->name }}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary shrink-0">{{ $table->slug }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">ID</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->field_primary }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Sort</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->sort_order ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
                                 <x-table-action :model="$model" :id="$table->field_primary" />
-                            </x-table-mobile-footer>
-                        </x-table-mobile-item>
-                        @endforeach
-                    </x-table-mobile-list>
-                </x-slot:mobile>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </x-slot:mobile>
             </x-table>
 
             <x-pagination :paginator="$data" />

@@ -47,6 +47,8 @@ class SoPrepareScan extends Component
         $this->errorMsg = '';
         $this->successMsg = '';
 
+        $barcodeContent = trim($barcodeContent);
+
         $so = So::with('details')->findOrFail($this->soId);
 
         if ($so->so_status !== SoStatusEnum::PREPARE) {
@@ -154,7 +156,7 @@ class SoPrepareScan extends Component
                 $this->checkFulfillment($so, $prepare);
             });
 
-            $this->successMsg = "Scan berhasil. Stock {$barcodeContent} dialokasikan.";
+            $this->successMsg = "{$barcodeContent} dialokasikan.";
             $this->barcodeInput = '';
             $this->refreshData();
         } catch (\Throwable $th) {

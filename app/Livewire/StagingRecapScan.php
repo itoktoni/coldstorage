@@ -41,6 +41,8 @@ class StagingRecapScan extends Component
         $this->errorMsg = '';
         $this->successMsg = '';
 
+        $barcode = trim($barcode);
+
         $stock = Stock::where('stock_code', $barcode)
             ->where('stock_type', Stock::TYPE_STAGING)
             ->where('stock_qty', '>', 0)

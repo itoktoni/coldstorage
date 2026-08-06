@@ -1,7 +1,7 @@
 <?php /** @var App\Models\PoDetail $poDetail */ ?>
 
 <x-layouts::app>
-    <x-breadcrumb :items="[['url' => route('wms-po-detail.getTable'), 'label' => 'PO Detail'], ['url' => '', 'label' => 'Convert to Masuk']]" />
+    <x-breadcrumb :items="[['url' => route('wms-po-detail.getTable'), 'label' => 'PO Detail'], ['url' => '', 'label' => 'Prepare Barang Masuk']]" />
 
     <div class="content mt-4 lg:mt-0">
         {{-- Header Info --}}
@@ -10,30 +10,28 @@
                 <span class="material-symbols-outlined text-primary text-xl">swap_horiz</span>
                 Prepare Barang Masuk
             </h3>
-            <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">PO Detail</label>
-                    <input type="text" value="{{ $poDetail->po_detail_code }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50" readonly />
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">PO Detail</label>
+                    <p class="text-sm font-bold text-on-surface">{{ $poDetail->po_detail_code }}</p>
                 </div>
-                <div class="col-span-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
-                    <input type="text" value="{{ $product->product_nama ?? '-' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50" readonly />
+                <div class="text-right">
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Product</label>
+                    <p class="text-sm font-bold text-on-surface truncate">{{ $product->product_nama ?? '-' }}</p>
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                    <div class="flex items-center h-10">
-                        @if($productCategory)
-                        <span class="badge badge-primary">{{ $productCategory }}</span>
-                        @else
+                <div>
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Kategori</label>
+                    @if($productCategory)
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary">{{ $productCategory }}</span>
+                    @else
                         <span class="text-sm text-on-surface-variant">-</span>
-                        @endif
-                    </div>
+                    @endif
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Sisa Qty</label>
-                    <input type="text" value="{{ (float) $remainingQty }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50 font-semibold text-primary" readonly />
+                <div class="text-right">
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Qty</label>
+                    <p class="text-sm font-bold text-primary">{{ (float) $remainingQty }}</p>
                     @if($alreadyConverted > 0)
-                    <p class="text-xs text-on-surface-variant mt-1">Dari {{ (float) $totalQty }} ({{ (float) $alreadyConverted }} sudah masuk)</p>
+                    <p class="text-[10px] text-on-surface-variant">Dari {{ (float) $totalQty }} ({{ (float) $alreadyConverted }} sudah masuk)</p>
                     @endif
                 </div>
             </div>
@@ -68,7 +66,8 @@
             </div>
             @endif
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-on-surface-variant bg-gray-50">
                         <tr>
@@ -136,7 +135,7 @@
                                         title="Convert row ini saja ke Masuk Detail"
                                         onclick="convertSingle({{ $poDetail->po_detail_id }}, '{{ $lokasi['lokasi_code'] }}', this)">
                                     <span class="material-symbols-outlined text-base">inventory_2</span>
-                                    Convert
+                                    Prepare
                                 </button>
                             </td>
                         </tr>
@@ -152,6 +151,84 @@
                         </tr>
                     </tfoot>
                 </table>
+            </div>
+
+            {{-- Mobile Cards --}}
+            <div class="md:hidden space-y-3">
+                @foreach($lokasiData as $lokasi)
+                <div class="lokasi-card border border-outline-variant rounded-xl p-4 bg-surface shadow-sm">
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $lokasi['lokasi_nama'] }}</p>
+                            @if($lokasi['gudang_nama'])
+                            <p class="text-[10px] text-on-surface-variant">{{ $lokasi['gudang_nama'] }}</p>
+                            @endif
+                        </div>
+                        @if($lokasi['lokasi_category'])
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary shrink-0">{{ $lokasi['lokasi_category'] }}</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning shrink-0">Semua</span>
+                        @endif
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mb-3 text-center">
+                        <div>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Current</p>
+                            <p class="text-xs font-bold text-on-surface">{{ (float) $lokasi['current_qty'] }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Max</p>
+                            <p class="text-xs font-bold text-on-surface">{!! $lokasi['max_qty'] ? (float) $lokasi['max_qty'] : '<span class="text-success">∞</span>' !!}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Sisa</p>
+                            <p class="text-xs font-bold {{ ($lokasi['capacity_left'] ?? 0) < 10 ? 'text-error' : 'text-on-surface' }}">
+                                {{ $lokasi['capacity_left'] !== null ? (float) $lokasi['capacity_left'] : '∞' }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mb-3">
+                        <div>
+                            <label class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-1 block">Alokasi Qty</label>
+                            <input type="number"
+                                   step="0.001"
+                                   name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][qty]"
+                                   value="{{ $lokasi['suggested_qty'] ?? 0 }}"
+                                   max="{{ min($lokasi['capacity_left'] ?? $remainingQty, $remainingQty) }}"
+                                   min="0"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
+                                   data-remaining="{{ min($lokasi['capacity_left'] ?? $remainingQty, $remainingQty) }}"
+                                   data-lokasi-code="{{ $lokasi['lokasi_code'] }}">
+                            <input type="hidden" name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][lokasi_code]" value="{{ $lokasi['lokasi_code'] }}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-1 block">Staging</label>
+                            <select name="lokasi_allocations[{{ $lokasi['lokasi_code'] }}][staging_code]"
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option value="">Pilih Staging</option>
+                                @foreach($stagingOptions as $sc => $sn)
+                                <option value="{{ $sc }}">{{ $sn }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <button type="button"
+                            class="w-full inline-flex items-center justify-center gap-1 px-4 py-2 bg-primary text-on-primary hover:bg-primary/90 rounded-lg transition-colors text-sm font-medium shadow-sm"
+                            title="Convert ke Masuk Detail"
+                            onclick="convertSingle({{ $poDetail->po_detail_id }}, '{{ $lokasi['lokasi_code'] }}', this)">
+                        <span class="material-symbols-outlined text-base">inventory_2</span>
+                        Prepare
+                    </button>
+                </div>
+                @endforeach
+
+                {{-- Mobile Total --}}
+                <div class="bg-surface-container rounded-xl p-4 flex items-center justify-between">
+                    <span class="text-sm font-semibold text-on-surface-variant">Total Alokasi:</span>
+                    <span class="text-sm font-bold text-primary">
+                        <span id="total-allocation-mobile">{{ number_format($lokasiData->sum('suggested_qty'), 3) }}</span>
+                        / {{ number_format($remainingQty, 3) }}
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -201,11 +278,14 @@
         function updateTotal() {
             let total = 0;
             allInputs().forEach(input => { total += parseFloat(input.value) || 0; });
-            document.getElementById('total-allocation').textContent = total.toFixed(3);
+            const totalDesktop = document.getElementById('total-allocation');
+            const totalMobile = document.getElementById('total-allocation-mobile');
+            if (totalDesktop) totalDesktop.textContent = total.toFixed(3);
+            if (totalMobile) totalMobile.textContent = total.toFixed(3);
         }
 
         async function convertSingle(poDetailId, lokasiCode, btn) {
-            const row = btn.closest('tr');
+            const row = btn.closest('tr') || btn.closest('.lokasi-card');
             const input = row.querySelector('input[data-lokasi-code]');
             const qty = parseFloat(input.value) || 0;
 

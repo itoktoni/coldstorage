@@ -46,7 +46,7 @@ class WmsSeeder extends Seeder
             ['lokasi_code' => 'LOC-05', 'lokasi_nama' => 'RACK B1', 'lokasi_code_gudang' => 'GD-02', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             ['lokasi_code' => 'LOC-06', 'lokasi_nama' => 'RACK B2', 'lokasi_code_gudang' => 'GD-02', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             // Dry Storage
-            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'RACK C1 (Sayuran)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 1000, 'lokasi_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
+            ['lokasi_code' => 'LOC-07', 'lokasi_nama' => 'RACK C1 (Sayuran)', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 10, 'lokasi_category' => 'sayuran', 'created_at' => $now, 'updated_at' => $now],
             ['lokasi_code' => 'LOC-08', 'lokasi_nama' => 'RACK C2', 'lokasi_code_gudang' => 'GD-03', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],
             // Retail Area
             ['lokasi_code' => 'LOC-09', 'lokasi_nama' => 'RACK D1', 'lokasi_code_gudang' => 'GD-04', 'lokasi_max_qty' => 1000, 'lokasi_category' => null, 'created_at' => $now, 'updated_at' => $now],

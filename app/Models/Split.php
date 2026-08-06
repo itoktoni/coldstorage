@@ -18,9 +18,6 @@ class Split extends BaseModel
         'split_id_product_source',
         'split_id_product_target',
         'split_id_product_waste',
-        'split_qty_hasil',
-        'split_qty_waste',
-        'split_qty_penyusutan',
         'split_status',
         'split_tanggal',
         'split_created_by',
@@ -28,9 +25,6 @@ class Split extends BaseModel
     ];
 
     protected $casts = [
-        'split_qty_hasil' => 'double',
-        'split_qty_waste' => 'double',
-        'split_qty_penyusutan' => 'double',
         'split_tanggal' => 'date',
         'split_created_at' => 'datetime',
     ];
@@ -55,16 +49,19 @@ class Split extends BaseModel
         return $this->hasMany(SplitDetail::class, 'split_detail_id_split', 'split_id');
     }
 
+    public function targets()
+    {
+        return $this->hasMany(SplitTarget::class, 'split_target_id_split', 'split_id');
+    }
+
     public function rules(): array
     {
         $id = $this->exists ? $this->split_id : null;
 
         return [
             'split_id_product_source' => ['required', 'exists:product,product_id'],
-            'split_id_product_target' => ['required', 'exists:product,product_id'],
+            'split_id_product_target' => ['nullable', 'exists:product,product_id'],
             'split_id_product_waste' => ['nullable', 'exists:product,product_id'],
-            'split_qty_hasil' => ['required', 'numeric', 'min:0'],
-            'split_qty_waste' => ['required', 'numeric', 'min:0'],
             'split_tanggal' => ['required', 'date'],
             'split_status' => ['nullable', 'string', 'max:20'],
         ];

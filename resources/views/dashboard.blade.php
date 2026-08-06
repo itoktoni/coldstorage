@@ -112,34 +112,18 @@
                 </div>
 
                 {{-- Lokasi List --}}
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
                     @foreach($wh['lokasi'] as $loc)
                     @php
                         $isFull = $loc['percent'] >= 91;
                         $isAlmostFull = $loc['percent'] >= 60 && !$isFull;
                     @endphp
                     <div class="bg-surface-container rounded-lg p-3 border {{ $isFull ? 'border-error border-2' : ($isAlmostFull ? 'border-warning border-2' : 'border-outline-variant/50') }}">
+                        <p class="text-xs font-bold text-on-surface truncate mb-1">{{ $loc['name'] }}</p>
                         <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2">
-                                @if($isFull)
-                                <span class="material-symbols-outlined text-error text-lg animate-pulse">block</span>
-                                @elseif($isAlmostFull)
-                                <span class="material-symbols-outlined text-warning text-lg">warning</span>
-                                @else
-                                <span class="material-symbols-outlined text-success text-lg">check_circle</span>
-                                @endif
-                                <div>
-                                    <p class="text-xs font-bold text-on-surface">{{ $loc['name'] }}</p>
-                                    <p class="text-[9px] text-on-surface-variant font-mono">{{ $loc['code'] }}</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                @if($isFull)
-                                    <span class="bg-error text-on-error text-[9px] font-bold px-2 py-0.5 rounded-full">ALERT</span>
-                                @elseif($isAlmostFull)
-                                    <span class="bg-warning text-on-warning text-[9px] font-bold px-2 py-0.5 rounded-full">WARNING</span>
-                                @endif
-                                <span class="block text-sm font-bold {{ $isFull ? 'text-error' : ($isAlmostFull ? 'text-warning' : 'text-success') }}">
+                            <p class="text-[9px] text-on-surface-variant font-mono truncate">{{ $loc['code'] }}</p>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <span class="text-sm font-bold {{ $isFull ? 'text-error' : ($isAlmostFull ? 'text-warning' : 'text-success') }}">
                                     {{ $loc['percent'] }}%
                                 </span>
                             </div>

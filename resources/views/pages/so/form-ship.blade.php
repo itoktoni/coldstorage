@@ -14,20 +14,40 @@
                     <span class="material-symbols-outlined text-primary text-xl">point_of_sale</span>
                     Sales Order - {{ $so->so_code }}
                 </h3>
-                <div class="grid grid-cols-12 gap-5">
-                    <div class="col-span-12 md:col-span-4">
+
+                {{-- DESKTOP --}}
+                <div class="hidden md:grid grid-cols-12 gap-5">
+                    <div class="col-span-4">
                         <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Customer</div>
                         <div class="font-body-sm font-bold">{{ $so->customer->customer_nama ?? '-' }}</div>
                     </div>
-                    <div class="col-span-12 md:col-span-4">
+                    <div class="col-span-4">
                         <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Tanggal</div>
                         <div class="font-body-sm font-bold">{{ $so->so_tanggal?->format('d M Y') ?? '-' }}</div>
                     </div>
-                    <div class="col-span-12 md:col-span-4">
+                    <div class="col-span-4">
                         <div class="text-xs text-on-surface-variant uppercase tracking-widest mb-1">Status</div>
                         <div class="font-body-sm font-bold">
                             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-info/10 text-info">Confirmed</span>
                         </div>
+                    </div>
+                </div>
+
+                {{-- MOBILE --}}
+                <div class="md:hidden">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Customer</p>
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $so->customer->customer_nama ?? '-' }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Status</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-info/10 text-info">Confirmed</span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Tanggal</p>
+                        <p class="text-xs font-medium text-on-surface">{{ $so->so_tanggal?->format('d M Y') ?? '-' }}</p>
                     </div>
                 </div>
             </div>
@@ -38,38 +58,79 @@
                     <span class="material-symbols-outlined text-primary text-xl">checklist</span>
                     Detail Pengiriman
                 </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="border-b border-outline-variant">
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">No</th>
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Product</th>
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Order</th>
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Kirim (Real)</th>
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Harga</th>
-                                <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($details as $i => $d)
-                            <tr class="border-b border-outline-variant/50">
-                                <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ $i + 1 }}</td>
-                                <td class="py-2 px-3 font-body-sm font-medium">{{ $d['product_nama'] }}</td>
-                                <td class="py-2 px-3 font-body-sm text-right">{{ number_format($d['order_qty']) }}</td>
-                                <td class="py-2 px-3 font-body-sm text-right text-primary font-bold">{{ number_format($d['real_qty'], 3) }}</td>
-                                <td class="py-2 px-3 font-body-sm text-right">Rp {{ number_format($d['harga'], 0, ',', '.') }}</td>
-                                <td class="py-2 px-3 font-body-sm text-right">Rp {{ number_format($d['real_qty'] * $d['harga'], 0, ',', '.') }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                        <tfoot>
-                            <tr class="border-t-2 border-outline-variant">
-                                <td colspan="4" class="py-2 px-3 font-body-sm font-bold">Total Qty Kirim: {{ number_format($details->sum('real_qty'), 3) }}</td>
-                                <td></td>
-                                <td class="py-2 px-3 font-body-sm text-right font-bold text-primary">Rp {{ number_format($details->sum(fn($d) => $d['real_qty'] * $d['harga']), 0, ',', '.') }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+
+                {{-- DESKTOP TABLE --}}
+                <div class="hidden md:block">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead>
+                                <tr class="border-b border-outline-variant">
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">No</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant">Product</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Order</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Qty Kirim (Real)</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Harga</th>
+                                    <th class="py-2 px-3 font-body-sm font-bold text-on-surface-variant text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($details as $i => $d)
+                                <tr class="border-b border-outline-variant/50">
+                                    <td class="py-2 px-3 font-body-sm text-on-surface-variant">{{ $i + 1 }}</td>
+                                    <td class="py-2 px-3 font-body-sm font-medium">{{ $d['product_nama'] }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right">{{ number_format($d['order_qty']) }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right text-primary font-bold">{{ number_format($d['real_qty'], 3) }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right">Rp {{ number_format($d['harga'], 0, ',', '.') }}</td>
+                                    <td class="py-2 px-3 font-body-sm text-right">Rp {{ number_format($d['real_qty'] * $d['harga'], 0, ',', '.') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot>
+                                <tr class="border-t-2 border-outline-variant">
+                                    <td colspan="4" class="py-2 px-3 font-body-sm font-bold">Total Qty Kirim: {{ number_format($details->sum('real_qty'), 3) }}</td>
+                                    <td></td>
+                                    <td class="py-2 px-3 font-body-sm text-right font-bold text-primary">Rp {{ number_format($details->sum(fn($d) => $d['real_qty'] * $d['harga']), 0, ',', '.') }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- MOBILE CARDS --}}
+                <div class="md:hidden space-y-3">
+                    @foreach($details as $i => $d)
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm">
+                        <p class="text-sm font-bold text-on-surface truncate mb-3">{{ $d['product_nama'] }}</p>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Qty Order</p>
+                                <p class="text-xs font-medium text-on-surface">{{ number_format($d['order_qty']) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Qty Kirim</p>
+                                <p class="text-sm font-bold text-primary">{{ number_format($d['real_qty'], 3) }}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Harga</p>
+                                <p class="text-xs font-medium text-on-surface">Rp {{ number_format($d['harga'], 0, ',', '.') }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Subtotal</p>
+                                <p class="text-xs font-bold text-primary">Rp {{ number_format($d['real_qty'] * $d['harga'], 0, ',', '.') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    {{-- Mobile Total --}}
+                    <div class="border-t-2 border-outline-variant pt-3 mt-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-on-surface">Total Qty: {{ number_format($details->sum('real_qty'), 3) }}</span>
+                            <span class="text-sm font-bold text-primary">Rp {{ number_format($details->sum(fn($d) => $d['real_qty'] * $d['harga']), 0, ',', '.') }}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -81,7 +142,6 @@
                 </h3>
 
                 <div class="grid grid-cols-12 gap-5">
-
                     <div class="col-span-12 md:col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Kendaraan</label>
                         <select id="select-kendaraan" name="delivery_id_kendaraan"
@@ -118,7 +178,7 @@
                         <input type="text" id="input-kurir" name="delivery_nama_kurir" value="{{ old('delivery_nama_kurir') }}"
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
                     </div>
-                     <div class="col-span-6 md:col-span-6">
+                    <div class="col-span-6 md:col-span-6">
                         <label class="text-xs font-semibold text-on-surface-variant mb-1 block">Nama Penerima</label>
                         <input type="text" name="delivery_nama_penerima" value="{{ old('delivery_nama_pembali', $so->customer->customer_nama) }}"
                                class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none" />
@@ -137,17 +197,20 @@
             </div>
 
             {{-- Submit --}}
-            <div class="mt-6 mb-12 flex items-center gap-3">
-                <a href="{{ route('wms-so.getTable') }}"
-                   class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-all">
-                    Batal
-                </a>
-                <button type="submit"
+            <div class="fixed left-0 right-0 lg:left-72 bg-surface-container-lowest border-t border-outline-variant shadow-[0_-4px_12px_rgba(0,0,0,0.08)] px-3 md:px-6 py-2 md:py-3 z-[45] md:!bottom-0" style="bottom: 4rem">
+                <div class="flex items-center justify-end gap-2 md:gap-3">
+                    <a href="{{ route('wms-so.getTable') }}"
+                        class="inline-flex items-center justify-center gap-1 h-8 md:h-10 px-2.5 md:px-4 text-xs md:text-sm font-semibold rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-all shrink-0">
+                        <span class="material-symbols-outlined text-base md:text-xl">close</span>
+                        <span class="hidden sm:inline">Batal</span>
+                    </a>
+                    <button type="submit"
                         onclick="return confirm('Yakin ingin mengirim SO ini? Invoice & Delivery Order akan dibuat.')"
-                    class="inline-flex items-center justify-center gap-2 h-10 px-5 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95">
-                    <span class="material-symbols-outlined text-base">local_shipping</span>
-                    Kirim & Buat Invoice
-                </button>
+                        class="inline-flex items-center justify-center gap-1 h-8 md:h-10 px-2.5 md:px-4 text-xs md:text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95 shrink-0">
+                        <span class="material-symbols-outlined text-base md:text-xl">local_shipping</span>
+                        <span class="hidden sm:inline">Kirim & Buat Invoice</span>
+                    </button>
+                </div>
             </div>
         </form>
     </div>

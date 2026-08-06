@@ -61,29 +61,59 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @forelse ($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->{head($model::$sortColumns)} }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
-                        @endforeach
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary">
-                                <a href="{{ route('wms-po-detail-convert', ['id' => $table->field_primary]) }}"
-                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success text-white hover:bg-success/80 transition-colors"
-                                   title="Convert to Masuk">
-                                    <span class="material-symbols-outlined text-lg">swap_horiz</span>
-                                </a>
-                            </x-table-action>
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    @php
+                        $sisa = (float) $table->po_detail_qty - (float) $table->prepare_qty;
+                    @endphp
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $table->product->product_nama ?? 'N/A' }}</p>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-primary/10 text-primary shrink-0">{{ $table->po_detail_code }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">PO Code</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->po->po_code }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Tanggal</p>
+                                <p class="text-xs font-medium text-on-surface">{{ formatDate($table->po->po_tanggal) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Supplier</p>
+                                <p class="text-xs font-medium text-on-surface truncate">{{ $table->po->supplier->supplier_nama ?? 'N/A' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Qty</p>
+                                <p class="text-xs font-bold text-on-surface">{{ formatQty($table->po_detail_qty) }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Prepare</p>
+                                <p class="text-xs font-medium text-on-surface">{{ formatQty($table->prepare_qty) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Sisa</p>
+                                <p class="text-xs font-bold {{ $sisa > 0 ? 'text-warning' : 'text-success' }}">{{ formatQty($sisa) }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary">
+                                    <a href="{{ route('wms-po-detail-convert', ['id' => $table->field_primary]) }}"
+                                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
+                                       title="Convert to Masuk">
+                                        <span class="material-symbols-outlined text-lg">inventory_2</span>
+                                    </a>
+                                </x-table-action>
+                            </div>
+                        </div>
+                    </div>
                     @empty
-                    <x-table-mobile-item>
-                        <div class="text-center p-4">No data available.</div>
-                    </x-table-mobile-item>
+                    <div class="text-center p-4 text-on-surface-variant">No data available.</div>
                     @endforelse
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

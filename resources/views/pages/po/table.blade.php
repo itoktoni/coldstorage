@@ -63,15 +63,32 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @forelse ($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->{head($model::$sortColumns)} }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :label="formatLabel($column)" :text="$table->$column" />
-                        @endforeach
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <div class="flex gap-2">
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $table->po_code }}</p>
+                            @if($table->po_status === \App\Wms\PoStatusEnum::DONE)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success shrink-0">Done</span>
+                            @elseif($table->po_status === \App\Wms\PoStatusEnum::PROCESS)
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning shrink-0">Process</span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 shrink-0">{{ $table->po_status }}</span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Tanggal</p>
+                                <p class="text-xs font-medium text-on-surface">{{ formatDate($table->po_tanggal) }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Supplier</p>
+                                <p class="text-xs font-medium text-on-surface truncate">{{ $table->supplier->supplier_nama ?? 'N/A' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
                                 @if($table->po_status !== \App\Wms\PoStatusEnum::DONE)
                                 <a href="{{ moduleRoute('getUpdate', ['id' => $table->field_primary]) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                                     <span class="material-symbols-outlined text-lg">edit</span>
@@ -86,14 +103,12 @@
                                     <span class="material-symbols-outlined text-lg">print</span>
                                 </a>
                             </div>
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                        </div>
+                    </div>
                     @empty
-                    <x-table-mobile-item>
-                        <div class="text-center p-4">No data available.</div>
-                    </x-table-mobile-item>
+                    <div class="text-center p-4 text-on-surface-variant">No data available.</div>
                     @endforelse
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

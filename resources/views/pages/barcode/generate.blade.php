@@ -23,24 +23,24 @@
             </h3>
             <form method="POST" action="{{ route('wms-barcode.postGenerate') }}">
                 @csrf
-                <div class="grid grid-cols-12 gap-5">
-                    <div class="col-span-12 md:col-span-4">
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                    <div class="col-span-2">
                         <x-select label="Product" name="product_id" :options="$products" :default="$selectedProduct ?? ''" required />
                     </div>
 
-                    <div class="col-span-12 md:col-span-2">
+                    <div>
                         <x-input label="Qty" name="qty" type="number" step="0.01" min="0.01" :value="$selectedQty ?? '1'" required />
                     </div>
 
-                    <div class="col-span-12 md:col-span-2">
+                    <div>
                         <x-input label="Jumlah" name="jumlah" type="number" min="1" max="100" :value="$selectedJumlah ?? '1'" required />
                     </div>
 
-                    <div class="col-span-12 md:col-span-3">
+                    <div class="col-span-2">
                         <x-input label="Expired Date" name="expired_date" type="date" :value="$selectedExpired ?? ''" />
                     </div>
 
-                    <div class="col-span-12 md:col-span-1 flex items-end">
+                    <div class="col-span-2 md:col-span-1 flex items-end">
                         <x-button variant="primary" type="submit" class="w-full">Generate</x-button>
                     </div>
                 </div>
@@ -56,20 +56,23 @@
             <input type="hidden" id="pdf-jumlah" value="{{ $selectedJumlah ?? '' }}" />
             <h3 class="qr-header font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-xl">qr_code_2</span>
-                QR Codes - {{ $product->product_nama }} ({{ count($qrcodes) }})
-                <button type="button" onclick="downloadPdf()" class="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">
-                    <span class="material-symbols-outlined text-lg">picture_as_pdf</span> Download PDF
+                <span class="min-w-0 truncate">List QR</span>
+                <span class="text-sm font-normal text-on-surface-variant shrink-0">({{ count($qrcodes) }})</span>
+                <button type="button" onclick="downloadPdf()" class="ml-auto shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">
+                    <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                    <span class="hidden sm:inline">Download PDF</span>
+                    <span class="sm:hidden">PDF</span>
                 </button>
             </h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                 @foreach($qrcodes as $qr)
-                <div class="border border-outline-variant rounded-lg p-3 text-center bg-white qr-item">
-                    <p style="font-size: 8px;" class="qr-label text-xs mb-2 text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $qr['content'] }}</p>
-                    <img src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code" class="mx-auto mb-2" style="width:150px;height:150px;" />
-                    <p class="qr-label text-xs text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $product->product_nama }}</p>
-                    <p class="qr-label text-xs text-on-surface-variant">Qty: {{ (float) $qty }}</p>
+                <div class="border border-outline-variant rounded-lg p-2 md:p-3 text-center bg-white qr-item">
+                    <p style="font-size: 5px;" class="qr-label md:text-xs mb-1 md:mb-2 text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $qr['content'] }}</p>
+                    <img src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code" class="mx-auto mb-1 md:mb-2" style="width:120px;height:120px;" />
+                    <p class="qr-label text-[10px] md:text-xs text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $product->product_nama }}</p>
+                    <p class="qr-label text-[10px] md:text-xs text-on-surface-variant">Qty: {{ (float) $qty }}</p>
                     @if($expired)
-                    <p class="qr-label text-xs text-on-surface-variant">Exp: {{ \Carbon\Carbon::parse($expired)->format('d M Y') }}</p>
+                    <p class="qr-label text-[10px] md:text-xs text-on-surface-variant">Exp: {{ \Carbon\Carbon::parse($expired)->format('d M Y') }}</p>
                     @endif
                 </div>
                 @endforeach

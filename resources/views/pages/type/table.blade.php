@@ -45,19 +45,46 @@
 
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @foreach($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->field_name }}" />
-                        @foreach ($model::$sortColumns as $column)
-                        <x-table-mobile-text :text="$table->$column" size="sm" color="primary" />
-                        @endforeach
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-center gap-2 mb-3">
+                            @if($table->menu_icon)
+                            <span class="material-symbols-outlined text-primary text-lg">{{ $table->menu_icon }}</span>
+                            @endif
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $table->name }}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Slug</p>
+                                <p class="text-xs font-medium text-primary">{{ $table->slug }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Type</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->type }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Position</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->menu_position ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Status</p>
+                                @if($table->is_active)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success">Active</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600">Inactive</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary" />
+                            </div>
+                        </div>
+                    </div>
                     @endforeach
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

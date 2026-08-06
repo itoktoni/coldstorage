@@ -52,26 +52,53 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data" />
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @forelse($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->product_nama ?? $table->stock_code }}" />
-                        <x-table-mobile-text label="Stock Code" value="{{ $table->stock_code }}" />
-                        <x-table-mobile-text label="Reff" value="{{ $table->stock_reff }}" />
-                        <x-table-mobile-text label="Product" value="{{ $table->product_nama ?? $table->stock_id_product }}" />
-                        <x-table-mobile-text label="Lokasi" value="{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}" />
-                        <x-table-mobile-text label="Type" value="{{ $table->stock_type }}" />
-                        <x-table-mobile-text label="Qty" value="{{ $table->stock_qty }}" />
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm cursor-pointer transition-colors" data-id="{{ $table->field_primary }}" onclick="mToggle(this)">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <div class="flex items-center gap-2 min-w-0">
+                                <span data-check class="icon-[tabler--circle] size-5 text-base-content/20 shrink-0"></span>
+                                <p class="text-sm font-bold text-on-surface truncate">{{ $table->product_nama ?? $table->stock_id_product }}</p>
+                            </div>
+                            @php
+                                $typeColors = [
+                                    'IN' => 'bg-success/10 text-success',
+                                    'OUT' => 'bg-error/10 text-error',
+                                    'MOVE' => 'bg-info/10 text-info',
+                                    'ADJUST' => 'bg-warning/10 text-warning',
+                                ];
+                                $typeColor = $typeColors[$table->stock_type] ?? 'bg-gray-100 text-gray-600';
+                            @endphp
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium {{ $typeColor }} shrink-0">{{ $table->stock_type }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Stock Code</p>
+                                <p class="text-xs font-medium text-on-surface font-mono truncate">{{ $table->stock_code }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Reff</p>
+                                <p class="text-xs font-medium text-on-surface truncate">{{ $table->stock_reff ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Lokasi</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->lokasi->lokasi_nama ?? $table->stock_code_lokasi }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Qty</p>
+                                <p class="text-sm font-bold text-on-surface">{{ $table->stock_qty }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                        </div>
+                    </div>
                     @empty
-                    <x-table-mobile-item>
-                        <div class="text-center p-4">No data available.</div>
-                    </x-table-mobile-item>
+                    <div class="text-center p-4 text-on-surface-variant">No data available.</div>
                     @endforelse
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

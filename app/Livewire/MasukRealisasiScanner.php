@@ -50,6 +50,8 @@ class MasukRealisasiScanner extends Component
         $this->error = '';
         $this->success = '';
 
+        $barcodeContent = trim($barcodeContent);
+
         if (empty($this->stagingCode)) {
             $this->error = 'Pilih staging area terlebih dahulu';
             $this->refreshSummary();

@@ -2,83 +2,237 @@
 
 namespace App\Livewire;
 
-use App\Models\ForkliftTask;
-use App\Models\Lokasi;
 use App\Models\Product;
 use App\Models\Split;
-use App\Models\SplitDetail;
+use App\Models\SplitTarget;
 use App\Models\Stock;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class SplitProduce extends Component
 {
+    public $splitId = null;
+
+    public $split = null;
+
+    // Source
     public $sourceProductId = '';
 
-    public $targetProductId = '';
+    public $sourceProductName = '';
 
+    // Waste
     public $wasteProductId = '';
 
-    public $splitStatus = 'Draft';
+    public $wasteProductName = '';
+
+    // Targets
+    public $targets = [];
+    // Each target: ['product_id' => '', 'qty' => '', 'jumlah' => '']
+
+    // Scanner
+    public $barcodeInput = '';
 
     public $scannedBarcodes = [];
 
-    public $barcodeInput = '';
+    public $totalSumber = 0;
 
-    public $qtyHasil = 0;
+    // Generate form
+    public $generateProductId = '';
+
+    public $generateQty = '';
+
+    public $generateJumlah = '';
+
+    // Summary
+    public $totalHasil = 0;
 
     public $qtyWaste = 0;
 
+    public $penyusutan = 0;
+
+    public $expiredDate = '';
+
+    // Status
     public $error = '';
 
     public $success = '';
 
-    protected $listeners = ['barcodeScanned' => 'scanBarcode'];
+    public $products = [];
 
-    public function scanBarcode($code)
+    public function mount()
+    {
+        $this->products = Product::pluck('product_nama', 'product_id')->toArray();
+    }
+
+    // ── Source ──
+
+    public function updatedSourceProductId()
+    {
+        if ($this->sourceProductId) {
+            $this->sourceProductName = $this->products[$this->sourceProductId] ?? '';
+        }
+    }
+
+    public function saveSource()
     {
         $this->error = '';
-        $code = trim($code);
+        $this->success = '';
 
-        if (empty($code)) {
-            $this->error = 'Barcode tidak boleh kosong';
-
-            return;
-        }
-
-        if (collect($this->scannedBarcodes)->contains('stock_code', $code)) {
-            $this->error = 'Barcode sudah di-scan';
+        if (! $this->sourceProductId) {
+            $this->error = 'Pilih produk asal terlebih dahulu.';
 
             return;
         }
 
-        $stock = Stock::where('stock_code', $code)
-            ->where('stock_type', Stock::TYPE_IN)
-            ->where('stock_qty', '>', 0)
-            ->first();
+        if ($this->splitId) {
+            $this->split->update([
+                'split_id_product_source' => $this->sourceProductId,
+            ]);
+        } else {
+            $this->split = Split::create([
+                'split_id_product_source' => $this->sourceProductId,
+                'split_status' => 'Draft',
+                'split_tanggal' => now()->toDateString(),
+                'split_created_by' => auth()->id(),
+                'split_created_at' => now(),
+            ]);
+            $this->splitId = $this->split->split_id;
+        }
+
+        $this->success = 'Produk asal tersimpan.';
+    }
+
+    // ── Waste ──
+
+    public function updatedWasteProductId()
+    {
+        if ($this->wasteProductId) {
+            $this->wasteProductName = $this->products[$this->wasteProductId] ?? '';
+            $this->split->update(['split_id_product_waste' => $this->wasteProductId]);
+        } else {
+            $this->wasteProductName = '';
+            $this->split->update(['split_id_product_waste' => null]);
+        }
+        $this->recalcSummary();
+    }
+
+    // ── Targets ──
+
+    public function addTarget()
+    {
+        $this->targets[] = ['product_id' => '', 'qty' => '', 'jumlah' => '1'];
+    }
+
+    public function removeTarget($index)
+    {
+        unset($this->targets[$index]);
+        $this->targets = array_values($this->targets);
+        $this->saveTargets();
+    }
+
+    public function updatedTargets()
+    {
+        $this->saveTargets();
+    }
+
+    public function generateTargets()
+    {
+        if (! $this->generateProductId || ! $this->generateQty || ! $this->generateJumlah) {
+            $this->error = 'Isi produk, qty, dan jumlah untuk generate.';
+
+            return;
+        }
+
+        $qty = (float) $this->generateQty;
+        $jumlah = (int) $this->generateJumlah;
+
+        if ($qty <= 0 || $jumlah <= 0) {
+            $this->error = 'Qty dan jumlah harus lebih dari 0.';
+
+            return;
+        }
+
+        for ($i = 0; $i < $jumlah; $i++) {
+            $this->targets[] = [
+                'product_id' => $this->generateProductId,
+                'qty' => $qty,
+                'jumlah' => '1',
+            ];
+        }
+
+        $this->generateProductId = '';
+        $this->generateQty = '';
+        $this->generateJumlah = '';
+
+        $this->saveTargets();
+    }
+
+    public function saveTargets()
+    {
+        if (! $this->splitId) {
+            return;
+        }
+
+        // Delete existing targets
+        SplitTarget::where('split_target_id_split', $this->splitId)->delete();
+
+        // Create new targets
+        $urutan = 1;
+        foreach ($this->targets as $target) {
+            if (empty($target['product_id']) || empty($target['qty'])) {
+                continue;
+            }
+
+            SplitTarget::create([
+                'split_target_id_split' => $this->splitId,
+                'split_target_id_product' => $target['product_id'],
+                'split_target_qty' => $target['qty'],
+                'split_target_jumlah' => $target['jumlah'] ?? 1,
+                'split_target_urutan' => $urutan++,
+            ]);
+        }
+
+        $this->recalcSummary();
+    }
+
+    // ── Scanner ──
+
+    public function scanBarcode($barcode = null)
+    {
+        $this->error = '';
+        $this->success = '';
+
+        $barcode = $barcode ?? $this->barcodeInput;
+        if (empty($barcode)) {
+            return;
+        }
+
+        $barcode = trim($barcode);
+
+        if (! $this->sourceProductId) {
+            $this->error = 'Pilih dan simpan produk asal terlebih dahulu.';
+
+            return;
+        }
+
+        $stock = Stock::with('product')->where('stock_code', $barcode)->first();
 
         if (! $stock) {
-            $this->error = 'Stock tidak ditemukan atau tidak tersedia';
+            $this->error = "Barcode '{$barcode}' tidak ditemukan di sistem.";
 
             return;
         }
 
-        if (! empty($this->sourceProductId) && $this->sourceProductId != $stock->stock_id_product) {
-            $this->error = 'Product barcode tidak sesuai dengan product asal yang dipilih';
+        if ($stock->product->product_id != $this->sourceProductId) {
+            $this->error = "Barcode '{$barcode}' adalah produk '{$stock->product->product_nama}', bukan produk asal yang dipilih ({$this->sourceProductName}).";
 
             return;
         }
 
-        if (! empty($this->targetProductId) && $this->targetProductId == $stock->stock_id_product) {
-            $this->error = 'Product sumber tidak boleh sama dengan product target';
-
-            return;
-        }
-
-        if (! empty($this->scannedBarcodes)) {
-            $firstProduct = $this->scannedBarcodes[0]['stock_id_product'];
-            if ($stock->stock_id_product !== $firstProduct) {
-                $this->error = 'Product barcode harus sama dengan product sebelumnya';
+        // Check duplicate
+        foreach ($this->scannedBarcodes as $scan) {
+            if ($scan['stock_id'] == $stock->stock_id) {
+                $this->error = "Barcode '{$barcode}' sudah discan sebelumnya.";
 
                 return;
             }
@@ -87,257 +241,134 @@ class SplitProduce extends Component
         $this->scannedBarcodes[] = [
             'stock_id' => $stock->stock_id,
             'stock_code' => $stock->stock_code,
-            'stock_id_product' => $stock->stock_id_product,
-            'product_nama' => $stock->product->product_nama ?? '-',
-            'stock_qty' => (float) $stock->stock_qty,
+            'product_nama' => $stock->product->product_nama,
+            'stock_qty' => $stock->stock_qty,
             'stock_expired_date' => $stock->stock_expired_date,
-            'stock_code_lokasi' => $stock->stock_code_lokasi,
         ];
 
         $this->barcodeInput = '';
-        $this->dispatch('show-toast', message: 'Barcode berhasil di-scan', type: 'success');
+        $this->totalSumber = collect($this->scannedBarcodes)->sum('stock_qty');
     }
 
     public function removeScan($index)
     {
         unset($this->scannedBarcodes[$index]);
         $this->scannedBarcodes = array_values($this->scannedBarcodes);
+        $this->totalSumber = collect($this->scannedBarcodes)->sum('stock_qty');
     }
 
-    public function saveConfig()
+    // ── Summary ──
+
+    public function recalcSummary()
+    {
+        // Total hasil from targets
+        $this->totalHasil = 0;
+        foreach ($this->targets as $target) {
+            $qty = (float) ($target['qty'] ?? 0);
+            $jumlah = (int) ($target['jumlah'] ?? 1);
+            $this->totalHasil += $qty * $jumlah;
+        }
+
+        // Waste
+        $this->qtyWaste = 0;
+    }
+
+    // ── Process ──
+
+    public function process()
     {
         $this->error = '';
         $this->success = '';
 
-        if (empty($this->sourceProductId)) {
-            $this->error = 'Pilih produk asal terlebih dahulu';
+        if (! $this->splitId) {
+            $this->error = 'Simpan konfigurasi split terlebih dahulu.';
 
             return;
         }
 
-        if (empty($this->targetProductId)) {
-            $this->error = 'Pilih produk target terlebih dahulu';
+        if (count($this->scannedBarcodes) == 0) {
+            $this->error = 'Scan minimal 1 barcode sumber.';
 
             return;
         }
 
-        if ($this->sourceProductId == $this->targetProductId) {
-            $this->error = 'Produk asal dan target tidak boleh sama';
+        if (count($this->targets) == 0) {
+            $this->error = 'Tambah minimal 1 target hasil split.';
 
             return;
         }
 
-        if (! empty($this->wasteProductId) && $this->wasteProductId == $this->sourceProductId) {
-            $this->error = 'Produk waste tidak boleh sama dengan produk asal';
+        $this->recalcSummary();
 
-            return;
-        }
-
-        if (! empty($this->wasteProductId) && $this->wasteProductId == $this->targetProductId) {
-            $this->error = 'Produk waste tidak boleh sama dengan produk target';
-
-            return;
-        }
-
-        try {
-            $split = Split::create([
-                'split_id_product_source' => $this->sourceProductId,
-                'split_id_product_target' => $this->targetProductId,
-                'split_id_product_waste' => $this->wasteProductId ?: null,
-                'split_qty_hasil' => 0,
-                'split_qty_waste' => 0,
-                'split_qty_penyusutan' => 0,
-                'split_status' => $this->splitStatus,
-                'split_tanggal' => now()->toDateString(),
-            ]);
-
-            $this->success = 'Konfigurasi split berhasil disimpan! (ID: '.$split->split_id.')';
-            $this->dispatch('show-toast', message: $this->success, type: 'success');
-        } catch (\Throwable $th) {
-            $this->error = 'Gagal menyimpan: '.$th->getMessage();
-        }
-    }
-
-    public function updatedTargetProductId()
-    {
-        $this->validateTargetProduct();
-    }
-
-    private function validateTargetProduct(): void
-    {
-        if (empty($this->targetProductId) || empty($this->scannedBarcodes)) {
-            return;
-        }
-
-        $sourceProductId = $this->scannedBarcodes[0]['stock_id_product'];
-        if ($this->targetProductId == $sourceProductId) {
-            $this->error = 'Product target tidak boleh sama dengan product sumber';
-            $this->targetProductId = '';
-        }
-    }
-
-    public function getTotalSumberProperty(): float
-    {
-        return collect($this->scannedBarcodes)->sum('stock_qty');
-    }
-
-    public function getSourceProductName(): ?string
-    {
-        if (! empty($this->scannedBarcodes)) {
-            return $this->scannedBarcodes[0]['product_nama'] ?? null;
-        }
-
-        if (! empty($this->sourceProductId)) {
-            return Product::find($this->sourceProductId)?->product_nama;
-        }
-
-        return null;
-    }
-
-    public function getPenyusutanProperty(): float
-    {
-        $total = $this->totalSumber;
-        $hasil = (float) $this->qtyHasil;
-        $waste = (float) $this->qtyWaste;
-
-        return max(0, $total - $hasil - $waste);
-    }
-
-    public function getIsValidProperty(): bool
-    {
-        if (empty($this->sourceProductId)) {
-            return false;
-        }
-        if (empty($this->targetProductId)) {
-            return false;
-        }
-        if (empty($this->scannedBarcodes)) {
-            return false;
-        }
-        if ((float) $this->qtyHasil <= 0) {
-            return false;
-        }
         if ($this->penyusutan < 0) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public function process(): void
-    {
-        $this->error = '';
-        $this->success = '';
-
-        if (! $this->isValid) {
-            $this->error = 'Lengkapi semua data terlebih dahulu';
+            $this->error = 'Total hasil split melebihi total sumber. Periksa qty dan jumlah target.';
 
             return;
         }
 
         try {
             DB::transaction(function () {
-                $splitCode = 'SPLIT-'.uniqid();
-
-                // 1. Create split record
-                $split = Split::create([
-                    'split_id_product_source' => $this->sourceProductId,
-                    'split_id_product_target' => $this->targetProductId,
-                    'split_id_product_waste' => $this->wasteProductId ?: null,
-                    'split_qty_hasil' => $this->qtyHasil,
-                    'split_qty_waste' => $this->qtyWaste,
-                    'split_qty_penyusutan' => $this->penyusutan,
-                    'split_status' => 'Processed',
-                    'split_tanggal' => now()->toDateString(),
-                ]);
-
-                // 2. Create split_detail + decrement source stock
+                // 1. Process each scanned source stock
                 foreach ($this->scannedBarcodes as $scan) {
-                    SplitDetail::create([
-                        'split_detail_id_split' => $split->split_id,
-                        'split_detail_id_stock' => $scan['stock_id'],
-                        'split_detail_qty' => $scan['stock_qty'],
-                    ]);
+                    $sourceStock = Stock::find($scan['stock_id']);
+                    if (! $sourceStock) {
+                        throw new \Exception("Stock {$scan['stock_code']} tidak ditemukan.");
+                    }
 
-                    Stock::where('stock_id', $scan['stock_id'])
-                        ->decrement('stock_qty', $scan['stock_qty']);
+                    // 2. Create new stock for each target
+                    foreach ($this->targets as $target) {
+                        if (empty($target['product_id']) || empty($target['qty'])) {
+                            continue;
+                        }
+
+                        $qty = (float) $target['qty'];
+                        $jumlah = (int) ($target['jumlah'] ?? 1);
+                        $expiredDate = $this->expiredDate ?: $sourceStock->stock_expired_date;
+                        $product = Product::find($target['product_id']);
+                        $productCode = $product->product_code ?? 'PROD';
+
+                        for ($i = 0; $i < $jumlah; $i++) {
+                            // Generate barcode: {product_code}#{timestamp}{random}#{qty}#{expired_date}
+                            $timestamp = now()->format('YmdHis');
+                            $random = strtoupper(uniqid());
+                            $barcode = implode('#', [
+                                $productCode,
+                                $timestamp.$random,
+                                (string) $qty,
+                                $expiredDate ? date('Ymd', strtotime($expiredDate)) : '-',
+                            ]);
+
+                            Stock::create([
+                                'stock_code' => $barcode,
+                                'stock_id_product' => $target['product_id'],
+                                'stock_qty' => $qty,
+                                'stock_type' => Stock::TYPE_IN,
+                                'stock_expired_date' => $expiredDate,
+                                'stock_reff' => $this->split->split_id,
+                            ]);
+                        }
+                    }
+
+                    // 3. Deduct source stock to 0
+                    $sourceStock->update(['stock_qty' => 0]);
                 }
 
-                // 3. Get staging area from first source
-                $firstScan = $this->scannedBarcodes[0];
-                $sourceLokasi = $firstScan['stock_code_lokasi'];
-                $stagingCode = $this->getStagingForLokasi($sourceLokasi);
-
-                // 4. Create STAGING stock for target product
-                $targetExpired = $firstScan['stock_expired_date'];
-                Stock::create([
-                    'stock_id_product' => $this->targetProductId,
-                    'stock_qty' => $this->qtyHasil,
-                    'stock_type' => Stock::TYPE_STAGING,
-                    'stock_code_lokasi' => $stagingCode,
-                    'stock_expired_date' => $targetExpired,
-                    'stock_reff' => $splitCode,
-                    'stock_pallet_code' => $splitCode,
-                ]);
-
-                // 5. Create STAGING stock for waste product (if exists)
-                if (! empty($this->wasteProductId) && $this->qtyWaste > 0) {
-                    Stock::create([
-                        'stock_id_product' => $this->wasteProductId,
-                        'stock_qty' => $this->qtyWaste,
-                        'stock_type' => Stock::TYPE_STAGING,
-                        'stock_code_lokasi' => $stagingCode,
-                        'stock_expired_date' => $targetExpired,
-                        'stock_reff' => $splitCode,
-                        'stock_pallet_code' => $splitCode,
-                    ]);
-                }
-
-                // 6. Create ForkliftTask for putaway
-                ForkliftTask::create([
-                    'forklift_type' => ForkliftTask::TYPE_PUTAWAY,
-                    'forklift_pallet_code' => $splitCode,
-                    'forklift_lokasi_asal' => $stagingCode,
-                    'forklift_lokasi_tujuan' => $sourceLokasi,
-                    'forklift_reff' => $splitCode,
-                    'forklift_status' => ForkliftTask::STATUS_PENDING,
+                // 4. Update split status
+                $this->split->update([
+                    'split_status' => 'Active',
                 ]);
             });
 
-            $this->success = 'Split berhasil diproses! Forklift task sudah dibuat.';
-            $this->dispatch('show-toast', message: $this->success, type: 'success');
-
-            $this->reset(['sourceProductId', 'targetProductId', 'wasteProductId', 'splitStatus', 'scannedBarcodes', 'barcodeInput', 'qtyHasil', 'qtyWaste']);
-        } catch (\Throwable $th) {
-            $this->error = 'Gagal memproses split: '.$th->getMessage();
+            $this->success = 'Split berhasil diproses! Stock sumber = 0, stock baru sudah dibuat.';
+            $this->scannedBarcodes = [];
+            $this->totalSumber = 0;
+        } catch (\Exception $e) {
+            $this->error = 'Gagal memproses split: '.$e->getMessage();
         }
-    }
-
-    private function getStagingForLokasi(?string $lokasiCode): string
-    {
-        $lokasi = Lokasi::where('lokasi_code', $lokasiCode)->first();
-        if ($lokasi && $lokasi->lokasi_category !== 'staging') {
-            $staging = Lokasi::where('lokasi_code_gudang', $lokasi->lokasi_code_gudang)
-                ->where('lokasi_category', 'staging')
-                ->first();
-            if ($staging) {
-                return $staging->lokasi_code;
-            }
-        }
-
-        return 'STG-A';
     }
 
     public function render()
     {
-        $products = Product::pluck('product_nama', 'product_id');
-
-        return view('livewire.split-produce', [
-            'products' => $products,
-            'totalSumber' => $this->totalSumber,
-            'penyusutan' => $this->penyusutan,
-            'isValid' => $this->isValid,
-            'sourceProductName' => $this->getSourceProductName(),
-        ]);
+        return view('livewire.split-produce');
     }
 }

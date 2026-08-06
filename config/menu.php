@@ -97,8 +97,11 @@ return [
     ],
 
     'bottom_nav' => [
+        ['route' => 'wms-po-detail.getTable', 'icon' => 'receipt_long', 'label' => 'PO Detail'],
+        ['route' => 'wms-so.getTable', 'icon' => 'assignment', 'label' => 'SO Prepare'],
         ['route' => 'dashboard', 'icon' => 'home', 'label' => 'Home'],
-        ['route' => 'profile.edit', 'icon' => 'person', 'label' => 'Profile'],
+        ['route' => 'wms-stock-sales.index', 'icon' => 'inventory_2', 'label' => 'Stock'],
+        ['route' => 'wms-split.index', 'icon' => 'call_split', 'label' => 'Split'],
     ],
 
 ];

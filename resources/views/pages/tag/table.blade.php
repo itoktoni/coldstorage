@@ -38,16 +38,23 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @foreach($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->name }}" />
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <p class="text-sm font-bold text-on-surface truncate mb-3">{{ $table->name }}</p>
+                        <div class="mb-3">
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Slug</p>
+                            <p class="text-xs font-medium text-primary">{{ $table->slug }}</p>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary" />
+                            </div>
+                        </div>
+                    </div>
                     @endforeach
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

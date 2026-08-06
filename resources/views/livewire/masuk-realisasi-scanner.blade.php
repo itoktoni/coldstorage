@@ -9,27 +9,25 @@
         <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 form-card">
             <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary text-xl">inventory_2</span>
-                Realisasikan {{ $masukDetail->in_detail_code }}
+                 {{ $masukDetail->in_detail_code }}
             </h3>
-            <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Product</label>
-                    <input type="text" value="{{ $masukDetail->product->product_nama ?? '-' }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50" readonly />
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Product</label>
+                    <p class="text-sm font-bold text-on-surface truncate">{{ $masukDetail->product->product_nama ?? '-' }}</p>
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Qty Direncanakan</label>
-                    <input type="text" value="{{ (float) $masukDetail->in_detail_qty }}" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-50" readonly />
+                <div class="text-right">
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Qty Direncanakan</label>
+                    <p class="text-sm font-bold text-on-surface">{{ (float) $masukDetail->in_detail_qty }}</p>
                 </div>
-                <div class="col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <div class="flex items-center h-10">
-                        <span class="badge badge-{{ $masukDetail->in_detail_status->badgeColor() }}">
-                            {{ $masukDetail->in_detail_status->description() }}
-                        </span>
-                    </div>
+                <div>
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Status</label>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-{{ $masukDetail->in_detail_status->badgeColor() }}/10 text-{{ $masukDetail->in_detail_status->badgeColor() }}">
+                        {{ $masukDetail->in_detail_status->description() }}
+                    </span>
                 </div>
-                <div class="col-span-3">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Aksi Status</label>
+                <div class="text-right">
+                    <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Aksi Status</label>
                     @php
                         $nextStatuses = match($masukDetail->in_detail_status) {
                             \App\Wms\MasukStatusEnum::PENDING => [\App\Wms\MasukStatusEnum::PROCESS],
@@ -40,15 +38,15 @@
                     @endphp
                     @if(count($nextStatuses) > 0)
                     <select x-on:change="$wire.changeStatus($el.value); $el.value = ''"
-                            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
                         <option value="">Ubah ke...</option>
                         @foreach($nextStatuses as $next)
                         <option value="{{ $next->value }}">{{ $next->description() }}</option>
                         @endforeach
                     </select>
                     @else
-                    <div class="flex items-center h-10 text-sm text-on-surface-variant">
-                        <span class="material-symbols-outlined text-lg mr-1">check_circle</span>
+                    <div class="flex items-center gap-1 text-sm text-success">
+                        <span class="material-symbols-outlined text-lg">check_circle</span>
                         Selesai
                     </div>
                     @endif
@@ -62,9 +60,9 @@
                 <span class="material-symbols-outlined text-primary text-xl">warehouse</span>
                 Staging Area
             </h3>
-            <div class="flex items-center gap-2">
-                <label class="text-sm font-medium">Staging Area:</label>
-                <select wire:model.live="stagingCode" class="border border-gray-300 rounded-lg px-3 py-2">
+            <div>
+                <label class="block text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Staging Area</label>
+                <select wire:model.live="stagingCode" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary">
                     <option value="">Pilih Staging</option>
                     @foreach(\App\Models\Lokasi::where('lokasi_category', 'staging')->get() as $s)
                     <option value="{{ $s->lokasi_code }}">{{ $s->lokasi_nama }}</option>
@@ -117,7 +115,7 @@
 
             <div class="grid grid-cols-12 gap-4">
                 {{-- USB Scanner Input --}}
-                <div class="col-span-8">
+                <div class="col-span-12 md:col-span-8">
                     <label class="block text-sm font-medium text-gray-700 mb-1">Barcode Input (USB Scanner)</label>
                     <input type="text"
                            wire:model="barcodeInput"
@@ -128,10 +126,10 @@
                 </div>
 
                 {{-- Camera Scanner Button --}}
-                <div class="col-span-4 flex items-end">
+                <div class="col-span-12 md:col-span-4 flex items-end">
                     <button type="button"
                             x-on:click="$dispatch('open-camera-scanner')"
-                            class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                            class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
                         <span class="material-symbols-outlined text-lg mr-1">photo_camera</span>
                         Scan
                     </button>
@@ -151,24 +149,24 @@
                 <span class="material-symbols-outlined text-primary text-xl">qr_code_2</span>
                 Barcode Pallet / Group
             </h3>
-            <div class="flex items-center justify-between flex-wrap gap-3">
-                <div>
-                    <div class="text-xs text-on-surface-variant uppercase tracking-widest">Kode Pallet</div>
-                    <div class="text-2xl font-bold text-on-surface font-mono">{{ $palletCode }}</div>
-                    <div class="text-sm text-on-surface-variant mt-1">
-                        1 barcode ini mewakili seluruh realisasi pada {{ $masukDetail->in_detail_code }}.
-                    </div>
+            <div class="mb-4">
+                <div class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-1">Kode Pallet</div>
+                <div class="text-xl md:text-2xl font-bold text-on-surface font-mono break-all">{{ $palletCode }}</div>
+                <div class="text-xs text-on-surface-variant mt-1">
+                    1 barcode ini mewakili seluruh realisasi pada {{ $masukDetail->in_detail_code }}.
                 </div>
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('wms-forklift.printQr', ['groupCode' => $palletCode]) }}" target="_blank" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
-                        <span class="material-symbols-outlined text-lg mr-1">picture_as_pdf</span>
-                        Print PDF
-                    </a>
-                    <button type="button" wire:click="regeneratePallet" wire:confirm="Yakin ingin regenerate pallet code?" class="inline-flex items-center px-4 py-2 bg-warning text-on-warning rounded-lg hover:bg-warning/90 transition-colors">
-                        <span class="material-symbols-outlined text-lg mr-1">refresh</span>
-                        Regenerate Code
-                    </button>
-                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-2">
+                <a href="{{ route('wms-forklift.printQr', ['groupCode' => $palletCode]) }}" target="_blank"
+                   class="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2 bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors shadow-sm">
+                    <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                    Print PDF
+                </a>
+                <button type="button" wire:click="regeneratePallet" wire:confirm="Yakin ingin regenerate pallet code?"
+                        class="flex-1 inline-flex items-center justify-center gap-1 px-4 py-2 bg-warning/10 text-warning hover:bg-warning/20 rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-lg">refresh</span>
+                    Regenerate Code
+                </button>
             </div>
         </div>
         @endif
@@ -180,7 +178,8 @@
                 Summary Realisasi
             </h3>
 
-            <div class="overflow-x-auto">
+            {{-- Desktop Table --}}
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-sm text-left">
                     <thead class="text-xs text-on-surface-variant bg-gray-50">
                         <tr>
@@ -210,17 +209,40 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- Mobile Cards --}}
+            <div class="md:hidden space-y-3">
+                @forelse($summary as $item)
+                <div class="border border-outline-variant rounded-xl p-4 bg-surface shadow-sm">
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <p class="text-sm font-bold text-on-surface truncate">{{ $item->product->product_nama ?? '-' }}</p>
+                        <span class="text-lg font-bold text-primary shrink-0">{{ (float) $item->total_qty }}</span>
+                    </div>
+                    <button wire:click="getDetail({{ $item->in_realisasi_id_product }})"
+                            class="w-full inline-flex items-center justify-center gap-1 px-4 py-2 bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">visibility</span>
+                        Detail
+                    </button>
+                </div>
+                @empty
+                <div class="text-center py-8 text-on-surface-variant">
+                    <span class="material-symbols-outlined text-4xl mb-2 block">inventory_2</span>
+                    <p class="text-sm">Belum ada realisasi</p>
+                </div>
+                @endforelse
+            </div>
         </div>
 
         {{-- Detail Modal --}}
         @if($selectedProductId)
-        <div wire:key="detail-modal-{{ $selectedProductId }}" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" wire:click="closeDetail">
-            <div class="bg-surface-container-lowest rounded-xl p-6 max-w-lg w-full mx-4" x-on:click.stop>
+        <div wire:key="detail-modal-{{ $selectedProductId }}" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" wire:click="closeDetail">
+            <div class="bg-surface-container-lowest rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto" x-on:click.stop>
                 <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant">
                     Detail Realisasi
                 </h3>
 
-                <div class="overflow-x-auto">
+                {{-- Desktop Table --}}
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs text-on-surface-variant bg-gray-50">
                             <tr>
@@ -244,11 +266,32 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-3 text-center text-on-surface-variant">Tidak ada data</td>
+                                <td colspan="3" class="px-4 py-3 text-center text-on-surface-variant">Tidak ada data</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                {{-- Mobile Cards --}}
+                <div class="md:hidden space-y-2">
+                    @forelse($scans as $scan)
+                    <div class="flex items-center justify-between gap-3 p-3 border border-outline-variant rounded-lg bg-surface">
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-bold text-on-surface">{{ (float) $scan->in_realisasi_qty }}</p>
+                            <p class="text-[10px] font-mono text-on-surface-variant truncate">{{ $scan->in_realisasi_barcode }}</p>
+                        </div>
+                        <button wire:click="deleteScan({{ $scan->in_realisasi_id }})"
+                                wire:confirm="Hapus scan ini?"
+                                class="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-lg bg-error/10 text-error hover:bg-error/20 transition-colors">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    </div>
+                    @empty
+                    <div class="text-center py-8 text-on-surface-variant">
+                        <p class="text-sm">Tidak ada data</p>
+                    </div>
+                    @endforelse
                 </div>
 
                 <div class="mt-4 flex justify-end">

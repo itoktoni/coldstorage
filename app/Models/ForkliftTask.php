@@ -5,6 +5,7 @@ namespace App\Models;
 class ForkliftTask extends BaseModel
 {
     protected $table = 'forklift_task';
+
     protected $primaryKey = 'forklift_id';
 
     protected $fillable = [
@@ -14,15 +15,19 @@ class ForkliftTask extends BaseModel
     ];
 
     protected $casts = [
-        'forklift_scan_asal_at'   => 'datetime',
+        'forklift_scan_asal_at' => 'datetime',
         'forklift_scan_tujuan_at' => 'datetime',
     ];
 
     const TYPE_PUTAWAY = 'putaway';
-    const TYPE_PICK    = 'pick';
-    const STATUS_PENDING  = 'Pending';
+
+    const TYPE_PICK = 'pick';
+
+    const STATUS_PENDING = 'Pending';
+
     const STATUS_PROGRESS = 'Progress';
-    const STATUS_DONE     = 'Done';
+
+    const STATUS_DONE = 'Done';
 
     public function lokasiAsal()
     {
@@ -32,5 +37,10 @@ class ForkliftTask extends BaseModel
     public function lokasiTujuan()
     {
         return $this->belongsTo(Lokasi::class, 'forklift_lokasi_tujuan', 'lokasi_code');
+    }
+
+    public function realisasiGroup()
+    {
+        return $this->hasMany(MasukRealisasi::class, 'in_realisasi_group', 'forklift_pallet_code');
     }
 }

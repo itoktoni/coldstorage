@@ -50,25 +50,54 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data" />
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @foreach($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->product_nama }}" />
-                        <x-table-mobile-text label="Harga" value="{{ number_format($table->product_harga, 2) }}" />
-                        <x-table-mobile-text label="Status" value="{{ $table->product_status ?? 'active' }}" />
-                        <x-table-mobile-text label="Qty" value="{{ number_format($table->qty, 0, ',', '.') }}" />
-                        <x-table-mobile-text label="Tanggal" value="{{ $table->tanggal ?? '-' }}" />
-                        <x-table-mobile-footer :label="$table->field_primary">
-                    <x-table-action :model="$model" :id="$table->field_primary" />
-                    <a href="{{ route('wms-product.getQrcode', $table->product_id) }}"
-                       class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                       title="QR Code">
-                        <span class="material-symbols-outlined text-lg">qr_code</span>
-                    </a>
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm font-bold text-on-surface truncate">{{ $table->product_nama }}</p>
+                                <p class="text-[10px] font-mono text-on-surface-variant mt-0.5">{{ $table->product_code }}</p>
+                            </div>
+                            <div class="shrink-0 text-right">
+                                @if ($table->product_status === 'active')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success">Active</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600">Inactive</span>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Harga</p>
+                                <p class="text-xs font-bold text-on-surface">Rp {{ number_format($table->product_harga, 0, ',', '.') }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Qty</p>
+                                <p class="text-xs font-bold text-on-surface">{{ number_format($table->qty, 0, ',', '.') }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Kategori</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->product_category ?? '-' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Exp</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->tanggal ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary" />
+                                <a href="{{ route('wms-product.getQrcode', $table->product_id) }}"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                                   title="QR Code">
+                                    <span class="material-symbols-outlined text-lg">qr_code</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                     @endforeach
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

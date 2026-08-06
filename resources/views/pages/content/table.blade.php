@@ -52,18 +52,46 @@
             </x-slot:body>
             <x-slot:mobile>
                 <x-table-mobile-select :model="$model" :total="$data"/>
-                <x-table-mobile-list>
+                <div class="p-3 space-y-3" id="mBody">
                     @foreach($data as $table)
-                    <x-table-mobile-item :id="$table->field_primary">
-                        <x-table-mobile-header title="{{ $table->title }}" />
-                        <x-table-mobile-text :text="$contentTypes[$table->content_type_id] ?? '-'" size="sm" color="primary" />
-                        <x-table-mobile-text :text="$table->status" size="sm" />
-                        <x-table-mobile-footer :label="$table->field_primary">
-                            <x-table-action :model="$model" :id="$table->field_primary" />
-                        </x-table-mobile-footer>
-                    </x-table-mobile-item>
+                    <div class="border border-outline-variant rounded-xl p-4 bg-surface-container-lowest shadow-sm" data-id="{{ $table->field_primary }}">
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <p class="text-sm font-bold text-on-surface truncate">{{ $table->title }}</p>
+                            @if($table->status === 'published')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-success/10 text-success shrink-0">Published</span>
+                            @elseif($table->status === 'draft')
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-warning/10 text-warning shrink-0">Draft</span>
+                            @else
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-100 text-gray-600 shrink-0">{{ $table->status }}</span>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Type</p>
+                                <p class="text-xs font-medium text-primary">{{ $contentTypes[$table->content_type_id] ?? '-' }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Published</p>
+                                <p class="text-xs font-medium text-on-surface">{{ isset($table->published_at) ? \Illuminate\Support\Carbon::parse($table->published_at)->format('d M Y') : '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">Slug</p>
+                                <p class="text-xs font-medium text-on-surface truncate">{{ $table->slug }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-wide mb-0.5">ID</p>
+                                <p class="text-xs font-medium text-on-surface">{{ $table->field_primary }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between pt-2 border-t border-outline-variant/50">
+                            <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
+                            <div class="flex gap-1" onclick="event.stopPropagation()">
+                                <x-table-action :model="$model" :id="$table->field_primary" />
+                            </div>
+                        </div>
+                    </div>
                     @endforeach
-                </x-table-mobile-list>
+                </div>
             </x-slot:mobile>
         </x-table>
 

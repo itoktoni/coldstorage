@@ -51,6 +51,8 @@ class KeluarRealisasiScan extends Component
         $this->errorMsg = '';
         $this->successMsg = '';
 
+        $barcodeContent = trim($barcodeContent);
+
         $detail = KeluarDetail::with(['product', 'keluar', 'soDetail.so'])->findOrFail($this->detailId);
 
         try {
