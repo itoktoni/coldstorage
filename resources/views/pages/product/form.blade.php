@@ -16,14 +16,14 @@
 
                     {{-- Camera capture button (mobile) --}}
                     <button type="button" id="btn-camera-capture"
-                        class="hidden w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 px-4 py-6 text-primary font-bold hover:bg-primary/10 transition-colors mb-2">
+                        class="md:hidden w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 px-4 py-6 text-primary font-bold hover:bg-primary/10 transition-colors mb-2">
                         <span class="material-symbols-outlined text-2xl">photo_camera</span>
                         <span class="font-body-sm">Foto Produk</span>
                     </button>
 
                     {{-- File browse button (desktop) --}}
                     <button type="button" id="btn-browse-file"
-                        class="hidden w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-outline-variant px-4 py-6 text-on-surface-variant hover:border-primary hover:bg-primary/5 transition-colors">
+                        class="hidden md:flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-outline-variant px-4 py-6 text-on-surface-variant hover:border-primary hover:bg-primary/5 transition-colors">
                         <span class="material-symbols-outlined text-2xl">upload_file</span>
                         <span class="font-body-sm">Pilih File</span>
                     </button>
@@ -62,7 +62,6 @@
     @push('scripts')
     <script>
     (function() {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0 && window.innerWidth < 768);
         const btnCamera = document.getElementById('btn-camera-capture');
         const btnBrowse = document.getElementById('btn-browse-file');
         const inputImage = document.getElementById('input-product-image');
@@ -72,14 +71,6 @@
         const btnRemoveExisting = document.getElementById('btn-remove-existing');
         const inputRemove = document.getElementById('input-remove');
         const existingImage = document.getElementById('existing-image');
-
-        if (isMobile) {
-            btnCamera.classList.remove('hidden');
-            btnCamera.classList.add('flex');
-        } else {
-            btnBrowse.classList.remove('hidden');
-            btnBrowse.classList.add('flex');
-        }
 
         function showPreview(file) {
             if (!file || !file.type.startsWith('image/')) return;
@@ -93,12 +84,12 @@
             reader.readAsDataURL(file);
         }
 
-        btnCamera.addEventListener('click', () => {
+        btnCamera.addEventListener('click', function() {
             inputImage.setAttribute('capture', 'environment');
             inputImage.click();
         });
 
-        btnBrowse.addEventListener('click', () => {
+        btnBrowse.addEventListener('click', function() {
             inputImage.removeAttribute('capture');
             inputImage.click();
         });
@@ -113,6 +104,7 @@
             inputImage.value = '';
             preview.classList.add('hidden');
             previewImg.src = '';
+            // Restore the correct button via responsive CSS classes
             btnCamera.classList.remove('hidden');
             btnBrowse.classList.remove('hidden');
         });
