@@ -6,8 +6,11 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @page { size: 55mm 30mm; margin: 0; }
+        html, body { width: 55mm; min-height: 30mm; }
         body { font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #333; }
         .qr-page {
+            width: 55mm;
+            height: 30mm;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -25,7 +28,7 @@
 <body>
     @foreach($qrcodes as $qr)
         <div class="qr-page">
-            <img style="height:60px;width:60px;margin-bottom:10px;margin-top:5px" src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code">
+            <img src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code">
             <div class="name">{{ $product->product_nama }}</div>
             <div class="info">Qty: {{ $qty }}</div>
             @if($expired)
@@ -33,5 +36,18 @@
             @endif
         </div>
     @endforeach
+    @if($nativePrint ?? false)
+        <script>
+            window.addEventListener('load', function () {
+                setTimeout(function () {
+                    if (window.NativeBridge && typeof NativeBridge.printPage === 'function') {
+                        NativeBridge.printPage();
+                    } else {
+                        window.print();
+                    }
+                }, 250);
+            });
+        </script>
+    @endif
 </body>
 </html>

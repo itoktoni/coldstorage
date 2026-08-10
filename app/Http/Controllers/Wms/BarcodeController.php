@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Wms;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Milon\Barcode\Facades\DNS2DFacade;
@@ -89,17 +88,12 @@ class BarcodeController extends Controller
             ];
         }
 
-        $paperWidth = 55 * 2.835;
-        $paperHeight = 30 * 2.835;
-
-        $pdf = Pdf::loadView('pages.barcode.pdf', [
+        return view('pages.barcode.pdf', [
             'product' => $product,
             'qrcodes' => $qrcodes,
             'qty' => $request->qty,
             'expired' => $request->expired_date,
+            'nativePrint' => $request->boolean('print'),
         ]);
-        $pdf->setPaper([0, 0, $paperWidth, $paperHeight], 'portrait');
-
-        return $pdf->stream('qrcode-'.$product->product_code.'.pdf');
     }
 }
