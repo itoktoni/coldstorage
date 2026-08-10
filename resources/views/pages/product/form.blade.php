@@ -66,24 +66,51 @@
         <x-action :model="$model" :action="['save']"/>
     </x-form>
 
+    {{-- Debug Console --}}
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-4 mt-4">
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">terminal</span>
+                Console Log
+            </h3>
+            <button onclick="document.getElementById('log-panel').innerHTML=''" class="text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-colors">Clear</button>
+        </div>
+        <div id="log-panel" class="bg-black rounded-lg p-3 h-40 overflow-x-hidden overflow-y-auto font-mono text-xs text-green-400 break-all">
+            <div class="text-gray-500">Ready. Tap a button to upload an image.</div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
     (function() {
-        const btnCamera    = document.getElementById('btn-camera-capture');
-        const btnGallery   = document.getElementById('btn-gallery');
-        const btnBrowse    = document.getElementById('btn-browse-file');
-        const inputImage   = document.getElementById('input-product-image');
-        const preview      = document.getElementById('image-preview');
-        const previewImg   = document.getElementById('preview-img');
-        const btnRemove    = document.getElementById('btn-remove-image');
-        const btnRemoveExisting = document.getElementById('btn-remove-existing');
-        const inputRemove  = document.getElementById('input-remove');
-        const existingImage = document.getElementById('existing-image');
+        // ── Console log helper ──
+        function log(msg, type) {
+            type = type || 'info';
+            var panel = document.getElementById('log-panel');
+            if (!panel) return;
+            var time = new Date().toLocaleTimeString();
+            var color = type === 'error' ? '#ef4444' : type === 'success' ? '#22c55e' : type === 'warn' ? '#eab308' : '#4ade80';
+            panel.innerHTML += '<div><span style="color:#6b7280">[' + time + ']</span> <span style="color:' + color + '">' + msg + '</span></div>';
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        var btnCamera    = document.getElementById('btn-camera-capture');
+        var btnGallery   = document.getElementById('btn-gallery');
+        var btnBrowse    = document.getElementById('btn-browse-file');
+        var inputImage   = document.getElementById('input-product-image');
+        var preview      = document.getElementById('image-preview');
+        var previewImg   = document.getElementById('preview-img');
+        var btnRemove    = document.getElementById('btn-remove-image');
+        var btnRemoveExisting = document.getElementById('btn-remove-existing');
+        var inputRemove  = document.getElementById('input-remove');
+        var existingImage = document.getElementById('existing-image');
 
         var hasNativeBridge = typeof NativeBridge !== 'undefined'
-            && typeof NativeBridge.openCamera === 'function';
+            && typeof NativeBridge.captureCamera === 'function';
 
-        // ── 1. Convert a data-URL (base64) to a File object ──
+        log('hasNativeBridge = ' + hasNativeBridge, hasNativeBridge ? 'success' : 'warn');
+        log('User-agent: ' + navigator.userAgent.substring(0, 80), 'info');
+
         function dataURLtoFile(dataurl, filename) {
             var arr  = dataurl.split(',');
             var mime = (arr[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
@@ -94,20 +121,20 @@
             return new File([u8], filename, { type: mime });
         }
 
-        // ── 2. Set a File on the hidden <input> so the form submission works ──
         function setFileOnInput(file) {
             var dt = new DataTransfer();
             dt.items.add(file);
             inputImage.files = dt.files;
+            log('setFileOnInput → ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)', 'success');
         }
 
-        // ── 3. Show preview and hide the pick buttons ──
         function showPreview(src) {
             previewImg.src = src;
             preview.classList.remove('hidden');
             btnCamera.classList.add('hidden');
             btnGallery.classList.add('hidden');
             btnBrowse.classList.add('hidden');
+            log('showPreview → image displayed (' + Math.round(src.length / 1024) + ' KB)', 'success');
         }
 
         function hidePreview() {
@@ -117,64 +144,86 @@
             btnCamera.classList.remove('hidden');
             btnGallery.classList.remove('hidden');
             btnBrowse.classList.remove('hidden');
+            log('hidePreview → image removed', 'info');
         }
 
-        // ── 4. NativeBridge callbacks (approach 3) ──
+        // ── NativeBridge callbacks ──
         window.onImageCaptured = function(base64) {
-            if (!base64 || base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1) return;
-            var file = dataURLtoFile(base64, 'camera_' + Date.now() + '.jpg');
-            setFileOnInput(file);
-            showPreview(base64);
+            log('onImageCaptured → (' + Math.round((base64||'').length/1024) + ' KB)', 'info');
+            if (!base64 || (base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1)) {
+                log('onImageCaptured → error: ' + base64, 'error');
+                return;
+            }
+            try {
+                var file = dataURLtoFile(base64, 'camera_' + Date.now() + '.jpg');
+                setFileOnInput(file);
+                showPreview(base64);
+            } catch(e) { log('Camera error: ' + e.message, 'error'); }
         };
         window.onImagePicked = function(base64) {
-            if (!base64 || base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1) return;
-            var ext  = (base64.match(/^data:image\/(\w+)/) || [])[1] || 'jpeg';
-            var file = dataURLtoFile(base64, 'gallery_' + Date.now() + '.' + ext);
-            setFileOnInput(file);
-            showPreview(base64);
+            log('onImagePicked → (' + Math.round((base64||'').length/1024) + ' KB)', 'info');
+            if (!base64 || (base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1)) {
+                log('onImagePicked → error: ' + base64, 'error');
+                return;
+            }
+            try {
+                var ext = (base64.match(/^data:image\/(\w+)/)||[])[1]||'jpeg';
+                var file = dataURLtoFile(base64, 'gallery_' + Date.now() + '.' + ext);
+                setFileOnInput(file);
+                showPreview(base64);
+            } catch(e) { log('Gallery error: ' + e.message, 'error'); }
         };
 
-        // ── 5. Camera button — approach 3 (native bridge) or 2 (input+capture) ──
         btnCamera.addEventListener('click', function() {
+            log('btn-camera clicked', 'info');
             if (hasNativeBridge) {
-                NativeBridge.openCamera();           // result via onImageCaptured
+                log('→ NativeBridge.captureCamera()', 'info');
+                NativeBridge.captureCamera();
             } else {
-                inputImage.setAttribute('capture', 'environment');
-                inputImage.click();                  // fallback: opens camera via onShowFileChooser
-                // Remove capture after a short delay so it doesn't affect other buttons
-                setTimeout(function() { inputImage.removeAttribute('capture'); }, 2000);
+                log('→ input.click() + capture [fallback]', 'warn');
+                inputImage.setAttribute('capture','environment');
+                inputImage.click();
+                setTimeout(function(){ inputImage.removeAttribute('capture'); }, 2000);
             }
         });
 
-        // ── 6. Gallery button — approach 3 (native bridge) or 1 (input no capture) ──
         btnGallery.addEventListener('click', function() {
+            log('btn-gallery clicked', 'info');
             if (hasNativeBridge) {
-                NativeBridge.openGallery();          // result via onImagePicked
+                log('→ NativeBridge.pickFromGallery()', 'info');
+                NativeBridge.pickFromGallery();
             } else {
+                log('→ input.click() no capture [fallback]', 'warn');
                 inputImage.removeAttribute('capture');
-                inputImage.click();                  // fallback: shows Camera/Gallery dialog
+                inputImage.click();
             }
         });
 
-        // ── 7. Browse button (desktop) — approach 1: input click, no capture ──
         btnBrowse.addEventListener('click', function() {
+            log('btn-browse clicked', 'info');
+            log('→ input.click() [approach 1]', 'info');
             inputImage.removeAttribute('capture');
-            inputImage.click();                      // opens file chooser
+            inputImage.click();
         });
 
-        // ── 8. File input change (approach 1/2) — when file is picked via <input> ──
         inputImage.addEventListener('change', function() {
+            log('input change → files=' + this.files.length, 'info');
             if (this.files[0]) {
+                log('File: ' + this.files[0].name + ' (' + Math.round(this.files[0].size/1024) + ' KB)', 'success');
                 var reader = new FileReader();
                 reader.onload = function(e) { showPreview(e.target.result); };
+                reader.onerror = function() { log('FileReader error', 'error'); };
                 reader.readAsDataURL(this.files[0]);
             }
         });
 
-        // ── 9. Remove buttons ──
-        btnRemove.addEventListener('click', hidePreview);
+        btnRemove.addEventListener('click', function() {
+            log('btn-remove clicked', 'info');
+            hidePreview();
+        });
         if (btnRemoveExisting) {
             btnRemoveExisting.addEventListener('click', function() {
+                log('btn-remove-existing clicked', 'info');
                 existingImage.classList.add('hidden');
                 inputRemove.value = '1';
             });
