@@ -48,6 +48,11 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
+    private companion object {
+        const val RETURN_URL_PREFS = "native_bridge_return"
+        const val RETURN_URL_KEY = "url"
+    }
+
     private lateinit var webView: WebView
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var progressBar: ProgressBar
@@ -278,7 +283,15 @@ class MainActivity : AppCompatActivity() {
         setupErrorLayout()
 
         if (savedInstanceState == null) {
-            webView.loadUrl(AppConfig.DEFAULT_URL)
+            val returnUrl = getSharedPreferences(RETURN_URL_PREFS, MODE_PRIVATE)
+                .getString(RETURN_URL_KEY, null)
+
+            getSharedPreferences(RETURN_URL_PREFS, MODE_PRIVATE)
+                .edit()
+                .remove(RETURN_URL_KEY)
+                .apply()
+
+            webView.loadUrl(returnUrl ?: AppConfig.DEFAULT_URL)
         } else {
             webView.restoreState(savedInstanceState)
         }
@@ -294,6 +307,15 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         webView.saveState(outState)
+    }
+
+    fun rememberExternalReturnUrl() {
+        val url = webView.url ?: return
+
+        getSharedPreferences(RETURN_URL_PREFS, MODE_PRIVATE)
+            .edit()
+            .putString(RETURN_URL_KEY, url)
+            .apply()
     }
 
     override fun onDestroy() {

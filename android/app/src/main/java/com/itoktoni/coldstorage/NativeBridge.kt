@@ -411,6 +411,7 @@ class NativeBridge(private val context: Context) {
         Handler(context.mainLooper).post {
             try {
                 val currentWebView = webView ?: return@post
+                (activity as? MainActivity)?.rememberExternalReturnUrl()
                 val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
                 val jobName = "${context.getString(R.string.app_name)} Print"
                 val printAdapter = currentWebView.createPrintDocumentAdapter(jobName)
@@ -426,6 +427,7 @@ class NativeBridge(private val context: Context) {
         Handler(context.mainLooper).post {
             try {
                 val currentWebView = webView ?: return@post
+                (activity as? MainActivity)?.rememberExternalReturnUrl()
                 val printManager = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
                 val jobName = "${context.getString(R.string.app_name)} ${System.currentTimeMillis()}"
                 val printAdapter = currentWebView.createPrintDocumentAdapter(jobName)
@@ -459,6 +461,7 @@ class NativeBridge(private val context: Context) {
                         putExtra(Intent.EXTRA_STREAM, uri)
                         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
+                    (activity as? MainActivity)?.rememberExternalReturnUrl()
                     activity?.startActivity(Intent.createChooser(shareIntent, "Share via"))
                 } else {
                     Toast.makeText(context, "Failed to save image", Toast.LENGTH_SHORT).show()
@@ -482,6 +485,7 @@ class NativeBridge(private val context: Context) {
                 }
 
                 val filename = "ColdStorage_${System.currentTimeMillis()}.png"
+                (activity as? MainActivity)?.rememberExternalReturnUrl()
                 val saved = saveBitmapToGallery(bitmap, filename)
 
                 if (saved) {
