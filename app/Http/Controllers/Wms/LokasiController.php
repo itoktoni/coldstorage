@@ -47,7 +47,7 @@ class LokasiController extends Controller
         $userAgent = $request->userAgent() ?? '';
         $isAndroidWebView = str_contains($userAgent, 'Android') && str_contains($userAgent, '; wv');
         if ($request->boolean('render') || $isAndroidWebView) {
-            return response()->view('pdf.lokasi-qr', $viewData + ['nativePrint' => true]);
+            return view('pages.lokasi.print-qr', $viewData);
         }
 
         $paperWidth = 55 * 2.835;

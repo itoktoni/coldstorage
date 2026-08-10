@@ -313,14 +313,23 @@ class ForkliftController extends Controller
         $scanValue = config('scan.prefix.pallet', 'P').$groupCode;
         $qrPng = DNS2DFacade::getBarcodePNG($scanValue, 'QRCODE', 8, 8);
 
-        $pdf = Pdf::loadView('pdf.pallet-qr', [
+        $viewData = [
             'groupCode' => $groupCode,
             'qrPng' => $qrPng,
             'product' => $first->product,
             'detail' => $first->masukDetail,
             'totalQty' => $totalQty,
             'rows' => $rows,
-        ])->setPaper('a4', 'portrait');
+        ];
+
+        $userAgent = request()->userAgent() ?? '';
+        $isAndroidWebView = str_contains($userAgent, 'Android') && str_contains($userAgent, '; wv');
+        if (request()->boolean('render') || $isAndroidWebView) {
+            return view('pages.pallet.print-qr', $viewData);
+        }
+
+        $pdf = Pdf::loadView('pdf.pallet-qr', $viewData)
+            ->setPaper('a4', 'portrait');
 
         return $pdf->stream('pallet-'.$groupCode.'.pdf');
     }
