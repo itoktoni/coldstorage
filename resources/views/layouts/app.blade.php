@@ -15,7 +15,7 @@
     @include('layouts.sidebar')
 
     {{-- Main Content --}}
-    <main class="px-4 md:px-6" style="padding-top: calc(4rem + env(safe-area-inset-top)); padding-bottom: calc(8rem + env(safe-area-inset-bottom));" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-0'">
+    <main class="px-4 md:px-6" style="padding-top: 4rem; padding-bottom: calc(8rem + env(safe-area-inset-bottom));" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-0'">
         <div class="max-w-full md:max-w-[calc(100vw-18rem)] mx-auto">
             {{ $slot }}
         </div>
