@@ -478,6 +478,163 @@ console.log("Battery:", deviceInfo.batteryLevel + "%");
 
 ---
 
+## File Operations
+
+File operations menggunakan app internal storage (`context.filesDir/bridge_files/`). Semua methods mengembalikan JSON string.
+
+### `NativeBridge.createFile(filename, content): String`
+Membuat file baru. Gagal jika file sudah ada.
+```javascript
+const result = JSON.parse(NativeBridge.createFile('test.txt', 'Hello World'));
+console.log(result.success, result.size);
+```
+**Response:**
+```json
+{"success": true, "filename": "test.txt", "size": 11}
+{"success": false, "error": "File already exists", "filename": "test.txt"}
+```
+
+### `NativeBridge.readFile(filename): String`
+Membaca isi file.
+```javascript
+const result = JSON.parse(NativeBridge.readFile('test.txt'));
+if (result.success) {
+    console.log(result.content); // "Hello World"
+    console.log(result.size);    // 11
+}
+```
+**Response:**
+```json
+{"success": true, "filename": "test.txt", "content": "Hello World", "size": 11}
+{"success": false, "error": "File not found", "filename": "test.txt"}
+```
+
+### `NativeBridge.updateFile(filename, content): String`
+Menulis ulang isi file (overwrite). Membuat file baru jika belum ada.
+```javascript
+const result = JSON.parse(NativeBridge.updateFile('test.txt', 'Updated content'));
+console.log(result.success, result.size, result.mode); // true 16 "overwrite"
+```
+**Response:**
+```json
+{"success": true, "filename": "test.txt", "size": 16, "mode": "overwrite"}
+```
+
+### `NativeBridge.appendFile(filename, content): String`
+Menambahkan isi ke akhir file (append). Membuat file baru jika belum ada.
+```javascript
+const result = JSON.parse(NativeBridge.appendFile('log.txt', 'Line 2\n'));
+console.log(result.success, result.size, result.mode); // true ... "append"
+```
+**Response:**
+```json
+{"success": true, "filename": "log.txt", "size": 32, "mode": "append"}
+```
+
+### `NativeBridge.deleteFile(filename): String`
+Menghapus file.
+```javascript
+const result = JSON.parse(NativeBridge.deleteFile('test.txt'));
+console.log(result.deleted); // true
+```
+**Response:**
+```json
+{"success": true, "filename": "test.txt", "deleted": true}
+{"success": false, "error": "File not found", "filename": "test.txt"}
+```
+
+### `NativeBridge.renameFile(oldName, newName): String`
+Mengganti nama file.
+```javascript
+const result = JSON.parse(NativeBridge.renameFile('old.txt', 'new.txt'));
+console.log(result.oldName, result.newName);
+```
+**Response:**
+```json
+{"success": true, "oldName": "old.txt", "newName": "new.txt"}
+{"success": false, "error": "File not found", "filename": "old.txt"}
+{"success": false, "error": "Target file already exists", "filename": "new.txt"}
+```
+
+### `NativeBridge.fileExists(filename): Boolean`
+Cek apakah file ada.
+```javascript
+if (NativeBridge.fileExists('test.txt')) {
+    const data = JSON.parse(NativeBridge.readFile('test.txt'));
+    console.log(data.content);
+}
+```
+
+### `NativeBridge.listFiles(): String`
+List semua file di direktori bridge_files.
+```javascript
+const result = JSON.parse(NativeBridge.listFiles());
+console.log(result.count); // jumlah file
+result.files.forEach(f => {
+    console.log(f.name, f.size, f.lastModified);
+});
+```
+**Response:**
+```json
+{
+    "success": true,
+    "count": 2,
+    "files": [
+        {"name": "test.txt", "size": 11, "isDirectory": false, "lastModified": 1691234567890},
+        {"name": "data.json", "size": 256, "isDirectory": false, "lastModified": 1691234567890}
+    ]
+}
+```
+
+### `NativeBridge.getFilesDirectory(): String`
+Mengembalikan path absolut direktori penyimpanan.
+```javascript
+const path = NativeBridge.getFilesDirectory();
+console.log(path); // "/data/user/0/com.itoktoni.coldstorage/files/bridge_files"
+```
+
+### Contoh Lengkap: CRUD Operations
+```html
+<script>
+    function createTestFile() {
+        const result = JSON.parse(NativeBridge.createFile('test.txt', 'Hello from NativeBridge!'));
+        log('create: ' + JSON.stringify(result));
+    }
+
+    function readTestFile() {
+        const result = JSON.parse(NativeBridge.readFile('test.txt'));
+        log('read: ' + (result.success ? result.content : result.error));
+    }
+
+    function updateTestFile() {
+        const result = JSON.parse(NativeBridge.updateFile('test.txt', 'Updated at ' + new Date().toLocaleTimeString()));
+        log('update: ' + JSON.stringify(result));
+    }
+
+    function appendTestFile() {
+        const result = JSON.parse(NativeBridge.appendFile('test.txt', '\nAppended line'));
+        log('append: ' + JSON.stringify(result));
+    }
+
+    function renameTestFile() {
+        const result = JSON.parse(NativeBridge.renameFile('test.txt', 'renamed.txt'));
+        log('rename: ' + JSON.stringify(result));
+    }
+
+    function deleteTestFile() {
+        const result = JSON.parse(NativeBridge.deleteFile('renamed.txt'));
+        log('delete: ' + JSON.stringify(result));
+    }
+
+    function listAllFiles() {
+        const result = JSON.parse(NativeBridge.listFiles());
+        log('files (' + result.count + '): ' + result.files.map(f => f.name).join(', '));
+    }
+</script>
+```
+
+---
+
 ## Notes
 
 1. **Thread:** Semua fungsi NativeBridge berjalan di background thread. UI updates (Toast) otomatis di-post ke main thread.

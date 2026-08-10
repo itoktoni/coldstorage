@@ -1,0 +1,11 @@
+{
+    "id": 54,
+    "content_type_id": 54,
+    "title": "Test Post",
+    "slug": "test-post",
+    "status": "draft",
+    "menu_order": 0,
+    "meta": [],
+    "created_at": "2026-08-10T06:44:58.000000Z",
+    "updated_at": "2026-08-10T06:44:58.000000Z"
+}

@@ -138,6 +138,21 @@
     .ov-icon{font-size:72px;line-height:1}
     .ov-msg{font-size:24px;font-weight:900;margin-top:16px;line-height:1.3}
     @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-12px)}75%{transform:translateX(12px)}}
+
+    /* ---- Camera Scanner Modal ---- */
+    .camera-overlay{display:none!important;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);flex-direction:column;align-items:center;justify-content:flex-start;padding:0}
+    .camera-overlay.active{display:flex!important}
+    .camera-header{width:100%;display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,0px) 16px 12px;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:10}
+    .camera-header .title{color:#fff;font-size:16px;font-weight:700}
+    .camera-close{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .camera-reader-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+    #camera-reader{width:100%;max-width:420px;aspect-ratio:1/1;overflow:hidden;border-radius:16px}
+    #camera-reader video{width:100%!important;height:100%!important;object-fit:cover;border-radius:16px}
+    #camera-reader img[alt="Info icon"]{display:none!important}
+    #camera-reader__scan_region{min-height:100%!important}
+    #camera-reader__dashboard{display:none!important}
+    .camera-scan-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;animation:hintPulse 2s ease-in-out infinite}
+    @keyframes hintPulse{0%,100%{opacity:.8;transform:translateX(-50%) scale(1)}50%{opacity:1;transform:translateX(-50%) scale(1.03)}}
 </style>
 </head>
 <body>
@@ -173,10 +188,14 @@
         <span class="scan-pulse"></span>
         <span class="lbl">Scanner siap</span>
     </div>
-    <input type="text" id="scan-input" class="scan-input" placeholder="SCAN DI SINI…" autofocus autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" inputmode="none" readonly onfocus="this.removeAttribute('readonly')">
+    <div style="display:flex;gap:10px;align-items:stretch;">
+        <input type="text" id="scan-input" class="scan-input" style="flex:1;" placeholder="SCAN DI SINI…" autofocus autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" inputmode="none" readonly onfocus="this.removeAttribute('readonly')">
+        <button id="btn-camera-scan" onclick="openCameraScanner()" style="width:64px;min-width:64px;background:var(--blue);color:#fff;border:none;border-radius:14px;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,.25);">📷</button>
+    </div>
     <div class="scan-hints">
         <div class="hint"><code>P…</code> PALLET</div>
         <div class="hint"><code>L…</code> LOKASI / RAK</div>
+        <div class="hint" onclick="openCameraScanner()" style="cursor:pointer;color:var(--blue);">📷 KAMERA</div>
     </div>
 </div>
 
@@ -422,6 +441,64 @@ setInterval(async () => {
     } catch (e) { /* abaikan, coba lagi siklus berikutnya */ }
 }, 5000);
 idleBanner();
+</script>
+
+<!-- Camera Scanner Modal -->
+<div class="camera-overlay" id="cameraOverlay">
+    <div class="camera-header">
+        <span class="title">📷 Scan Kamera</span>
+        <button class="camera-close" onclick="closeCameraScanner()">✕</button>
+    </div>
+    <div class="camera-reader-wrap">
+        <div id="camera-reader"></div>
+        <div class="camera-scan-hint">Arahkan kamera ke barcode</div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+let html5Qrcode = null;
+let cameraScanning = false;
+
+function openCameraScanner() {
+    const overlay = document.getElementById('cameraOverlay');
+    overlay.classList.add('active');
+    overlay.classList.remove('error', 'stop');
+
+    if (html5Qrcode) {
+        html5Qrcode.clear().catch(() => {});
+        html5Qrcode = null;
+    }
+    html5Qrcode = new Html5Qrcode('camera-reader');
+    cameraScanning = true;
+
+    html5Qrcode.start(
+        { facingMode: 'environment' },
+        { fps: 10, qrbox: { width: 280, height: 280 }, aspectRatio: 1.0 },
+        (decodedText) => {
+            if (!cameraScanning) return;
+            cameraScanning = false;
+            html5Qrcode.stop().catch(() => {});
+            closeCameraScanner();
+            processScan(decodedText);
+        },
+        () => {}
+    ).catch(err => {
+        overlay.classList.add('error');
+        overlay.setAttribute('data-error', 'Camera error: ' + err);
+    });
+}
+
+function closeCameraScanner() {
+    cameraScanning = false;
+    if (html5Qrcode) {
+        html5Qrcode.stop().catch(() => {});
+        html5Qrcode.clear().catch(() => {});
+        html5Qrcode = null;
+    }
+    document.getElementById('cameraOverlay').classList.remove('active');
+    input.focus();
+}
 </script>
 </body>
 </html>

@@ -46,6 +46,18 @@
                 <span class="material-symbols-outlined text-sm">package_2</span>
                 getPackageName()
             </button>
+            <button onclick="testGetAndroidId()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">fingerprint</span>
+                getAndroidId()
+            </button>
+            <button onclick="testGetSerialNumber()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">qr_code</span>
+                getSerialNumber()
+            </button>
+            <button onclick="testGetUniqueId()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">key</span>
+                getUniqueId()
+            </button>
             <button onclick="testGetDeviceInfo()" class="btn-test col-span-2 sm:col-span-3">
                 <span class="material-symbols-outlined text-sm">devices</span>
                 getDeviceInfo() (Full)
@@ -213,13 +225,9 @@
                 <span class="material-symbols-outlined text-sm">link_off</span>
                 disconnectWebSocket()
             </button>
-            <button onclick="testStartPolling()" class="btn-test">
-                <span class="material-symbols-outlined text-sm">sync</span>
-                startPolling()
-            </button>
-            <button onclick="testStopPolling()" class="btn-test">
-                <span class="material-symbols-outlined text-sm">sync_disabled</span>
-                stopPolling()
+            <button onclick="testGetPollingStatus()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">info</span>
+                getPollingStatus()
             </button>
             <button onclick="testConnectMqtt()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">cell_tower</span>
@@ -236,6 +244,225 @@
             <button onclick="testCancelAllLocalNotifications()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">alarm_off</span>
                 cancelAllLocal()
+            </button>
+        </div>
+    </div>
+
+    {{-- 9. Bluetooth Printer --}}
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-4">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface pb-3 mb-3 border-b border-outline-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">printer</span>
+            Bluetooth Printer
+        </h3>
+
+        <div id="printer-status" class="mb-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-sm font-mono">
+            Status: Checking...
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button onclick="testGetPairedPrinters()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">bluetooth_searching</span>
+                getPairedPrinters()
+            </button>
+            <button onclick="testScanPrinters()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">radar</span>
+                scanPrinters()
+            </button>
+            <button onclick="testCancelPrinterScan()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">cancel</span>
+                cancelScan()
+            </button>
+            <button onclick="testAutoConnectPrinter()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">link</span>
+                autoConnect()
+            </button>
+            <button onclick="testDisconnectPrinter()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">link_off</span>
+                disconnectPrinter()
+            </button>
+            <button onclick="testGetConnectedPrinter()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">info</span>
+                getConnectedPrinter()
+            </button>
+            <button onclick="testGetSavedPrinter()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">bookmark</span>
+                getSavedPrinter()
+            </button>
+            <button onclick="testRemoveSavedPrinter()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">bookmark_remove</span>
+                removeSaved()
+            </button>
+            <button onclick="testPrinterTestPrint()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">print</span>
+                testPrint()
+            </button>
+        </div>
+
+        {{-- Paired Devices List --}}
+        <div id="printer-paired-list" class="mt-3 space-y-2 hidden">
+            <div class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1">Paired Devices</div>
+        </div>
+
+        {{-- Discovered Devices List --}}
+        <div id="printer-discovered-list" class="mt-3 space-y-2 hidden">
+            <div class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1">Available Devices</div>
+        </div>
+
+        {{-- Quick Connect --}}
+        <div class="mt-3">
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Quick Connect (MAC Address)</label>
+            <div class="flex gap-2">
+                <input type="text" id="printer-mac-input" placeholder="AA:BB:CC:DD:EE:FF" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+                <button onclick="testConnectPrinter(document.getElementById('printer-mac-input').value)" class="btn-test">Connect</button>
+            </div>
+        </div>
+
+        {{-- Print Receipt Test --}}
+        <div class="mt-3">
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Print Receipt Test</label>
+            <div class="flex gap-2">
+                <button onclick="testPrintReceipt()" class="btn-test flex-1">
+                    <span class="material-symbols-outlined text-sm">receipt_long</span>
+                    Print Receipt
+                </button>
+                <button onclick="testPrintLabel()" class="btn-test flex-1">
+                    <span class="material-symbols-outlined text-sm">label</span>
+                    Print Label
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- 10. File Operations --}}
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-4">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface pb-3 mb-3 border-b border-outline-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">folder</span>
+            File Operations
+        </h3>
+
+        <div id="file-dir" class="mb-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-sm font-mono">
+            Directory: Checking...
+        </div>
+
+        <div id="file-list" class="mb-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-sm font-mono hidden max-h-40 overflow-y-auto">
+        </div>
+
+        {{-- Create File --}}
+        <div class="mb-3">
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Create / Update File</label>
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="file-name-input" placeholder="filename.txt" value="test.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+                <button onclick="testFileExists()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    exists()
+                </button>
+            </div>
+            <textarea id="file-content-input" rows="3" placeholder="File content..." class="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono mb-2">Hello from NativeBridge!</textarea>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <button onclick="testCreateFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    createFile()
+                </button>
+                <button onclick="testUpdateFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                    updateFile()
+                </button>
+                <button onclick="testAppendFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">playlist_add</span>
+                    appendFile()
+                </button>
+                <button onclick="testReadFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">visibility</span>
+                    readFile()
+                </button>
+            </div>
+        </div>
+
+        {{-- Rename / Delete --}}
+        <div class="mb-3">
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Rename / Delete</label>
+            <div class="flex gap-2 mb-2">
+                <input type="text" id="file-rename-old" placeholder="old.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+                <span class="material-symbols-outlined text-on-surface-variant self-center">arrow_forward</span>
+                <input type="text" id="file-rename-new" placeholder="new.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="testRenameFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">drive_file_rename</span>
+                    renameFile()
+                </button>
+                <button onclick="testDeleteFile()" class="btn-test">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                    deleteFile()
+                </button>
+            </div>
+        </div>
+
+        {{-- List & Info --}}
+        <div class="grid grid-cols-2 gap-2">
+            <button onclick="testListFiles()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">list</span>
+                listFiles()
+            </button>
+            <button onclick="testGetFilesDir()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">folder_open</span>
+                getFilesDirectory()
+            </button>
+        </div>
+
+        {{-- File Content Display --}}
+        <div id="file-content-display" class="mt-3 hidden">
+            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">File Content</label>
+            <pre id="file-content-pre" class="px-3 py-2 rounded-lg bg-black text-green-400 text-xs font-mono max-h-48 overflow-y-auto whitespace-pre-wrap"></pre>
+        </div>
+    </div>
+
+    {{-- 11. Push Notification Polling --}}
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-4">
+        <h3 class="font-headline-sm text-headline-sm text-on-surface pb-3 mb-3 border-b border-outline-variant flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-xl">notifications_active</span>
+            Push Notification Polling
+        </h3>
+
+        <div id="polling-status" class="mb-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-sm font-mono">
+            Status: Checking...
+        </div>
+
+        {{-- Toggle Button --}}
+        <div class="mb-3">
+            <button id="btn-polling-toggle" onclick="togglePolling()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-colors">
+                <span class="material-symbols-outlined text-lg" id="polling-icon">play_arrow</span>
+                <span id="polling-btn-text">Start Polling</span>
+            </button>
+        </div>
+
+        {{-- Config --}}
+        <div class="space-y-3">
+            <div>
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Polling URL</label>
+                <input type="text" id="polling-url" value="{{ url('/api/notifications/poll') }}" placeholder="https://your-server.com/notifications"
+                    class="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Interval (seconds)</label>
+                <div class="flex gap-2">
+                    <button onclick="setPollingInterval(30)" id="poll-int-30" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors">30s</button>
+                    <button onclick="setPollingInterval(60)" id="poll-int-60" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 border-blue-500 bg-blue-50 text-blue-600 transition-colors">60s</button>
+                    <button onclick="setPollingInterval(120)" id="poll-int-120" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors">120s</button>
+                    <button onclick="setPollingInterval(300)" id="poll-int-300" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors">5m</button>
+                </div>
+            </div>
+        </div>
+
+        {{-- Manual Actions --}}
+        <div class="mt-3 grid grid-cols-2 gap-2">
+            <button onclick="testGetPollingStatus()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">info</span>
+                getStatus()
+            </button>
+            <button onclick="testScheduleLocalNotification()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">alarm_add</span>
+                Test Local
             </button>
         </div>
     </div>
@@ -305,6 +532,24 @@
             if (!hasNativeBridge()) return;
             const result = NativeBridge.getPackageName();
             log('getPackageName() → ' + result, 'success');
+        }
+
+        function testGetAndroidId() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getAndroidId();
+            log('getAndroidId() → ' + result, 'success');
+        }
+
+        function testGetSerialNumber() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getSerialNumber();
+            log('getSerialNumber() → ' + result, result === 'permission_required' ? 'warn' : 'success');
+        }
+
+        function testGetUniqueId() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getUniqueId();
+            log('getUniqueId() → ' + result, 'success');
         }
 
         function testGetDeviceInfo() {
@@ -499,20 +744,78 @@
             log('disconnectWebSocket() → disconnected', 'success');
         }
 
-        function testStartPolling() {
-            if (!hasNativeBridge()) return;
-            window.onPushNotification = function(data) {
-                const payload = JSON.parse(data);
-                log('Polling notification → ' + payload.title + ': ' + payload.body, 'success');
-            };
-            NativeBridge.startPolling('https://jsonplaceholder.typicode.com/posts/1', 1);
-            log('startPolling() → polling every 1 minute', 'success');
+        // === Push Notification Polling ===
+        let pollingInterval = 60;
+
+        function setPollingInterval(seconds) {
+            pollingInterval = seconds;
+            document.querySelectorAll('[id^="poll-int-"]').forEach(btn => {
+                btn.className = 'flex-1 py-2 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors';
+            });
+            const active = document.getElementById('poll-int-' + seconds);
+            if (active) {
+                active.className = 'flex-1 py-2 rounded-xl text-sm font-bold border-2 border-blue-500 bg-blue-50 text-blue-600 transition-colors';
+            }
         }
 
-        function testStopPolling() {
+        function updatePollingStatus(isPolling, url, interval) {
+            const el = document.getElementById('polling-status');
+            const btn = document.getElementById('btn-polling-toggle');
+            const icon = document.getElementById('polling-icon');
+            const text = document.getElementById('polling-btn-text');
+
+            if (isPolling) {
+                el.textContent = 'Status: Polling every ' + interval + 's → ' + (url || 'N/A');
+                el.className = 'mb-3 px-3 py-2 rounded-lg bg-green-50 text-green-700 text-sm font-mono';
+                btn.className = 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold bg-red-500 text-white hover:bg-red-600 transition-colors';
+                icon.textContent = 'stop';
+                text.textContent = 'Stop Polling';
+            } else {
+                el.textContent = 'Status: Stopped';
+                el.className = 'mb-3 px-3 py-2 rounded-lg bg-surface-container-high text-on-surface-variant text-sm font-mono';
+                btn.className = 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold bg-green-500 text-white hover:bg-green-600 transition-colors';
+                icon.textContent = 'play_arrow';
+                text.textContent = 'Start Polling';
+            }
+        }
+
+        function togglePolling() {
             if (!hasNativeBridge()) return;
-            NativeBridge.stopPolling();
-            log('stopPolling() → stopped', 'success');
+
+            const isPolling = NativeBridge.isPolling();
+            if (isPolling) {
+                NativeBridge.stopPolling();
+                log('stopPolling() → stopped', 'success');
+                updatePollingStatus(false);
+            } else {
+                const url = document.getElementById('polling-url').value;
+                if (!url) { log('Enter polling URL', 'error'); return; }
+
+                window.onPushNotification = function(data) {
+                    const payload = JSON.parse(data);
+                    log('🔔 Push: ' + payload.title + ' → ' + payload.body, 'success');
+                };
+                window.onPollingStarted = function(data) {
+                    const d = JSON.parse(data);
+                    log('onPollingStarted → ' + d.url + ' every ' + d.interval + 's', 'success');
+                    updatePollingStatus(true, d.url, d.interval);
+                };
+                window.onPollingStopped = function(data) {
+                    log('onPollingStopped', 'success');
+                    updatePollingStatus(false);
+                };
+
+                NativeBridge.startPolling(url, pollingInterval);
+                log('startPolling() → polling every ' + pollingInterval + 's', 'info');
+            }
+        }
+
+        function testGetPollingStatus() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getPollingStatus();
+            log('getPollingStatus() → ' + result, 'success');
+            const d = JSON.parse(result);
+            updatePollingStatus(d.polling, d.url, d.interval);
         }
 
         function testConnectMqtt() {
@@ -547,6 +850,294 @@
             if (!hasNativeBridge()) return;
             NativeBridge.cancelAllLocalNotifications();
             log('cancelAllLocalNotifications() → cancelled all', 'success');
+        }
+
+        // === Bluetooth Printer ===
+        function updatePrinterStatus(text) {
+            const el = document.getElementById('printer-status');
+            el.textContent = 'Status: ' + text;
+            el.className = 'mb-3 px-3 py-2 rounded-lg text-sm font-mono ' +
+                (text.includes('Connected') ? 'bg-green-50 text-green-700' : 'bg-surface-container-high text-on-surface-variant');
+        }
+
+        function testGetPairedPrinters() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getPairedPrinters();
+            log('getPairedPrinters() → ' + result, 'success');
+            const devices = JSON.parse(result);
+            const list = document.getElementById('printer-paired-list');
+            if (devices.length === 0) {
+                list.innerHTML = '<div class="text-sm text-on-surface-variant">No paired printers</div>';
+            } else {
+                list.innerHTML = '<div class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1">Paired Devices</div>' +
+                    devices.map(d => '<div class="flex items-center justify-between p-2 bg-surface-container-high rounded-lg">' +
+                        '<div><div class="text-sm font-bold">' + d.name + '</div><div class="text-xs text-on-surface-variant font-mono">' + d.address + '</div></div>' +
+                        '<button onclick="testConnectPrinter(\'' + d.address + '\')" class="text-xs px-2 py-1 rounded bg-primary text-on-primary font-semibold">Connect</button>' +
+                    '</div>').join('');
+            }
+            list.classList.remove('hidden');
+        }
+
+        function testScanPrinters() {
+            if (!hasNativeBridge()) return;
+            window.onPrintersFound = function(data) {
+                const devices = JSON.parse(data);
+                log('onPrintersFound → ' + devices.length + ' devices', 'success');
+                const list = document.getElementById('printer-discovered-list');
+                if (devices.length === 0) {
+                    list.innerHTML = '<div class="text-sm text-on-surface-variant">No devices found</div>';
+                } else {
+                    list.innerHTML = '<div class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1">Available Devices</div>' +
+                        devices.map(d => '<div class="flex items-center justify-between p-2 bg-surface-container-high rounded-lg">' +
+                            '<div><div class="text-sm font-bold">' + d.name + '</div><div class="text-xs text-on-surface-variant font-mono">' + d.address + '</div></div>' +
+                            '<button onclick="testConnectPrinter(\'' + d.address + '\')" class="text-xs px-2 py-1 rounded bg-primary text-on-primary font-semibold">Connect</button>' +
+                        '</div>').join('');
+                }
+                list.classList.remove('hidden');
+            };
+            NativeBridge.scanPrinters();
+            log('scanPrinters() → scanning...', 'info');
+        }
+
+        function testCancelPrinterScan() {
+            if (!hasNativeBridge()) return;
+            NativeBridge.cancelPrinterScan();
+            log('cancelPrinterScan() → stopped', 'success');
+        }
+
+        function testConnectPrinter(address) {
+            if (!hasNativeBridge()) return;
+            if (!address) { log('Enter MAC address', 'error'); return; }
+            window.onPrinterConnected = function(data) {
+                const d = JSON.parse(data);
+                log('onPrinterConnected → ' + JSON.stringify(d), d.success ? 'success' : 'error');
+                updatePrinterStatus(d.success ? 'Connected: ' + d.name : 'Failed: ' + (d.error || ''));
+            };
+            NativeBridge.connectPrinter(address);
+            log('connectPrinter(' + address + ') → connecting...', 'info');
+            updatePrinterStatus('Connecting...');
+        }
+
+        function testDisconnectPrinter() {
+            if (!hasNativeBridge()) return;
+            window.onPrinterDisconnected = function(data) {
+                log('onPrinterDisconnected → ' + data, 'success');
+                updatePrinterStatus('Disconnected');
+            };
+            NativeBridge.disconnectPrinter();
+            log('disconnectPrinter() → disconnecting...', 'info');
+        }
+
+        function testAutoConnectPrinter() {
+            if (!hasNativeBridge()) return;
+            window.onPrinterConnected = function(data) {
+                const d = JSON.parse(data);
+                log('onPrinterConnected (auto) → ' + JSON.stringify(d), d.success ? 'success' : 'error');
+                updatePrinterStatus(d.success ? 'Connected: ' + d.name : 'Failed: ' + (d.error || ''));
+            };
+            NativeBridge.autoConnectPrinter();
+            log('autoConnectPrinter() → attempting auto-connect...', 'info');
+        }
+
+        function testGetConnectedPrinter() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getConnectedPrinter();
+            log('getConnectedPrinter() → ' + result, 'success');
+            const d = JSON.parse(result);
+            updatePrinterStatus(d.connected ? 'Connected: ' + d.name : 'Disconnected');
+        }
+
+        function testGetSavedPrinter() {
+            if (!hasNativeBridge()) return;
+            const result = NativeBridge.getSavedPrinter();
+            log('getSavedPrinter() → ' + result, 'success');
+        }
+
+        function testRemoveSavedPrinter() {
+            if (!hasNativeBridge()) return;
+            window.onPrinterRemoved = function(data) {
+                log('onPrinterRemoved → ' + data, 'success');
+                updatePrinterStatus('No saved printer');
+            };
+            NativeBridge.removeSavedPrinter();
+            log('removeSavedPrinter() → removed', 'success');
+        }
+
+        function testPrinterTestPrint() {
+            if (!hasNativeBridge()) return;
+            window.onPrintResult = function(data) {
+                const d = JSON.parse(data);
+                log('onPrintResult → ' + JSON.stringify(d), d.success ? 'success' : 'error');
+            };
+            NativeBridge.testPrint();
+            log('testPrint() → sending test page...', 'info');
+        }
+
+        function testPrintReceipt() {
+            if (!hasNativeBridge()) return;
+            window.onPrintResult = function(data) {
+                const d = JSON.parse(data);
+                log('onPrintResult (receipt) → ' + JSON.stringify(d), d.success ? 'success' : 'error');
+            };
+            const data = {
+                lines: [
+                    { text: 'COLD STORAGE', style: 'large' },
+                    { divider: true },
+                    { text: 'Date: ' + new Date().toLocaleString('id-ID'), style: 'normal' },
+                    { text: '' },
+                    { text: 'ABC Product | 2 x 15.000', style: 'normal' },
+                    { text: 'XYZ Product | 1 x 25.000', style: 'normal' },
+                    { divider: true },
+                    { text: 'TOTAL | 55.000', style: 'bold' },
+                    { text: '' },
+                    { text: 'Thank you!', style: 'center' }
+                ],
+                paper_width: 58,
+                cut: true
+            };
+            NativeBridge.printReceipt(JSON.stringify(data));
+            log('printReceipt() → printing receipt...', 'info');
+        }
+
+        function testPrintLabel() {
+            if (!hasNativeBridge()) return;
+            window.onPrintResult = function(data) {
+                const d = JSON.parse(data);
+                log('onPrintResult (label) → ' + JSON.stringify(d), d.success ? 'success' : 'error');
+            };
+            const data = {
+                type: 'tspl',
+                content: 'COLD STORAGE\nSKU-001\nProduct Name\n*123456789*',
+                width: 40,
+                height: 30,
+                copies: 1
+            };
+            NativeBridge.printLabel(JSON.stringify(data));
+            log('printLabel() → printing label...', 'info');
+        }
+
+        // === File Operations ===
+        function updateFileDir() {
+            if (!hasNativeBridge()) return;
+            const path = NativeBridge.getFilesDirectory();
+            document.getElementById('file-dir').textContent = 'Directory: ' + path;
+        }
+
+        function updateFileList() {
+            if (!hasNativeBridge()) return;
+            const result = JSON.parse(NativeBridge.listFiles());
+            const el = document.getElementById('file-list');
+            if (result.count === 0) {
+                el.innerHTML = '<span class="text-on-surface-variant">No files yet</span>';
+            } else {
+                el.innerHTML = result.files.map(f =>
+                    '<div class="flex justify-between items-center py-1 border-b border-outline-variant last:border-0">' +
+                    '<span class="truncate">' + f.name + '</span>' +
+                    '<span class="text-on-surface-variant text-xs ml-2 whitespace-nowrap">' + f.size + ' B</span>' +
+                    '</div>'
+                ).join('');
+            }
+            el.classList.remove('hidden');
+        }
+
+        function showFileContent(content) {
+            const display = document.getElementById('file-content-display');
+            const pre = document.getElementById('file-content-pre');
+            pre.textContent = content;
+            display.classList.remove('hidden');
+        }
+
+        function testCreateFile() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            const content = document.getElementById('file-content-input').value;
+            if (!name) { log('Enter filename', 'error'); return; }
+            const result = JSON.parse(NativeBridge.createFile(name, content));
+            log('createFile(\'' + name + '\') → ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            updateFileList();
+        }
+
+        function testReadFile() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            if (!name) { log('Enter filename', 'error'); return; }
+            const result = JSON.parse(NativeBridge.readFile(name));
+            if (result.success) {
+                log('readFile(\'' + name + '\') → ' + result.size + ' bytes', 'success');
+                showFileContent(result.content);
+            } else {
+                log('readFile(\'' + name + '\') → ' + result.error, 'error');
+            }
+        }
+
+        function testUpdateFile() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            const content = document.getElementById('file-content-input').value;
+            if (!name) { log('Enter filename', 'error'); return; }
+            const result = JSON.parse(NativeBridge.updateFile(name, content));
+            log('updateFile(\'' + name + '\') → ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            updateFileList();
+        }
+
+        function testAppendFile() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            const content = document.getElementById('file-content-input').value;
+            if (!name) { log('Enter filename', 'error'); return; }
+            const result = JSON.parse(NativeBridge.appendFile(name, content));
+            log('appendFile(\'' + name + '\') → ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            updateFileList();
+        }
+
+        function testDeleteFile() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            if (!name) { log('Enter filename', 'error'); return; }
+            const result = JSON.parse(NativeBridge.deleteFile(name));
+            log('deleteFile(\'' + name + '\') → ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            updateFileList();
+            document.getElementById('file-content-display').classList.add('hidden');
+        }
+
+        function testRenameFile() {
+            if (!hasNativeBridge()) return;
+            const oldName = document.getElementById('file-rename-old').value.trim();
+            const newName = document.getElementById('file-rename-new').value.trim();
+            if (!oldName || !newName) { log('Enter both filenames', 'error'); return; }
+            const result = JSON.parse(NativeBridge.renameFile(oldName, newName));
+            log('renameFile(\'' + oldName + '\', \'' + newName + '\') → ' + JSON.stringify(result), result.success ? 'success' : 'error');
+            updateFileList();
+        }
+
+        function testFileExists() {
+            if (!hasNativeBridge()) return;
+            const name = document.getElementById('file-name-input').value.trim();
+            if (!name) { log('Enter filename', 'error'); return; }
+            const exists = NativeBridge.fileExists(name);
+            log('fileExists(\'' + name + '\') → ' + exists, exists ? 'success' : 'warn');
+        }
+
+        function testListFiles() {
+            if (!hasNativeBridge()) return;
+            const result = JSON.parse(NativeBridge.listFiles());
+            log('listFiles() → ' + result.count + ' file(s)', 'success');
+            result.files.forEach(f => {
+                log('  ' + f.name + ' (' + f.size + ' B)', 'info');
+            });
+            updateFileList();
+        }
+
+        function testGetFilesDir() {
+            if (!hasNativeBridge()) return;
+            const path = NativeBridge.getFilesDirectory();
+            log('getFilesDirectory() → ' + path, 'success');
+            document.getElementById('file-dir').textContent = 'Directory: ' + path;
+        }
+
+        // Init file dir on load
+        if (hasNativeBridge()) {
+            updateFileDir();
         }
     </script>
 </x-layouts::app>

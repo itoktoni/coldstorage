@@ -1,5 +1,5 @@
 {{-- Header --}}
-<header class="fixed top-0 w-full z-50 bg-surface-container-lowest shadow-sm border-b border-outline-variant flex items-center justify-between px-4 md:px-8 h-16">
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest shadow-sm border-b border-outline-variant flex items-center justify-between px-4 md:px-8 h-16" style="padding-top: env(safe-area-inset-top)">
     <div class="flex items-center gap-4">
         <button class="md:hidden p-2 hover:bg-surface-container rounded-full transition-colors" @click="drawerOpen = !drawerOpen">
             <span class="material-symbols-outlined text-[22px] text-on-surface-variant">menu</span>
@@ -13,6 +13,12 @@
     </div>
 
     <div class="flex items-center gap-2">
+        {{-- Printer Button --}}
+        <button onclick="PrinterModal.open()" class="relative p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant" title="Bluetooth Printer">
+            <span class="material-symbols-outlined text-[22px]">printer</span>
+            <span class="absolute top-1 right-1 w-2 h-2 rounded-full hidden" id="header-printer-dot"></span>
+        </button>
+
         {{-- Notification Dropdown --}}
         <div class="relative" x-data="{ open: false }" @click.away="open = false">
             <button class="relative p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant" @click="open = !open">

@@ -9,6 +9,14 @@
         "boost:mcp"
       ],
       "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/sse",
+      "enabled": true,
+      "headers": {
+        "x-api-key": "ctx7sk-d7893e0a-1604-4971-84c4-b4d21925374e"
+      }
     }
   }
 }

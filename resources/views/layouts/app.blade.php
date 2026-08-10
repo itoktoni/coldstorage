@@ -15,7 +15,7 @@
     @include('layouts.sidebar')
 
     {{-- Main Content --}}
-    <main class="pt-20 pb-32 md:pb-24 px-4 md:px-6" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-0'">
+    <main class="px-4 md:px-6" style="padding-top: calc(5rem + env(safe-area-inset-top)); padding-bottom: calc(8rem + env(safe-area-inset-bottom));" :class="sidebarOpen ? 'md:ml-72' : 'md:ml-0'">
         <div class="max-w-full md:max-w-[calc(100vw-18rem)] mx-auto">
             {{ $slot }}
         </div>
@@ -28,6 +28,8 @@
 
     @include('layouts.script')
     @livewireScripts
+
+    <x-printer-modal />
 
 </body>
 </html>

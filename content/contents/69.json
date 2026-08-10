@@ -1,0 +1,22 @@
+{
+    "id": 69,
+    "content_type_id": 69,
+    "title": "Homepage",
+    "slug": "homepage",
+    "status": "published",
+    "menu_order": 0,
+    "meta": {
+        "page_builder": [
+            {
+                "_layout": "hero",
+                "title": "Welcome"
+            },
+            {
+                "_layout": "cta",
+                "button_text": "Click"
+            }
+        ]
+    },
+    "created_at": "2026-08-10T06:45:28.000000Z",
+    "updated_at": "2026-08-10T06:45:28.000000Z"
+}

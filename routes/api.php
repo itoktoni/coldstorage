@@ -1,36 +1,12 @@
-﻿<?php
+<?php
 
-use App\Actions\PlanAction;
-use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\AddonController;
-use App\Http\Controllers\AnakController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ChallengeController;
-use App\Http\Controllers\ChallengeHistoryController;
-use App\Http\Controllers\ChecklistController;
-use App\Http\Controllers\CompletedSkillController;
 use App\Http\Controllers\Api\CmsController;
-use App\Http\Controllers\ContentApprovalController;
-use App\Http\Controllers\DiscountController;
-use App\Http\Controllers\EvaluationController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\ApiNotificationPollController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentWebhookController;
-use App\Http\Controllers\PilarController;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\SkillActivityController;
-use App\Http\Controllers\SkillController;
-use App\Http\Controllers\WorksheetController;
-use App\Models\Activity;
-use App\Models\Plan;
-use App\PeriodEnum;
-use App\Services\LocalImageGeneratorService;
-use App\Services\StoryGeneratorService;
+use App\Services\CentrifugoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Str;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
@@ -48,11 +24,11 @@ Route::prefix('cms')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/centrifugo/token', function (Request $request) {
-        if (!config('langkahkecil.notification_enable')) {
+        if (! config('langkahkecil.notification_enable')) {
             return response()->json(['token' => 'disabled']);
         }
 
-        $centrifugo = app(\App\Services\CentrifugoService::class);
+        $centrifugo = app(CentrifugoService::class);
         $user = $request->user();
 
         if ($request->input('channel')) {
@@ -71,3 +47,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/verify', [AuthController::class, 'verify'])->name('verification.verify');
 
 });
+
+// Public polling endpoint (no auth required)
+Route::get('/notifications/poll', [ApiNotificationPollController::class, 'poll']);

@@ -49,12 +49,19 @@
                        class="w-full h-11 px-3 bg-white border border-outline-variant rounded-lg font-body-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                        autofocus />
             </div>
-            <button type="button"
-                    x-on:click="$wire.scan(document.querySelector('[wire\\:model=barcodeInput]').value); document.querySelector('[wire\\:model=barcodeInput]').value = ''"
-                class="inline-flex items-center justify-center gap-2 h-11 px-5 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95">
-                <span class="material-symbols-outlined text-xl">check</span>
-                Scan
-            </button>
+            <div class="flex gap-2">
+                <button type="button"
+                        x-on:click="$wire.scan(document.querySelector('[wire\\:model=barcodeInput]').value); document.querySelector('[wire\\:model=barcodeInput]').value = ''"
+                    class="inline-flex items-center justify-center gap-2 h-11 px-5 text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-xl">check</span>
+                    Scan
+                </button>
+                <button type="button"
+                        x-on:click="$dispatch('open-camera-scanner')"
+                    class="inline-flex items-center justify-center gap-2 h-11 px-4 text-sm font-semibold rounded-lg bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 shadow-sm transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-xl">qr_code_scanner</span>
+                </button>
+            </div>
         </div>
         <p class="text-xs text-on-surface-variant mt-2">Scan otomatis alokasikan sisa qty SO dari stock IN / staging.</p>
 
@@ -323,4 +330,127 @@
             Kembali
         </a>
     </div>
+
+    {{-- Camera Scanner Modal --}}
+    <div x-data="cameraScanner()"
+         x-on:open-camera-scanner.window="open()"
+         x-on:close-camera-scanner.window="close()"
+         x-show="show"
+         x-cloak
+         class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-surface-container-lowest rounded-xl p-6 max-w-lg w-full mx-4" x-on:click.stop>
+            <h3 class="font-headline-md text-headline-md text-on-surface pb-4 mb-4 border-b border-outline-variant">
+                Scan Barcode / QR Code
+            </h3>
+            <div id="camera-scanner" class="w-full rounded-lg overflow-hidden mb-4" style="min-height: 300px;"></div>
+            <template x-if="error">
+                <div class="bg-error/10 border border-error rounded-lg p-3 mb-4">
+                    <p class="text-error text-sm" x-text="error"></p>
+                </div>
+            </template>
+            <div class="flex justify-between items-center">
+                <button x-on:click="switchCamera()"
+                        x-show="cameras.length > 1"
+                        class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                    <span class="material-symbols-outlined text-lg mr-1">cameraswitch</span>
+                    Ganti Kamera
+                </button>
+                <button x-on:click="close()"
+                        class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    <script>
+        function cameraScanner() {
+            return {
+                show: false,
+                scanner: null,
+                cameras: [],
+                currentCameraIndex: 0,
+                error: null,
+
+                open() {
+                    this.show = true;
+                    this.error = null;
+                    this.$nextTick(() => this.startScanner());
+                },
+
+                close() {
+                    this.stopScanner();
+                    this.show = false;
+                },
+
+                startScanner() {
+                    if (this.scanner) this.stopScanner();
+                    this.scanner = new Html5Qrcode('camera-scanner');
+                    const config = {
+                        fps: 15,
+                        qrbox: { width: 280, height: 150 },
+                        aspectRatio: 1.5,
+                        formatsToSupport: [
+                            Html5QrcodeSupportedFormats.QR_CODE,
+                            Html5QrcodeSupportedFormats.CODE_128,
+                            Html5QrcodeSupportedFormats.CODE_39,
+                            Html5QrcodeSupportedFormats.EAN_13,
+                            Html5QrcodeSupportedFormats.EAN_8,
+                            Html5QrcodeSupportedFormats.UPC_A,
+                            Html5QrcodeSupportedFormats.UPC_E,
+                            Html5QrcodeSupportedFormats.ITF,
+                        ]
+                    };
+                    Html5Qrcode.getCameras().then(devices => {
+                        this.cameras = devices || [];
+                        if (this.cameras.length === 0) {
+                            this.error = 'Kamera tidak ditemukan.';
+                            return;
+                        }
+                        this.currentCameraIndex = this.cameras.findIndex(d =>
+                            d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('belakang')
+                        );
+                        if (this.currentCameraIndex === -1) this.currentCameraIndex = 0;
+                        this.startWithCamera(this.cameras[this.currentCameraIndex].id, config);
+                    }).catch(err => {
+                        this.error = 'Tidak bisa mengakses kamera.';
+                    });
+                },
+
+                startWithCamera(cameraId, config) {
+                    this.scanner.start(cameraId, config,
+                        (decodedText) => this.onScanSuccess(decodedText),
+                        () => {}
+                    ).catch(err => {
+                        this.error = 'Gagal memulai kamera: ' + (err.message || err);
+                    });
+                },
+
+                onScanSuccess(decodedText) {
+                    this.stopScanner();
+                    this.show = false;
+                    if (window.Livewire) {
+                        Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id')).call('scan', decodedText);
+                    }
+                },
+
+                switchCamera() {
+                    if (this.cameras.length <= 1) return;
+                    this.currentCameraIndex = (this.currentCameraIndex + 1) % this.cameras.length;
+                    this.stopScanner();
+                    this.$nextTick(() => {
+                        this.scanner = new Html5Qrcode('camera-scanner');
+                        this.startWithCamera(this.cameras[this.currentCameraIndex].id, { fps: 15, qrbox: { width: 280, height: 150 }, aspectRatio: 1.5 });
+                    });
+                },
+
+                stopScanner() {
+                    if (this.scanner) {
+                        try { this.scanner.stop().then(() => { this.scanner.clear(); this.scanner = null; }).catch(() => { this.scanner = null; }); } catch (e) { this.scanner = null; }
+                    }
+                }
+            };
+        }
+    </script>
 </div>

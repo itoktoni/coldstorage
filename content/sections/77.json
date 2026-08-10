@@ -1,0 +1,12 @@
+{
+    "id": 77,
+    "name": "Post Meta",
+    "content_type_id": 77,
+    "field_ids": [
+        77
+    ],
+    "sort_order": 0,
+    "is_active": true,
+    "created_at": "2026-08-10T06:45:29.000000Z",
+    "updated_at": "2026-08-10T06:45:29.000000Z"
+}

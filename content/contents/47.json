@@ -1,0 +1,17 @@
+{
+    "id": 47,
+    "content_type_id": 47,
+    "title": "Test Post",
+    "slug": "test-post",
+    "content": "Body text",
+    "status": "published",
+    "published_at": "2026-08-10T06:44:40.000000Z",
+    "menu_order": 0,
+    "meta": {
+        "_active_field_groups": [
+            47
+        ]
+    },
+    "created_at": "2026-08-10T06:44:40.000000Z",
+    "updated_at": "2026-08-10T06:44:40.000000Z"
+}

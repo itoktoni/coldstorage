@@ -20,6 +20,7 @@ class Product extends BaseModel
         'product_harga',
         'product_category',
         'product_status',
+        'product_image',
     ];
 
     protected $casts = [
@@ -58,6 +59,7 @@ class Product extends BaseModel
             'product_harga' => ['required', 'numeric', 'min:0'],
             'product_category' => ['nullable', 'string', 'max:50'],
             'product_status' => ['nullable', 'string', 'in:active,inactive'],
+            'product_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
         ];
     }
 

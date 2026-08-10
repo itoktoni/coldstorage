@@ -2,8 +2,8 @@
     $bottomNav = config('menu.bottom_nav');
 @endphp
 
-<nav class="md:hidden fixed bottom-0 left-0 w-full h-16 bg-surface-container-lowest border-t border-outline-variant z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-    <div class="flex items-center justify-around h-full px-2">
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]" style="padding-bottom: env(safe-area-inset-bottom);">
+    <div class="flex items-center justify-around h-16 px-2">
         @foreach($bottomNav as $index => $item)
             @php
                 $routeName = $item['route'];
