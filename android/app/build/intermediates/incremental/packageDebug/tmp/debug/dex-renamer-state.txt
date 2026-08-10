@@ -1,19 +1,19 @@
-#Mon Aug 10 19:45:31 WIB 2026
-path.4=classes.dex
-path.3=4/classes.dex
-path.2=11/classes.dex
-path.1=0/classes.dex
-path.5=classes2.dex
-path.0=classes.dex
-base.4=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\global_synthetics_dex\\debug\\generateDebugGlobalSynthetics\\classes.dex
-base.3=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
-base.2=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
-base.1=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+#Mon Aug 10 22:24:26 WIB 2026
 base.0=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-renamed.3=classes4.dex
-renamed.2=classes3.dex
-renamed.1=classes2.dex
-renamed.0=classes.dex
-renamed.5=classes6.dex
-renamed.4=classes5.dex
+base.1=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.2=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
+base.3=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
+base.4=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\global_synthetics_dex\\debug\\generateDebugGlobalSynthetics\\classes.dex
 base.5=D\:\\laravel\\sidoraya\\android\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+path.0=classes.dex
+path.1=0/classes.dex
+path.2=11/classes.dex
+path.3=4/classes.dex
+path.4=classes.dex
+path.5=classes2.dex
+renamed.0=classes.dex
+renamed.1=classes2.dex
+renamed.2=classes3.dex
+renamed.3=classes4.dex
+renamed.4=classes5.dex
+renamed.5=classes6.dex

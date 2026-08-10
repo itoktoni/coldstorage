@@ -59,9 +59,9 @@ class ProductController extends Controller
         try {
             $response = $this->model->create($validated);
 
-            return $this->response([TOAST_SUCCESS, $response]);
+            return $this->response($this->payload(TOAST_SUCCESS, $response));
         } catch (\Throwable $th) {
-            return $this->response([TOAST_FAILED, $th->getMessage()]);
+            return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
         }
     }
 
@@ -102,9 +102,9 @@ class ProductController extends Controller
         try {
             $record->update($validated);
 
-            return $this->response([TOAST_SUCCESS, $record]);
+            return $this->response($this->payload(TOAST_SUCCESS, $record));
         } catch (\Throwable $th) {
-            return $this->response([TOAST_FAILED, $th->getMessage()]);
+            return $this->response($this->payload(TOAST_FAILED, $th->getMessage()));
         }
     }
 
