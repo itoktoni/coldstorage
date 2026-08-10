@@ -11,8 +11,6 @@
                 <x-input col="4" name="product_harga" type="number" />
                 <x-select col="4" name="product_status" :options="['active' => 'Active', 'inactive' => 'Inactive']" placeholder="Pilih status..." />
 
-                <input type="file" class="inline-flex items-center justify-center gap-1 h-8 md:h-10 px-2.5 md:px-4 text-xs md:text-sm font-semibold rounded-lg bg-primary text-on-primary hover:bg-primary/90 shadow-sm transition-all active:scale-95 shrink-0" id="input-product-image" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp">
-
                 <div class="col-span-12 md:col-span-4">
                     <label class="font-body-sm text-body-sm font-bold text-on-surface-variant block mb-1">Foto Produk</label>
 
@@ -51,7 +49,8 @@
                     @endif
 
                     {{-- One multipart input is used by both the native camera and file picker. --}}
-                    <input type="file" id="input-product-image" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp">
+                    <input type="file" id="input-product-image" name="product_image"
+                        accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden">
                     <input type="hidden" id="input-remove" name="remove_image" value="0">
                 </div>
             @endbind
