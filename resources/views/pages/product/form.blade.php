@@ -14,11 +14,18 @@
                 <div class="col-span-12 md:col-span-4">
                     <label class="font-body-sm text-body-sm font-bold text-on-surface-variant block mb-1">Foto Produk</label>
 
-                    {{-- Camera capture button (mobile) --}}
+                    {{-- Camera button (mobile) --}}
                     <button type="button" id="btn-camera-capture"
-                        class="md:hidden w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 px-4 py-6 text-primary font-bold hover:bg-primary/10 transition-colors mb-2">
+                        class="md:hidden w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 px-4 py-5 text-primary font-bold hover:bg-primary/10 transition-colors mb-2">
                         <span class="material-symbols-outlined text-2xl">photo_camera</span>
-                        <span class="font-body-sm">Foto Produk</span>
+                        <span class="font-body-sm">Ambil Foto</span>
+                    </button>
+
+                    {{-- Gallery button (mobile) --}}
+                    <button type="button" id="btn-gallery"
+                        class="md:hidden w-full flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary bg-primary/5 px-4 py-5 text-primary font-bold hover:bg-primary/10 transition-colors mb-2">
+                        <span class="material-symbols-outlined text-2xl">photo_library</span>
+                        <span class="font-body-sm">Pilih dari Galeri</span>
                     </button>
 
                     {{-- File browse button (desktop) --}}
@@ -48,9 +55,9 @@
                         </div>
                     @endif
 
-                    {{-- One multipart input is used by both the native camera and file picker. --}}
+                    {{-- Hidden file input (no capture — showImageChooser dialog will appear) --}}
                     <input type="file" id="input-product-image" name="product_image"
-                        accept="image/jpeg,image/png,image/webp" capture="environment" class="hidden">
+                        accept="image/jpeg,image/png,image/webp" class="hidden">
                     <input type="hidden" id="input-remove" name="remove_image" value="0">
                 </div>
             @endbind
@@ -62,53 +69,110 @@
     @push('scripts')
     <script>
     (function() {
-        const btnCamera = document.getElementById('btn-camera-capture');
-        const btnBrowse = document.getElementById('btn-browse-file');
-        const inputImage = document.getElementById('input-product-image');
-        const preview = document.getElementById('image-preview');
-        const previewImg = document.getElementById('preview-img');
-        const btnRemove = document.getElementById('btn-remove-image');
+        const btnCamera    = document.getElementById('btn-camera-capture');
+        const btnGallery   = document.getElementById('btn-gallery');
+        const btnBrowse    = document.getElementById('btn-browse-file');
+        const inputImage   = document.getElementById('input-product-image');
+        const preview      = document.getElementById('image-preview');
+        const previewImg   = document.getElementById('preview-img');
+        const btnRemove    = document.getElementById('btn-remove-image');
         const btnRemoveExisting = document.getElementById('btn-remove-existing');
-        const inputRemove = document.getElementById('input-remove');
+        const inputRemove  = document.getElementById('input-remove');
         const existingImage = document.getElementById('existing-image');
 
-        function showPreview(file) {
-            if (!file || !file.type.startsWith('image/')) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                previewImg.src = e.target.result;
-                preview.classList.remove('hidden');
-                btnCamera.classList.add('hidden');
-                btnBrowse.classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
+        var hasNativeBridge = typeof NativeBridge !== 'undefined'
+            && typeof NativeBridge.openCamera === 'function';
+
+        // ── 1. Convert a data-URL (base64) to a File object ──
+        function dataURLtoFile(dataurl, filename) {
+            var arr  = dataurl.split(',');
+            var mime = (arr[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
+            var bstr = atob(arr[1]);
+            var n    = bstr.length;
+            var u8   = new Uint8Array(n);
+            while (n--) u8[n] = bstr.charCodeAt(n);
+            return new File([u8], filename, { type: mime });
         }
 
-        btnCamera.addEventListener('click', function() {
-            inputImage.setAttribute('capture', 'environment');
-            inputImage.click();
-        });
+        // ── 2. Set a File on the hidden <input> so the form submission works ──
+        function setFileOnInput(file) {
+            var dt = new DataTransfer();
+            dt.items.add(file);
+            inputImage.files = dt.files;
+        }
 
-        btnBrowse.addEventListener('click', function() {
-            inputImage.removeAttribute('capture');
-            inputImage.click();
-        });
+        // ── 3. Show preview and hide the pick buttons ──
+        function showPreview(src) {
+            previewImg.src = src;
+            preview.classList.remove('hidden');
+            btnCamera.classList.add('hidden');
+            btnGallery.classList.add('hidden');
+            btnBrowse.classList.add('hidden');
+        }
 
-        inputImage.addEventListener('change', function() {
-            if (this.files[0]) {
-                showPreview(this.files[0]);
-            }
-        });
-
-        btnRemove.addEventListener('click', function() {
+        function hidePreview() {
             inputImage.value = '';
             preview.classList.add('hidden');
             previewImg.src = '';
-            // Restore the correct button via responsive CSS classes
             btnCamera.classList.remove('hidden');
+            btnGallery.classList.remove('hidden');
             btnBrowse.classList.remove('hidden');
+        }
+
+        // ── 4. NativeBridge callbacks (approach 3) ──
+        window.onImageCaptured = function(base64) {
+            if (!base64 || base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1) return;
+            var file = dataURLtoFile(base64, 'camera_' + Date.now() + '.jpg');
+            setFileOnInput(file);
+            showPreview(base64);
+        };
+        window.onImagePicked = function(base64) {
+            if (!base64 || base64.indexOf('error') !== -1 && base64.indexOf('data:') === -1) return;
+            var ext  = (base64.match(/^data:image\/(\w+)/) || [])[1] || 'jpeg';
+            var file = dataURLtoFile(base64, 'gallery_' + Date.now() + '.' + ext);
+            setFileOnInput(file);
+            showPreview(base64);
+        };
+
+        // ── 5. Camera button — approach 3 (native bridge) or 2 (input+capture) ──
+        btnCamera.addEventListener('click', function() {
+            if (hasNativeBridge) {
+                NativeBridge.openCamera();           // result via onImageCaptured
+            } else {
+                inputImage.setAttribute('capture', 'environment');
+                inputImage.click();                  // fallback: opens camera via onShowFileChooser
+                // Remove capture after a short delay so it doesn't affect other buttons
+                setTimeout(function() { inputImage.removeAttribute('capture'); }, 2000);
+            }
         });
 
+        // ── 6. Gallery button — approach 3 (native bridge) or 1 (input no capture) ──
+        btnGallery.addEventListener('click', function() {
+            if (hasNativeBridge) {
+                NativeBridge.openGallery();          // result via onImagePicked
+            } else {
+                inputImage.removeAttribute('capture');
+                inputImage.click();                  // fallback: shows Camera/Gallery dialog
+            }
+        });
+
+        // ── 7. Browse button (desktop) — approach 1: input click, no capture ──
+        btnBrowse.addEventListener('click', function() {
+            inputImage.removeAttribute('capture');
+            inputImage.click();                      // opens file chooser
+        });
+
+        // ── 8. File input change (approach 1/2) — when file is picked via <input> ──
+        inputImage.addEventListener('change', function() {
+            if (this.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) { showPreview(e.target.result); };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+
+        // ── 9. Remove buttons ──
+        btnRemove.addEventListener('click', hidePreview);
         if (btnRemoveExisting) {
             btnRemoveExisting.addEventListener('click', function() {
                 existingImage.classList.add('hidden');
