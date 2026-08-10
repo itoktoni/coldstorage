@@ -470,6 +470,8 @@ class MainActivity : AppCompatActivity() {
                 fileChooserParams: FileChooserParams?
             ): Boolean {
                 this@MainActivity.filePathCallback?.onReceiveValue(null)
+                this@MainActivity.cameraFilePathCallback?.onReceiveValue(null)
+                this@MainActivity.cameraFilePathCallback = null
                 this@MainActivity.filePathCallback = filePathCallback
 
                 val acceptTypes = fileChooserParams?.acceptTypes ?: arrayOf()
@@ -477,6 +479,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (isImageOnly) {
                     if (fileChooserParams?.isCaptureEnabled == true) {
+                        cameraFilePathCallback = filePathCallback
                         openCameraForForm()
                     } else {
                         showImageChooser()
@@ -658,6 +661,11 @@ class MainActivity : AppCompatActivity() {
 
     fun requestCameraPermission() {
         cameraPermissionLauncher.launch(arrayOf(Manifest.permission.CAMERA))
+    }
+
+    fun cancelCameraFileChooser() {
+        cameraFilePathCallback?.onReceiveValue(null)
+        cameraFilePathCallback = null
     }
 
     fun requestPhoneStatePermission() {

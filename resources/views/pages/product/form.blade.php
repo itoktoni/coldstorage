@@ -48,9 +48,8 @@
                         </div>
                     @endif
 
-                    {{-- Hidden inputs --}}
-                    <input type="file" id="input-camera" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" capture="environment" class="hidden" disabled>
-                    <input type="file" id="input-file" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" class="hidden">
+                    {{-- One multipart input is used by both the native camera and file picker. --}}
+                    <input type="file" id="input-product-image" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" capture="environment" class="hidden">
                     <input type="hidden" id="input-remove" name="remove_image" value="0">
                 </div>
             @endbind
@@ -65,8 +64,7 @@
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 0 && window.innerWidth < 768);
         const btnCamera = document.getElementById('btn-camera-capture');
         const btnBrowse = document.getElementById('btn-browse-file');
-        const inputCamera = document.getElementById('input-camera');
-        const inputFile = document.getElementById('input-file');
+        const inputImage = document.getElementById('input-product-image');
         const preview = document.getElementById('image-preview');
         const previewImg = document.getElementById('preview-img');
         const btnRemove = document.getElementById('btn-remove-image');
@@ -94,33 +92,24 @@
             reader.readAsDataURL(file);
         }
 
-        btnCamera.addEventListener('click', () => inputCamera.click());
-
-        btnBrowse.addEventListener('click', () => inputFile.click());
-
-        inputCamera.addEventListener('change', function() {
-            if (this.files[0]) {
-                inputFile.value = '';
-                inputFile.disabled = true;
-                inputCamera.disabled = false;
-                showPreview(this.files[0]);
-            }
+        btnCamera.addEventListener('click', () => {
+            inputImage.setAttribute('capture', 'environment');
+            inputImage.click();
         });
 
-        inputFile.addEventListener('change', function() {
+        btnBrowse.addEventListener('click', () => {
+            inputImage.removeAttribute('capture');
+            inputImage.click();
+        });
+
+        inputImage.addEventListener('change', function() {
             if (this.files[0]) {
-                inputCamera.value = '';
-                inputCamera.disabled = true;
-                inputFile.disabled = false;
                 showPreview(this.files[0]);
             }
         });
 
         btnRemove.addEventListener('click', function() {
-            inputFile.value = '';
-            inputCamera.value = '';
-            inputFile.disabled = false;
-            inputCamera.disabled = true;
+            inputImage.value = '';
             preview.classList.add('hidden');
             previewImg.src = '';
             btnCamera.classList.remove('hidden');

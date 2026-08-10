@@ -63,6 +63,7 @@ class NativeBridge(private val context: Context) {
                 }
             }
         } else {
+            (activity as? MainActivity)?.cancelCameraFileChooser()
             callJsCallback("onImageCaptured", "{\"error\": \"Camera permission denied\"}")
         }
         pendingCameraAction = null
