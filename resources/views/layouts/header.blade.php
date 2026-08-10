@@ -1,23 +1,18 @@
 {{-- Header --}}
-<header class="fixed top-0 w-full z-50 bg-surface-container-lowest shadow-sm border-b border-outline-variant flex items-center justify-between px-4 md:px-8 h-16" style="padding-top: env(safe-area-inset-top)">
-    <div class="flex items-center gap-4">
-        <button class="md:hidden p-2 hover:bg-surface-container rounded-full transition-colors" @click="drawerOpen = !drawerOpen">
+<header class="fixed top-0 w-full z-50 bg-surface-container-lowest shadow-sm border-b border-outline-variant flex items-center justify-between px-3 md:px-8" style="height: calc(4rem + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top)">
+    <div class="flex min-w-0 items-center gap-2 md:gap-4">
+        <button type="button" class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-surface-container transition-colors md:hidden" aria-label="Open navigation menu" @click="drawerOpen = !drawerOpen">
             <span class="material-symbols-outlined text-[22px] text-on-surface-variant">menu</span>
         </button>
-        <button class="hidden md:block p-2 hover:bg-surface-container rounded-full transition-colors" @click="sidebarOpen = !sidebarOpen">
+        <button type="button" class="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full hover:bg-surface-container transition-colors md:inline-flex" aria-label="Toggle sidebar" @click="sidebarOpen = !sidebarOpen">
             <span class="material-symbols-outlined text-[22px] text-on-surface-variant">menu</span>
         </button>
-        <a href="{{ url('/') }}" class="font-headline-md text-headline-md font-bold text-primary">
+        <a href="{{ url('/') }}" class="min-w-0 truncate font-headline-md text-headline-md font-bold text-primary">
             {{ config('app.name', 'Laravel') }}
         </a>
     </div>
 
     <div class="flex items-center gap-2">
-        {{-- Printer Button --}}
-        <button onclick="PrinterModal.open()" class="relative p-2 rounded-full bg-surface-container text-primary border border-outline-variant hover:bg-surface-container-highest hover:border-primary hover:text-on-surface shadow-sm transition-colors active:scale-95" title="Bluetooth Printer">
-            <span class="material-symbols-outlined text-[22px]">print</span>
-            <span class="absolute top-1 right-1 w-2 h-2 rounded-full hidden" id="header-printer-dot"></span>
-        </button>
 
         {{-- Notification Dropdown --}}
         <div class="relative" x-data="{ open: false }" @click.away="open = false">

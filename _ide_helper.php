@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 13.9.0.
+ * Generated for Laravel 13.23.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -1650,11 +1650,11 @@ namespace Illuminate\Support\Facades {
          * @throws \Illuminate\Contracts\Container\BindingResolutionException
          * @static
          */
-        public static function resolveFromAttribute($attribute)
+        public static function resolveFromAttribute($attribute, $parameter)
         {
             //Method inherited from \Illuminate\Container\Container 
             /** @var \Illuminate\Foundation\Application $instance */
-            return $instance->resolveFromAttribute($attribute);
+            return $instance->resolveFromAttribute($attribute, $parameter);
         }
 
         /**
@@ -3892,6 +3892,19 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Dispatch multiple commands in bulk to their appropriate handlers on the queue.
+         *
+         * @param iterable $jobs
+         * @return void
+         * @static
+         */
+        public static function bulk($jobs)
+        {
+            /** @var \Illuminate\Bus\Dispatcher $instance */
+            $instance->bulk($jobs);
+        }
+
+        /**
          * Attempt to find the batch with the given ID.
          *
          * @return \Illuminate\Bus\Batch|null
@@ -4948,6 +4961,22 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Get an item from the cache, or execute the given Closure and store the result.
+         *
+         * @template TCacheValue
+         * @param \UnitEnum|string $key
+         * @param \Closure|\DateTimeInterface|\DateInterval|int|null $ttl
+         * @param \Closure():  TCacheValue  $callback
+         * @return array{TCacheValue, bool} The cached value and whether it was warm.
+         * @static
+         */
+        public static function rememberWithWarmth($key, $ttl, $callback)
+        {
+            /** @var \Illuminate\Cache\Repository $instance */
+            return $instance->rememberWithWarmth($key, $ttl, $callback);
+        }
+
+        /**
          * Get an item from the cache, or execute the given Closure and store the result forever.
          *
          * @template TCacheValue
@@ -5355,7 +5384,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function lock($name, $seconds = 0, $owner = null)
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->lock($name, $seconds, $owner);
         }
 
@@ -5369,21 +5398,23 @@ namespace Illuminate\Support\Facades {
          */
         public static function restoreLock($name, $owner)
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->restoreLock($name, $owner);
         }
 
         /**
-         * Remove an item from the cache if it is expired.
+         * Atomically refresh the expiration of a cache key if it matches the expected owner.
          *
          * @param string $key
+         * @param mixed $expectedOwner
+         * @param int $seconds
          * @return bool
          * @static
          */
-        public static function forgetIfExpired($key)
+        public static function refreshIfOwned($key, $expectedOwner, $seconds)
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            return $instance->forgetIfExpired($key);
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->refreshIfOwned($key, $expectedOwner, $seconds);
         }
 
         /**
@@ -5394,58 +5425,71 @@ namespace Illuminate\Support\Facades {
          */
         public static function flush()
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->flush();
         }
 
         /**
-         * Get the underlying database connection.
+         * Get the full path for the given cache key.
          *
-         * @return \Illuminate\Database\MySqlConnection
+         * @param string $key
+         * @return string
          * @static
          */
-        public static function getConnection()
+        public static function path($key)
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            return $instance->getConnection();
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->path($key);
         }
 
         /**
-         * Set the underlying database connection.
+         * Get the Filesystem instance.
          *
-         * @param \Illuminate\Database\ConnectionInterface $connection
-         * @return \Illuminate\Cache\DatabaseStore
+         * @return \Illuminate\Filesystem\Filesystem
          * @static
          */
-        public static function setConnection($connection)
+        public static function getFilesystem()
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            return $instance->setConnection($connection);
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->getFilesystem();
         }
 
         /**
-         * Get the connection used to manage locks.
+         * Get the working directory of the cache.
          *
-         * @return \Illuminate\Database\MySqlConnection
+         * @return string
          * @static
          */
-        public static function getLockConnection()
+        public static function getDirectory()
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            return $instance->getLockConnection();
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->getDirectory();
         }
 
         /**
-         * Specify the connection that should be used to manage locks.
+         * Set the working directory of the cache.
          *
-         * @param \Illuminate\Database\ConnectionInterface $connection
-         * @return \Illuminate\Cache\DatabaseStore
+         * @param string $directory
+         * @return \Illuminate\Cache\FileStore
          * @static
          */
-        public static function setLockConnection($connection)
+        public static function setDirectory($directory)
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            return $instance->setLockConnection($connection);
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->setDirectory($directory);
+        }
+
+        /**
+         * Set the cache directory where locks should be stored.
+         *
+         * @param string|null $lockDirectory
+         * @return \Illuminate\Cache\FileStore
+         * @static
+         */
+        public static function setLockDirectory($lockDirectory)
+        {
+            /** @var \Illuminate\Cache\FileStore $instance */
+            return $instance->setLockDirectory($lockDirectory);
         }
 
         /**
@@ -5456,21 +5500,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getPrefix()
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->getPrefix();
-        }
-
-        /**
-         * Set the cache key prefix.
-         *
-         * @param string $prefix
-         * @return void
-         * @static
-         */
-        public static function setPrefix($prefix)
-        {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
-            $instance->setPrefix($prefix);
         }
 
         /**
@@ -5481,7 +5512,7 @@ namespace Illuminate\Support\Facades {
          */
         public static function hasSeparateLockStore()
         {
-            /** @var \Illuminate\Cache\DatabaseStore $instance */
+            /** @var \Illuminate\Cache\FileStore $instance */
             return $instance->hasSeparateLockStore();
         }
 
@@ -5831,7 +5862,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all of the configuration items for the application.
          *
-         * @return array
+         * @return array<string, mixed>
          * @static
          */
         public static function all()
@@ -6645,10 +6676,11 @@ namespace Illuminate\Support\Facades {
         /**
          * Get a queued cookie instance.
          *
+         * @template TQueuedDefault
          * @param string $key
-         * @param mixed $default
+         * @param TQueuedDefault|(\Closure(): TQueuedDefault) $default
          * @param string|null $path
-         * @return \Symfony\Component\HttpFoundation\Cookie|null
+         * @return \Symfony\Component\HttpFoundation\Cookie|TQueuedDefault
          * @static
          */
         public static function queued($key, $default = null, $path = null)
@@ -7119,7 +7151,7 @@ namespace Illuminate\Support\Facades {
          * Build a database connection instance from the given configuration.
          *
          * @param array $config
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function build($config)
@@ -7146,7 +7178,7 @@ namespace Illuminate\Support\Facades {
          * @param \UnitEnum|string $name
          * @param array $config
          * @param bool $force
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @throws \RuntimeException
          * @static
          */
@@ -7198,9 +7230,10 @@ namespace Illuminate\Support\Facades {
         /**
          * Set the default database connection for the callback execution.
          *
+         * @template TReturn
          * @param \UnitEnum|string $name
-         * @param callable $callback
-         * @return mixed
+         * @param (callable(): TReturn) $callback
+         * @return TReturn
          * @static
          */
         public static function usingConnection($name, $callback)
@@ -7397,8 +7430,58 @@ namespace Illuminate\Support\Facades {
          */
         public static function getDriverTitle()
         {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getDriverTitle();
+        }
+
+        /**
+         * Determine if the connected database is a MariaDB database.
+         *
+         * @return bool
+         * @static
+         */
+        public static function isMaria()
+        {
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->isMaria();
+        }
+
+        /**
+         * Get the server version for the connection.
+         *
+         * @return string
+         * @static
+         */
+        public static function getServerVersion()
+        {
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getServerVersion();
+        }
+
+        /**
+         * Get a schema builder instance for the connection.
+         *
+         * @return \Illuminate\Database\Schema\MariaDbBuilder
+         * @static
+         */
+        public static function getSchemaBuilder()
+        {
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getSchemaBuilder();
+        }
+
+        /**
+         * Get the schema state for the connection.
+         *
+         * @param \Illuminate\Filesystem\Filesystem|null $files
+         * @param callable|null $processFactory
+         * @return \Illuminate\Database\Schema\MariaDbSchemaState
+         * @static
+         */
+        public static function getSchemaState($files = null, $processFactory = null)
+        {
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getSchemaState($files, $processFactory);
         }
 
         /**
@@ -7412,7 +7495,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function insert($query, $bindings = [], $sequence = null)
         {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            //Method inherited from \Illuminate\Database\MySqlConnection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->insert($query, $bindings, $sequence);
         }
 
@@ -7424,58 +7508,9 @@ namespace Illuminate\Support\Facades {
          */
         public static function getLastInsertId()
         {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            //Method inherited from \Illuminate\Database\MySqlConnection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getLastInsertId();
-        }
-
-        /**
-         * Determine if the connected database is a MariaDB database.
-         *
-         * @return bool
-         * @static
-         */
-        public static function isMaria()
-        {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
-            return $instance->isMaria();
-        }
-
-        /**
-         * Get the server version for the connection.
-         *
-         * @return string
-         * @static
-         */
-        public static function getServerVersion()
-        {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
-            return $instance->getServerVersion();
-        }
-
-        /**
-         * Get a schema builder instance for the connection.
-         *
-         * @return \Illuminate\Database\Schema\MySqlBuilder
-         * @static
-         */
-        public static function getSchemaBuilder()
-        {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
-            return $instance->getSchemaBuilder();
-        }
-
-        /**
-         * Get the schema state for the connection.
-         *
-         * @param \Illuminate\Filesystem\Filesystem|null $files
-         * @param callable|null $processFactory
-         * @return \Illuminate\Database\Schema\MySqlSchemaState
-         * @static
-         */
-        public static function getSchemaState($files = null, $processFactory = null)
-        {
-            /** @var \Illuminate\Database\MySqlConnection $instance */
-            return $instance->getSchemaState($files, $processFactory);
         }
 
         /**
@@ -7487,7 +7522,7 @@ namespace Illuminate\Support\Facades {
         public static function useDefaultQueryGrammar()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->useDefaultQueryGrammar();
         }
 
@@ -7500,7 +7535,7 @@ namespace Illuminate\Support\Facades {
         public static function useDefaultSchemaGrammar()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->useDefaultSchemaGrammar();
         }
 
@@ -7513,7 +7548,7 @@ namespace Illuminate\Support\Facades {
         public static function useDefaultPostProcessor()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->useDefaultPostProcessor();
         }
 
@@ -7528,7 +7563,7 @@ namespace Illuminate\Support\Facades {
         public static function table($table, $as = null)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->table($table, $as);
         }
 
@@ -7541,7 +7576,7 @@ namespace Illuminate\Support\Facades {
         public static function query()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->query();
         }
 
@@ -7557,7 +7592,7 @@ namespace Illuminate\Support\Facades {
         public static function selectOne($query, $bindings = [], $useReadPdo = true)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->selectOne($query, $bindings, $useReadPdo);
         }
 
@@ -7574,7 +7609,7 @@ namespace Illuminate\Support\Facades {
         public static function scalar($query, $bindings = [], $useReadPdo = true)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->scalar($query, $bindings, $useReadPdo);
         }
 
@@ -7589,7 +7624,7 @@ namespace Illuminate\Support\Facades {
         public static function selectFromWriteConnection($query, $bindings = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->selectFromWriteConnection($query, $bindings);
         }
 
@@ -7606,7 +7641,7 @@ namespace Illuminate\Support\Facades {
         public static function select($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->select($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -7623,7 +7658,7 @@ namespace Illuminate\Support\Facades {
         public static function selectResultSets($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->selectResultSets($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -7640,7 +7675,7 @@ namespace Illuminate\Support\Facades {
         public static function cursor($query, $bindings = [], $useReadPdo = true, $fetchUsing = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->cursor($query, $bindings, $useReadPdo, $fetchUsing);
         }
 
@@ -7655,7 +7690,7 @@ namespace Illuminate\Support\Facades {
         public static function update($query, $bindings = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->update($query, $bindings);
         }
 
@@ -7670,7 +7705,7 @@ namespace Illuminate\Support\Facades {
         public static function delete($query, $bindings = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->delete($query, $bindings);
         }
 
@@ -7685,7 +7720,7 @@ namespace Illuminate\Support\Facades {
         public static function statement($query, $bindings = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->statement($query, $bindings);
         }
 
@@ -7700,7 +7735,7 @@ namespace Illuminate\Support\Facades {
         public static function affectingStatement($query, $bindings = [])
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->affectingStatement($query, $bindings);
         }
 
@@ -7714,7 +7749,7 @@ namespace Illuminate\Support\Facades {
         public static function unprepared($query)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->unprepared($query);
         }
 
@@ -7727,7 +7762,7 @@ namespace Illuminate\Support\Facades {
         public static function threadCount()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->threadCount();
         }
 
@@ -7741,21 +7776,22 @@ namespace Illuminate\Support\Facades {
         public static function pretend($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->pretend($callback);
         }
 
         /**
          * Execute the given callback without "pretending".
          *
-         * @param \Closure $callback
-         * @return mixed
+         * @template TReturn
+         * @param \Closure():  TReturn  $callback
+         * @return TReturn
          * @static
          */
         public static function withoutPretending($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->withoutPretending($callback);
         }
 
@@ -7770,7 +7806,7 @@ namespace Illuminate\Support\Facades {
         public static function bindValues($statement, $bindings)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->bindValues($statement, $bindings);
         }
 
@@ -7784,7 +7820,7 @@ namespace Illuminate\Support\Facades {
         public static function prepareBindings($bindings)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->prepareBindings($bindings);
         }
 
@@ -7800,7 +7836,7 @@ namespace Illuminate\Support\Facades {
         public static function logQuery($query, $bindings, $time = null)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->logQuery($query, $bindings, $time);
         }
 
@@ -7815,7 +7851,7 @@ namespace Illuminate\Support\Facades {
         public static function whenQueryingForLongerThan($threshold, $handler)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->whenQueryingForLongerThan($threshold, $handler);
         }
 
@@ -7828,7 +7864,7 @@ namespace Illuminate\Support\Facades {
         public static function allowQueryDurationHandlersToRunAgain()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->allowQueryDurationHandlersToRunAgain();
         }
 
@@ -7841,7 +7877,7 @@ namespace Illuminate\Support\Facades {
         public static function totalQueryDuration()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->totalQueryDuration();
         }
 
@@ -7854,7 +7890,7 @@ namespace Illuminate\Support\Facades {
         public static function resetTotalQueryDuration()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->resetTotalQueryDuration();
         }
 
@@ -7867,7 +7903,7 @@ namespace Illuminate\Support\Facades {
         public static function reconnectIfMissingConnection()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->reconnectIfMissingConnection();
         }
 
@@ -7875,13 +7911,13 @@ namespace Illuminate\Support\Facades {
          * Register a hook to be run just before a database transaction is started.
          *
          * @param \Closure $callback
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function beforeStartingTransaction($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->beforeStartingTransaction($callback);
         }
 
@@ -7889,13 +7925,13 @@ namespace Illuminate\Support\Facades {
          * Register a hook to be run just before a database query is executed.
          *
          * @param \Closure $callback
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function beforeExecuting($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->beforeExecuting($callback);
         }
 
@@ -7909,7 +7945,7 @@ namespace Illuminate\Support\Facades {
         public static function listen($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->listen($callback);
         }
 
@@ -7923,7 +7959,7 @@ namespace Illuminate\Support\Facades {
         public static function raw($value)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->raw($value);
         }
 
@@ -7939,7 +7975,7 @@ namespace Illuminate\Support\Facades {
         public static function escape($value, $binary = false)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->escape($value, $binary);
         }
 
@@ -7952,7 +7988,7 @@ namespace Illuminate\Support\Facades {
         public static function hasModifiedRecords()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->hasModifiedRecords();
         }
 
@@ -7966,7 +8002,7 @@ namespace Illuminate\Support\Facades {
         public static function recordsHaveBeenModified($value = true)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->recordsHaveBeenModified($value);
         }
 
@@ -7974,13 +8010,13 @@ namespace Illuminate\Support\Facades {
          * Set the record modification state.
          *
          * @param bool $value
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setRecordModificationState($value)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setRecordModificationState($value);
         }
 
@@ -7993,7 +8029,7 @@ namespace Illuminate\Support\Facades {
         public static function forgetRecordModificationState()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->forgetRecordModificationState();
         }
 
@@ -8001,13 +8037,13 @@ namespace Illuminate\Support\Facades {
          * Indicate that the connection should use the write PDO connection for reads.
          *
          * @param bool $value
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function useWriteConnectionWhenReading($value = true)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->useWriteConnectionWhenReading($value);
         }
 
@@ -8020,7 +8056,7 @@ namespace Illuminate\Support\Facades {
         public static function getPdo()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getPdo();
         }
 
@@ -8033,7 +8069,7 @@ namespace Illuminate\Support\Facades {
         public static function getRawPdo()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getRawPdo();
         }
 
@@ -8046,7 +8082,7 @@ namespace Illuminate\Support\Facades {
         public static function getReadPdo()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getReadPdo();
         }
 
@@ -8059,21 +8095,47 @@ namespace Illuminate\Support\Facades {
         public static function getRawReadPdo()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getRawReadPdo();
+        }
+
+        /**
+         * Get the current PDO connection used for direct connections.
+         *
+         * @return \PDO
+         * @static
+         */
+        public static function getDirectPdo()
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getDirectPdo();
+        }
+
+        /**
+         * Get the current direct PDO connection parameter without executing any reconnect logic.
+         *
+         * @return \PDO|\Closure|null
+         * @static
+         */
+        public static function getRawDirectPdo()
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getRawDirectPdo();
         }
 
         /**
          * Set the PDO connection.
          *
          * @param \PDO|\Closure|null $pdo
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setPdo($pdo)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setPdo($pdo);
         }
 
@@ -8081,13 +8143,13 @@ namespace Illuminate\Support\Facades {
          * Set the PDO connection used for reading.
          *
          * @param \PDO|\Closure|null $pdo
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setReadPdo($pdo)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setReadPdo($pdo);
         }
 
@@ -8095,14 +8157,68 @@ namespace Illuminate\Support\Facades {
          * Set the read PDO connection configuration.
          *
          * @param array $config
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setReadPdoConfig($config)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setReadPdoConfig($config);
+        }
+
+        /**
+         * Set the PDO connection used for direct connections.
+         *
+         * @param \PDO|\Closure|null $pdo
+         * @return \Illuminate\Database\MariaDbConnection
+         * @static
+         */
+        public static function setDirectPdo($pdo)
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->setDirectPdo($pdo);
+        }
+
+        /**
+         * Set the direct PDO connection configuration.
+         *
+         * @param array $config
+         * @return \Illuminate\Database\MariaDbConnection
+         * @static
+         */
+        public static function setDirectPdoConfig($config)
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->setDirectPdoConfig($config);
+        }
+
+        /**
+         * Get the direct PDO connection configuration.
+         *
+         * @return array
+         * @static
+         */
+        public static function getDirectPdoConfig()
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->getDirectPdoConfig();
+        }
+
+        /**
+         * Determine if this connection has a direct PDO connection configured.
+         *
+         * @return bool
+         * @static
+         */
+        public static function hasDirectConnection()
+        {
+            //Method inherited from \Illuminate\Database\Connection 
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
+            return $instance->hasDirectConnection();
         }
 
         /**
@@ -8114,7 +8230,7 @@ namespace Illuminate\Support\Facades {
         public static function getName()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getName();
         }
 
@@ -8127,7 +8243,7 @@ namespace Illuminate\Support\Facades {
         public static function getNameWithReadWriteType()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getNameWithReadWriteType();
         }
 
@@ -8141,7 +8257,7 @@ namespace Illuminate\Support\Facades {
         public static function getConfig($option = null)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getConfig($option);
         }
 
@@ -8154,7 +8270,7 @@ namespace Illuminate\Support\Facades {
         public static function getDriverName()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getDriverName();
         }
 
@@ -8167,7 +8283,7 @@ namespace Illuminate\Support\Facades {
         public static function getQueryGrammar()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getQueryGrammar();
         }
 
@@ -8175,13 +8291,13 @@ namespace Illuminate\Support\Facades {
          * Set the query grammar used by the connection.
          *
          * @param \Illuminate\Database\Query\Grammars\Grammar $grammar
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setQueryGrammar($grammar)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setQueryGrammar($grammar);
         }
 
@@ -8194,7 +8310,7 @@ namespace Illuminate\Support\Facades {
         public static function getSchemaGrammar()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getSchemaGrammar();
         }
 
@@ -8202,13 +8318,13 @@ namespace Illuminate\Support\Facades {
          * Set the schema grammar used by the connection.
          *
          * @param \Illuminate\Database\Schema\Grammars\Grammar $grammar
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setSchemaGrammar($grammar)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setSchemaGrammar($grammar);
         }
 
@@ -8221,7 +8337,7 @@ namespace Illuminate\Support\Facades {
         public static function getPostProcessor()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getPostProcessor();
         }
 
@@ -8229,13 +8345,13 @@ namespace Illuminate\Support\Facades {
          * Set the query post processor used by the connection.
          *
          * @param \Illuminate\Database\Query\Processors\Processor $processor
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setPostProcessor($processor)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setPostProcessor($processor);
         }
 
@@ -8248,7 +8364,7 @@ namespace Illuminate\Support\Facades {
         public static function getEventDispatcher()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getEventDispatcher();
         }
 
@@ -8256,13 +8372,13 @@ namespace Illuminate\Support\Facades {
          * Set the event dispatcher instance on the connection.
          *
          * @param \Illuminate\Contracts\Events\Dispatcher $events
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setEventDispatcher($events)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setEventDispatcher($events);
         }
 
@@ -8275,7 +8391,7 @@ namespace Illuminate\Support\Facades {
         public static function unsetEventDispatcher()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->unsetEventDispatcher();
         }
 
@@ -8283,13 +8399,13 @@ namespace Illuminate\Support\Facades {
          * Set the transaction manager instance on the connection.
          *
          * @param \Illuminate\Database\DatabaseTransactionsManager $manager
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setTransactionManager($manager)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setTransactionManager($manager);
         }
 
@@ -8302,7 +8418,7 @@ namespace Illuminate\Support\Facades {
         public static function unsetTransactionManager()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->unsetTransactionManager();
         }
 
@@ -8315,7 +8431,7 @@ namespace Illuminate\Support\Facades {
         public static function pretending()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->pretending();
         }
 
@@ -8328,7 +8444,7 @@ namespace Illuminate\Support\Facades {
         public static function getQueryLog()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getQueryLog();
         }
 
@@ -8341,7 +8457,7 @@ namespace Illuminate\Support\Facades {
         public static function getRawQueryLog()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getRawQueryLog();
         }
 
@@ -8354,7 +8470,7 @@ namespace Illuminate\Support\Facades {
         public static function flushQueryLog()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->flushQueryLog();
         }
 
@@ -8367,7 +8483,7 @@ namespace Illuminate\Support\Facades {
         public static function enableQueryLog()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->enableQueryLog();
         }
 
@@ -8380,7 +8496,7 @@ namespace Illuminate\Support\Facades {
         public static function disableQueryLog()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->disableQueryLog();
         }
 
@@ -8393,7 +8509,7 @@ namespace Illuminate\Support\Facades {
         public static function logging()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->logging();
         }
 
@@ -8406,7 +8522,7 @@ namespace Illuminate\Support\Facades {
         public static function getDatabaseName()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getDatabaseName();
         }
 
@@ -8414,13 +8530,13 @@ namespace Illuminate\Support\Facades {
          * Set the name of the connected database.
          *
          * @param string $database
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setDatabaseName($database)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setDatabaseName($database);
         }
 
@@ -8428,13 +8544,13 @@ namespace Illuminate\Support\Facades {
          * Set the read / write type of the connection.
          *
          * @param string|null $readWriteType
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setReadWriteType($readWriteType)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setReadWriteType($readWriteType);
         }
 
@@ -8447,7 +8563,7 @@ namespace Illuminate\Support\Facades {
         public static function getTablePrefix()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->getTablePrefix();
         }
 
@@ -8455,27 +8571,28 @@ namespace Illuminate\Support\Facades {
          * Set the table prefix in use by the connection.
          *
          * @param string $prefix
-         * @return \Illuminate\Database\MySqlConnection
+         * @return \Illuminate\Database\MariaDbConnection
          * @static
          */
         public static function setTablePrefix($prefix)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->setTablePrefix($prefix);
         }
 
         /**
          * Execute the given callback without table prefix.
          *
-         * @param \Closure $callback
-         * @return mixed
+         * @template TReturn
+         * @param (\Closure($this): TReturn) $callback
+         * @return TReturn
          * @static
          */
         public static function withoutTablePrefix($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->withoutTablePrefix($callback);
         }
 
@@ -8490,7 +8607,7 @@ namespace Illuminate\Support\Facades {
         public static function resolverFor($driver, $callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            \Illuminate\Database\MySqlConnection::resolverFor($driver, $callback);
+            \Illuminate\Database\MariaDbConnection::resolverFor($driver, $callback);
         }
 
         /**
@@ -8503,7 +8620,7 @@ namespace Illuminate\Support\Facades {
         public static function getResolver($driver)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            return \Illuminate\Database\MySqlConnection::getResolver($driver);
+            return \Illuminate\Database\MariaDbConnection::getResolver($driver);
         }
 
         /**
@@ -8519,7 +8636,7 @@ namespace Illuminate\Support\Facades {
         public static function transaction($callback, $attempts = 1)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->transaction($callback, $attempts);
         }
 
@@ -8533,7 +8650,7 @@ namespace Illuminate\Support\Facades {
         public static function beginTransaction()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->beginTransaction();
         }
 
@@ -8547,7 +8664,7 @@ namespace Illuminate\Support\Facades {
         public static function commit()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->commit();
         }
 
@@ -8562,7 +8679,7 @@ namespace Illuminate\Support\Facades {
         public static function rollBack($toLevel = null)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->rollBack($toLevel);
         }
 
@@ -8575,7 +8692,7 @@ namespace Illuminate\Support\Facades {
         public static function transactionLevel()
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             return $instance->transactionLevel();
         }
 
@@ -8590,7 +8707,7 @@ namespace Illuminate\Support\Facades {
         public static function afterCommit($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->afterCommit($callback);
         }
 
@@ -8605,7 +8722,7 @@ namespace Illuminate\Support\Facades {
         public static function afterRollBack($callback)
         {
             //Method inherited from \Illuminate\Database\Connection 
-            /** @var \Illuminate\Database\MySqlConnection $instance */
+            /** @var \Illuminate\Database\MariaDbConnection $instance */
             $instance->afterRollBack($callback);
         }
 
@@ -8834,7 +8951,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Gets the raw, unprepared listeners.
          *
-         * @return array
+         * @return array<string, callable|array|class-string|null>
          * @static
          */
         public static function getRawListeners()
@@ -10419,7 +10536,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Client\PendingRequest withResponseMiddleware(callable $middleware)
      * @method static \Illuminate\Http\Client\PendingRequest withAttributes(array $attributes)
      * @method static \Illuminate\Http\Client\PendingRequest beforeSending(callable $callback)
-     * @method static \Illuminate\Http\Client\PendingRequest afterResponse(callable|null $callback)
+     * @method static \Illuminate\Http\Client\PendingRequest afterResponse(callable $callback)
      * @method static \Illuminate\Http\Client\PendingRequest throw(callable|null $callback = null)
      * @method static \Illuminate\Http\Client\PendingRequest throwIf(callable|bool $condition)
      * @method static \Illuminate\Http\Client\PendingRequest throwUnless(callable|bool $condition)
@@ -10427,6 +10544,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Http\Client\PendingRequest dd()
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface get(string $url, array|string|null $query = null)
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface head(string $url, array|string|null $query = null)
+     * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface query(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface post(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface patch(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
      * @method static \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface put(string $url, array|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable $data = [])
@@ -10512,7 +10630,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Create a new response instance for use during stubbing.
          *
-         * @param array|string|null $body
+         * @param \Psr\Http\Message\StreamInterface|array|string|resource|null $body
          * @param int $status
          * @param array $headers
          * @return \GuzzleHttp\Promise\PromiseInterface
@@ -10526,10 +10644,11 @@ namespace Illuminate\Support\Facades {
         /**
          * Create a new PSR-7 response instance for use during stubbing.
          *
-         * @param array|string|null $body
+         * @param \Psr\Http\Message\StreamInterface|array|string|resource|null $body
          * @param int $status
          * @param array<string, mixed> $headers
          * @return \GuzzleHttp\Psr7\Response
+         * @throws \InvalidArgumentException
          * @static
          */
         public static function psr7Response($body = null, $status = 200, $headers = [])
@@ -10540,7 +10659,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Create a new RequestException instance for use during stubbing.
          *
-         * @param array|string|null $body
+         * @param \Psr\Http\Message\StreamInterface|array|string|resource|null $body
          * @param int $status
          * @param array<string, mixed> $headers
          * @return \Illuminate\Http\Client\RequestException
@@ -10608,6 +10727,7 @@ namespace Illuminate\Support\Facades {
          * @param string $url
          * @param \Illuminate\Http\Client\Response|\GuzzleHttp\Promise\PromiseInterface|callable|int|string|array|\Illuminate\Http\Client\ResponseSequence $callback
          * @return \Illuminate\Http\Client\Factory
+         * @throws \InvalidArgumentException
          * @static
          */
         public static function stubUrl($url, $callback)
@@ -10873,6 +10993,183 @@ namespace Illuminate\Support\Facades {
 
             }
     /**
+     * @see \Illuminate\Image\ImageManager
+     */
+    class Image {
+        /**
+         * Create an image instance from raw bytes.
+         *
+         * @static
+         */
+        public static function fromBytes($contents)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromBytes($contents);
+        }
+
+        /**
+         * Create an image instance from a base64 encoded string.
+         *
+         * @static
+         */
+        public static function fromBase64($base64)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromBase64($base64);
+        }
+
+        /**
+         * Create an image instance from a file path.
+         *
+         * @static
+         */
+        public static function fromPath($path)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromPath($path);
+        }
+
+        /**
+         * Create an image instance from a storage disk path.
+         *
+         * @static
+         */
+        public static function fromStorage($path, $disk = null)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromStorage($path, $disk);
+        }
+
+        /**
+         * Create an image instance from an uploaded file.
+         *
+         * @static
+         */
+        public static function fromUpload($file)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromUpload($file);
+        }
+
+        /**
+         * Create an image instance from a URL.
+         *
+         * @static
+         */
+        public static function fromUrl($url)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->fromUrl($url);
+        }
+
+        /**
+         * Register a transformation handler for the given driver.
+         *
+         * @param class-string<\Illuminate\Contracts\Image\Transformation> $transformation
+         * @static
+         */
+        public static function transformUsing($driver, $transformation, $callback)
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->transformUsing($driver, $transformation, $callback);
+        }
+
+        /**
+         * Get the default image driver name.
+         *
+         * @static
+         */
+        public static function getDefaultDriver()
+        {
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->getDefaultDriver();
+        }
+
+        /**
+         * Get a driver instance.
+         *
+         * @param \UnitEnum|string|null $driver
+         * @return mixed
+         * @throws \InvalidArgumentException
+         * @static
+         */
+        public static function driver($driver = null)
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->driver($driver);
+        }
+
+        /**
+         * Register a custom driver creator Closure.
+         *
+         * @param string $driver
+         * @param-closure-this $this  $callback
+         * @return \Illuminate\Image\ImageManager
+         * @static
+         */
+        public static function extend($driver, $callback)
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->extend($driver, $callback);
+        }
+
+        /**
+         * Get all of the created "drivers".
+         *
+         * @return array<string, mixed>
+         * @static
+         */
+        public static function getDrivers()
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->getDrivers();
+        }
+
+        /**
+         * Get the container instance used by the manager.
+         *
+         * @return \Illuminate\Contracts\Container\Container
+         * @static
+         */
+        public static function getContainer()
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->getContainer();
+        }
+
+        /**
+         * Set the container instance used by the manager.
+         *
+         * @param \Illuminate\Contracts\Container\Container $container
+         * @return \Illuminate\Image\ImageManager
+         * @static
+         */
+        public static function setContainer($container)
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->setContainer($container);
+        }
+
+        /**
+         * Forget all of the resolved driver instances.
+         *
+         * @return \Illuminate\Image\ImageManager
+         * @static
+         */
+        public static function forgetDrivers()
+        {
+            //Method inherited from \Illuminate\Support\Manager 
+            /** @var \Illuminate\Image\ImageManager $instance */
+            return $instance->forgetDrivers();
+        }
+
+            }
+    /**
      * @see \Illuminate\Translation\Translator
      */
     class Lang {
@@ -10919,6 +11216,31 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Translation\Translator $instance */
             return $instance->get($key, $replace, $locale, $fallback);
+        }
+
+        /**
+         * Get the specified string translation value.
+         *
+         * @throws \InvalidArgumentException
+         * @static
+         */
+        public static function string($key, $replace = [], $locale = null, $fallback = true)
+        {
+            /** @var \Illuminate\Translation\Translator $instance */
+            return $instance->string($key, $replace, $locale, $fallback);
+        }
+
+        /**
+         * Get the specified array translation value.
+         *
+         * @return array<array-key, mixed>
+         * @throws \InvalidArgumentException
+         * @static
+         */
+        public static function array($key, $replace = [], $locale = null, $fallback = true)
+        {
+            /** @var \Illuminate\Translation\Translator $instance */
+            return $instance->array($key, $replace, $locale, $fallback);
         }
 
         /**
@@ -11411,7 +11733,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Unset the given channel instance.
          *
-         * @param string|null $driver
+         * @param \UnitEnum|string|null $driver
          * @return void
          * @static
          */
@@ -11842,6 +12164,20 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Support\Testing\Fakes\MailFake $instance */
             $instance->assertQueued($mailable, $callback);
+        }
+
+        /**
+         * Assert if a mailable was queued a number of times.
+         *
+         * @param string $mailable
+         * @param int $times
+         * @return void
+         * @static
+         */
+        public static function assertQueuedTimes($mailable, $times = 1)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\MailFake $instance */
+            $instance->assertQueuedTimes($mailable, $times);
         }
 
         /**
@@ -12991,8 +13327,8 @@ namespace Illuminate\Support\Facades {
          * Set the queue route for the given class.
          *
          * @param array|class-string $class
-         * @param string|null $queue
-         * @param string|null $connection
+         * @param \UnitEnum|string|null $queue
+         * @param \UnitEnum|string|null $connection
          * @return void
          * @static
          */
@@ -13083,6 +13419,20 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Queue\QueueManager $instance */
             return $instance->isPaused($connection, $queue);
+        }
+
+        /**
+         * Determine which of the given queues are currently paused.
+         *
+         * @param string $connection
+         * @param array $queues
+         * @return array
+         * @static
+         */
+        public static function getPausedQueues($connection, $queues)
+        {
+            /** @var \Illuminate\Queue\QueueManager $instance */
+            return $instance->getPausedQueues($connection, $queues);
         }
 
         /**
@@ -13258,6 +13608,19 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Assert if a job was pushed exactly once.
+         *
+         * @param string $job
+         * @return void
+         * @static
+         */
+        public static function assertPushedOnce($job)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            $instance->assertPushedOnce($job);
+        }
+
+        /**
          * Assert if a job was pushed based on a truth-test callback.
          *
          * @param \UnitEnum|string $queue
@@ -13423,7 +13786,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the size of the queue.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return int
          * @static
          */
@@ -13436,7 +13799,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the number of pending jobs.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return int
          * @static
          */
@@ -13449,7 +13812,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the number of delayed jobs.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return int
          * @static
          */
@@ -13462,7 +13825,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the number of reserved jobs.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return int
          * @static
          */
@@ -13475,7 +13838,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the pending jobs for the given queue.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
@@ -13488,8 +13851,8 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the delayed jobs for the given queue.
          *
-         * @param string|null $queue
-         * @return \Illuminate\Support\Collection
+         * @param \UnitEnum|string|null $queue
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function delayedJobs($queue = null)
@@ -13501,8 +13864,8 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the reserved jobs for the given queue.
          *
-         * @param string|null $queue
-         * @return \Illuminate\Support\Collection
+         * @param \UnitEnum|string|null $queue
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function reservedJobs($queue = null)
@@ -13526,7 +13889,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all delayed jobs across every queue.
          *
-         * @return \Illuminate\Support\Collection
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function allDelayedJobs()
@@ -13538,7 +13901,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get all reserved jobs across every queue.
          *
-         * @return \Illuminate\Support\Collection
+         * @return \Illuminate\Support\Collection<int, \Illuminate\Queue\Jobs\InspectedJob>
          * @static
          */
         public static function allReservedJobs()
@@ -13550,7 +13913,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Get the creation timestamp of the oldest pending job, excluding delayed jobs.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return int|null
          * @static
          */
@@ -13565,7 +13928,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param string|object $job
          * @param mixed $data
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return mixed
          * @static
          */
@@ -13592,7 +13955,7 @@ namespace Illuminate\Support\Facades {
          * Push a raw payload onto the queue.
          *
          * @param string $payload
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @param array $options
          * @return mixed
          * @static
@@ -13609,7 +13972,7 @@ namespace Illuminate\Support\Facades {
          * @param \DateTimeInterface|\DateInterval|int $delay
          * @param string|object $job
          * @param mixed $data
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return mixed
          * @static
          */
@@ -13622,7 +13985,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Push a new job onto the queue.
          *
-         * @param string $queue
+         * @param \UnitEnum|string $queue
          * @param string|object $job
          * @param mixed $data
          * @return mixed
@@ -13637,7 +14000,7 @@ namespace Illuminate\Support\Facades {
         /**
          * Push a new job onto a specific queue after (n) seconds.
          *
-         * @param string $queue
+         * @param \UnitEnum|string $queue
          * @param \DateTimeInterface|\DateInterval|int $delay
          * @param string|object $job
          * @param mixed $data
@@ -13651,9 +14014,23 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Mark the given job as reserved.
+         *
+         * @param \Closure|string|object $job
+         * @param \UnitEnum|string|null $queue
+         * @return void
+         * @static
+         */
+        public static function reserve($job, $queue = null)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            $instance->reserve($job, $queue);
+        }
+
+        /**
          * Pop the next job off of the queue.
          *
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return \Illuminate\Contracts\Queue\Job|null
          * @static
          */
@@ -13668,7 +14045,7 @@ namespace Illuminate\Support\Facades {
          *
          * @param array $jobs
          * @param mixed $data
-         * @param string|null $queue
+         * @param \UnitEnum|string|null $queue
          * @return mixed
          * @static
          */
@@ -13725,6 +14102,44 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
             $instance->releaseUniqueJobLocks();
+        }
+
+        /**
+         * Clear all of the reserved jobs.
+         *
+         * @return void
+         * @static
+         */
+        public static function clearReserved()
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            $instance->clearReserved();
+        }
+
+        /**
+         * Register a callback to be invoked before pushing a job.
+         *
+         * @param callable $callback
+         * @return \Illuminate\Support\Testing\Fakes\QueueFake
+         * @static
+         */
+        public static function beforePushing($callback)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            return $instance->beforePushing($callback);
+        }
+
+        /**
+         * Register a callback to be invoked after pushing a job.
+         *
+         * @param callable $callback
+         * @return \Illuminate\Support\Testing\Fakes\QueueFake
+         * @static
+         */
+        public static function afterPushing($callback)
+        {
+            /** @var \Illuminate\Support\Testing\Fakes\QueueFake $instance */
+            return $instance->afterPushing($callback);
         }
 
         /**
@@ -13800,11 +14215,11 @@ namespace Illuminate\Support\Facades {
         /**
          * Delete all of the jobs from the queue.
          *
-         * @param string $queue
+         * @param string|null $queue
          * @return int
          * @static
          */
-        public static function clear($queue)
+        public static function clear($queue = null)
         {
             /** @var \Illuminate\Queue\DatabaseQueue $instance */
             return $instance->clear($queue);
@@ -14139,6 +14554,57 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Cache\RateLimiter $instance */
             return $instance->cleanRateLimiterKey($key);
+        }
+
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @param-closure-this static  $macro
+         * @return void
+         * @static
+         */
+        public static function macro($name, $macro)
+        {
+            \Illuminate\Cache\RateLimiter::macro($name, $macro);
+        }
+
+        /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void
+         * @throws \ReflectionException
+         * @static
+         */
+        public static function mixin($mixin, $replace = true)
+        {
+            \Illuminate\Cache\RateLimiter::mixin($mixin, $replace);
+        }
+
+        /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool
+         * @static
+         */
+        public static function hasMacro($name)
+        {
+            return \Illuminate\Cache\RateLimiter::hasMacro($name);
+        }
+
+        /**
+         * Flush the existing macros.
+         *
+         * @return void
+         * @static
+         */
+        public static function flushMacros()
+        {
+            \Illuminate\Cache\RateLimiter::flushMacros();
         }
 
             }
@@ -15401,10 +15867,6 @@ namespace Illuminate\Support\Facades {
          * being the original client, and each successive proxy that passed the request
          * adding the IP address where it received the request from.
          *
-         * If your reverse proxy uses a different header name than "X-Forwarded-For",
-         * ("Client-Ip" for instance), configure it via the $trustedHeaderSet
-         * argument of the Request::setTrustedProxies() method instead.
-         *
          * @see getClientIps()
          * @see https://wikipedia.org/wiki/X-Forwarded-For
          * @static
@@ -16577,6 +17039,17 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Retrieve a file from the request as an image instance.
+         *
+         * @static
+         */
+        public static function image($key)
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->image($key);
+        }
+
+        /**
          * Dump the items.
          *
          * @param mixed $keys
@@ -16644,10 +17117,12 @@ namespace Illuminate\Support\Facades {
         /**
          * Apply the callback if the instance contains the given key.
          *
+         * @template TReturn
+         * @template TReturnDefault = never
          * @param string $key
-         * @param callable $callback
-         * @param callable|null $default
-         * @return $this|mixed
+         * @param callable(mixed):  TReturn  $callback
+         * @param (callable(): TReturnDefault)|null $default
+         * @return $this|TReturn|\Illuminate\Http\TReturnDefault
          * @static
          */
         public static function whenHas($key, $callback, $default = null)
@@ -16698,16 +17173,37 @@ namespace Illuminate\Support\Facades {
         /**
          * Apply the callback if the instance contains a non-empty value for the given key.
          *
+         * @template TReturn
+         * @template TReturnDefault = never
          * @param string $key
-         * @param callable $callback
-         * @param callable|null $default
-         * @return $this|mixed
+         * @param callable(mixed):  TReturn  $callback
+         * @param (callable(): TReturnDefault)|null $default
+         * @return $this|TReturn|\Illuminate\Http\TReturnDefault
          * @static
          */
         public static function whenFilled($key, $callback, $default = null)
         {
             /** @var \Illuminate\Http\Request $instance */
             return $instance->whenFilled($key, $callback, $default);
+        }
+
+        /**
+         * Apply the callback if the instance contains a valid enum value for the given key.
+         *
+         * @template TEnum of \BackedEnum
+         * @template TReturn
+         * @template TReturnDefault = never
+         * @param string $key
+         * @param class-string<TEnum> $enumClass
+         * @param callable(TEnum):TReturn $callback
+         * @param (callable(): TReturnDefault)|null $default
+         * @return $this|TReturn|\Illuminate\Http\TReturnDefault
+         * @static
+         */
+        public static function whenEnum($key, $enumClass, $callback, $default = null)
+        {
+            /** @var \Illuminate\Http\Request $instance */
+            return $instance->whenEnum($key, $enumClass, $callback, $default);
         }
 
         /**
@@ -16726,10 +17222,12 @@ namespace Illuminate\Support\Facades {
         /**
          * Apply the callback if the instance is missing the given key.
          *
+         * @template TReturn
+         * @template TReturnDefault = never
          * @param string $key
-         * @param callable $callback
-         * @param callable|null $default
-         * @return $this|mixed
+         * @param callable(mixed):  TReturn  $callback
+         * @param (callable(): TReturnDefault)|null $default
+         * @return $this|TReturn|\Illuminate\Http\TReturnDefault
          * @static
          */
         public static function whenMissing($key, $callback, $default = null)
@@ -17398,6 +17896,7 @@ namespace Illuminate\Support\Facades {
             }
     /**
      * @method static \Illuminate\Routing\RouteRegistrar attribute(string $key, mixed $value)
+     * @method static \Illuminate\Routing\RouteRegistrar metadata(array $metadata)
      * @method static \Illuminate\Routing\RouteRegistrar whereAlpha(array|string $parameters)
      * @method static \Illuminate\Routing\RouteRegistrar whereAlphaNumeric(array|string $parameters)
      * @method static \Illuminate\Routing\RouteRegistrar whereNumber(array|string $parameters)
@@ -18528,6 +19027,7 @@ namespace Illuminate\Support\Facades {
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes skip(\Closure|bool $callback)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes name(string $description)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes description(string $description)
+     * @method static \Illuminate\Console\Scheduling\PendingEventAttributes withAttributes(array $attributes)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes cron(string $expression)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes between(string $startTime, string $endTime)
      * @method static \Illuminate\Console\Scheduling\PendingEventAttributes unlessBetween(string $startTime, string $endTime)
@@ -18734,6 +19234,19 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Indicate that the scheduler should not poll for pause or interrupt signals.
+         *
+         * This prevents the scheduler from hitting the application cache to determine if it needs to pause or interrupt.
+         *
+         * @return void
+         * @static
+         */
+        public static function withoutInterruptionPolling()
+        {
+            \Illuminate\Console\Scheduling\Schedule::withoutInterruptionPolling();
+        }
+
+        /**
          * Register a custom macro.
          *
          * @param string $name
@@ -18812,7 +19325,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function dropAllTables()
         {
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            //Method inherited from \Illuminate\Database\Schema\MySqlBuilder 
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->dropAllTables();
         }
 
@@ -18824,7 +19338,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function dropAllViews()
         {
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            //Method inherited from \Illuminate\Database\Schema\MySqlBuilder 
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->dropAllViews();
         }
 
@@ -18836,7 +19351,8 @@ namespace Illuminate\Support\Facades {
          */
         public static function getCurrentSchemaListing()
         {
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            //Method inherited from \Illuminate\Database\Schema\MySqlBuilder 
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getCurrentSchemaListing();
         }
 
@@ -18850,7 +19366,7 @@ namespace Illuminate\Support\Facades {
         public static function defaultStringLength($length)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::defaultStringLength($length);
+            \Illuminate\Database\Schema\MariaDbBuilder::defaultStringLength($length);
         }
 
         /**
@@ -18861,7 +19377,7 @@ namespace Illuminate\Support\Facades {
         public static function defaultTimePrecision($precision)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            return \Illuminate\Database\Schema\MySqlBuilder::defaultTimePrecision($precision);
+            return \Illuminate\Database\Schema\MariaDbBuilder::defaultTimePrecision($precision);
         }
 
         /**
@@ -18875,7 +19391,7 @@ namespace Illuminate\Support\Facades {
         public static function defaultMorphKeyType($type)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::defaultMorphKeyType($type);
+            \Illuminate\Database\Schema\MariaDbBuilder::defaultMorphKeyType($type);
         }
 
         /**
@@ -18887,7 +19403,7 @@ namespace Illuminate\Support\Facades {
         public static function morphUsingUuids()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::morphUsingUuids();
+            \Illuminate\Database\Schema\MariaDbBuilder::morphUsingUuids();
         }
 
         /**
@@ -18899,7 +19415,7 @@ namespace Illuminate\Support\Facades {
         public static function morphUsingUlids()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::morphUsingUlids();
+            \Illuminate\Database\Schema\MariaDbBuilder::morphUsingUlids();
         }
 
         /**
@@ -18912,7 +19428,7 @@ namespace Illuminate\Support\Facades {
         public static function createDatabase($name)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->createDatabase($name);
         }
 
@@ -18926,7 +19442,7 @@ namespace Illuminate\Support\Facades {
         public static function dropDatabaseIfExists($name)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->dropDatabaseIfExists($name);
         }
 
@@ -18939,7 +19455,7 @@ namespace Illuminate\Support\Facades {
         public static function getSchemas()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getSchemas();
         }
 
@@ -18953,7 +19469,7 @@ namespace Illuminate\Support\Facades {
         public static function hasTable($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->hasTable($table);
         }
 
@@ -18967,7 +19483,7 @@ namespace Illuminate\Support\Facades {
         public static function hasView($view)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->hasView($view);
         }
 
@@ -18981,7 +19497,7 @@ namespace Illuminate\Support\Facades {
         public static function getTables($schema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getTables($schema);
         }
 
@@ -18996,7 +19512,7 @@ namespace Illuminate\Support\Facades {
         public static function getTableListing($schema = null, $schemaQualified = true)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getTableListing($schema, $schemaQualified);
         }
 
@@ -19010,7 +19526,7 @@ namespace Illuminate\Support\Facades {
         public static function getViews($schema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getViews($schema);
         }
 
@@ -19024,7 +19540,7 @@ namespace Illuminate\Support\Facades {
         public static function getTypes($schema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getTypes($schema);
         }
 
@@ -19039,7 +19555,7 @@ namespace Illuminate\Support\Facades {
         public static function hasColumn($table, $column)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->hasColumn($table, $column);
         }
 
@@ -19054,7 +19570,7 @@ namespace Illuminate\Support\Facades {
         public static function hasColumns($table, $columns)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->hasColumns($table, $columns);
         }
 
@@ -19070,7 +19586,7 @@ namespace Illuminate\Support\Facades {
         public static function whenTableHasColumn($table, $column, $callback)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->whenTableHasColumn($table, $column, $callback);
         }
 
@@ -19086,7 +19602,7 @@ namespace Illuminate\Support\Facades {
         public static function whenTableDoesntHaveColumn($table, $column, $callback)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->whenTableDoesntHaveColumn($table, $column, $callback);
         }
 
@@ -19103,7 +19619,7 @@ namespace Illuminate\Support\Facades {
         public static function whenTableHasIndex($table, $index, $callback, $type = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->whenTableHasIndex($table, $index, $callback, $type);
         }
 
@@ -19120,7 +19636,7 @@ namespace Illuminate\Support\Facades {
         public static function whenTableDoesntHaveIndex($table, $index, $callback, $type = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->whenTableDoesntHaveIndex($table, $index, $callback, $type);
         }
 
@@ -19137,7 +19653,7 @@ namespace Illuminate\Support\Facades {
         public static function getColumnType($table, $column, $fullDefinition = false)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getColumnType($table, $column, $fullDefinition);
         }
 
@@ -19151,7 +19667,7 @@ namespace Illuminate\Support\Facades {
         public static function getColumnListing($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getColumnListing($table);
         }
 
@@ -19165,7 +19681,7 @@ namespace Illuminate\Support\Facades {
         public static function getColumns($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getColumns($table);
         }
 
@@ -19179,7 +19695,7 @@ namespace Illuminate\Support\Facades {
         public static function getIndexes($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getIndexes($table);
         }
 
@@ -19193,7 +19709,7 @@ namespace Illuminate\Support\Facades {
         public static function getIndexListing($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getIndexListing($table);
         }
 
@@ -19209,8 +19725,23 @@ namespace Illuminate\Support\Facades {
         public static function hasIndex($table, $index, $type = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->hasIndex($table, $index, $type);
+        }
+
+        /**
+         * Determine if the table has a given foreign key.
+         *
+         * @param string $table
+         * @param array|string $foreignKey
+         * @return bool
+         * @static
+         */
+        public static function hasForeignKey($table, $foreignKey)
+        {
+            //Method inherited from \Illuminate\Database\Schema\Builder 
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
+            return $instance->hasForeignKey($table, $foreignKey);
         }
 
         /**
@@ -19223,7 +19754,7 @@ namespace Illuminate\Support\Facades {
         public static function getForeignKeys($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getForeignKeys($table);
         }
 
@@ -19238,7 +19769,7 @@ namespace Illuminate\Support\Facades {
         public static function table($table, $callback)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->table($table, $callback);
         }
 
@@ -19253,7 +19784,7 @@ namespace Illuminate\Support\Facades {
         public static function create($table, $callback)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->create($table, $callback);
         }
 
@@ -19267,7 +19798,7 @@ namespace Illuminate\Support\Facades {
         public static function drop($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->drop($table);
         }
 
@@ -19281,7 +19812,7 @@ namespace Illuminate\Support\Facades {
         public static function dropIfExists($table)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->dropIfExists($table);
         }
 
@@ -19296,7 +19827,7 @@ namespace Illuminate\Support\Facades {
         public static function dropColumns($table, $columns)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->dropColumns($table, $columns);
         }
 
@@ -19310,7 +19841,7 @@ namespace Illuminate\Support\Facades {
         public static function dropAllTypes()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->dropAllTypes();
         }
 
@@ -19325,7 +19856,7 @@ namespace Illuminate\Support\Facades {
         public static function rename($from, $to)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->rename($from, $to);
         }
 
@@ -19338,7 +19869,7 @@ namespace Illuminate\Support\Facades {
         public static function enableForeignKeyConstraints()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->enableForeignKeyConstraints();
         }
 
@@ -19351,7 +19882,7 @@ namespace Illuminate\Support\Facades {
         public static function disableForeignKeyConstraints()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->disableForeignKeyConstraints();
         }
 
@@ -19366,7 +19897,7 @@ namespace Illuminate\Support\Facades {
         public static function withoutForeignKeyConstraints($callback)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->withoutForeignKeyConstraints($callback);
         }
 
@@ -19380,7 +19911,7 @@ namespace Illuminate\Support\Facades {
         public static function ensureVectorExtensionExists($schema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->ensureVectorExtensionExists($schema);
         }
 
@@ -19396,7 +19927,7 @@ namespace Illuminate\Support\Facades {
         public static function ensureExtensionExists($name, $schema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->ensureExtensionExists($name, $schema);
         }
 
@@ -19409,7 +19940,7 @@ namespace Illuminate\Support\Facades {
         public static function getCurrentSchemaName()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getCurrentSchemaName();
         }
 
@@ -19425,7 +19956,7 @@ namespace Illuminate\Support\Facades {
         public static function parseSchemaAndTable($reference, $withDefaultSchema = null)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->parseSchemaAndTable($reference, $withDefaultSchema);
         }
 
@@ -19438,7 +19969,7 @@ namespace Illuminate\Support\Facades {
         public static function getConnection()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             return $instance->getConnection();
         }
 
@@ -19452,7 +19983,7 @@ namespace Illuminate\Support\Facades {
         public static function blueprintResolver($resolver)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            /** @var \Illuminate\Database\Schema\MySqlBuilder $instance */
+            /** @var \Illuminate\Database\Schema\MariaDbBuilder $instance */
             $instance->blueprintResolver($resolver);
         }
 
@@ -19468,7 +19999,7 @@ namespace Illuminate\Support\Facades {
         public static function macro($name, $macro)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::macro($name, $macro);
+            \Illuminate\Database\Schema\MariaDbBuilder::macro($name, $macro);
         }
 
         /**
@@ -19483,7 +20014,7 @@ namespace Illuminate\Support\Facades {
         public static function mixin($mixin, $replace = true)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::mixin($mixin, $replace);
+            \Illuminate\Database\Schema\MariaDbBuilder::mixin($mixin, $replace);
         }
 
         /**
@@ -19496,7 +20027,7 @@ namespace Illuminate\Support\Facades {
         public static function hasMacro($name)
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            return \Illuminate\Database\Schema\MySqlBuilder::hasMacro($name);
+            return \Illuminate\Database\Schema\MariaDbBuilder::hasMacro($name);
         }
 
         /**
@@ -19508,7 +20039,7 @@ namespace Illuminate\Support\Facades {
         public static function flushMacros()
         {
             //Method inherited from \Illuminate\Database\Schema\Builder 
-            \Illuminate\Database\Schema\MySqlBuilder::flushMacros();
+            \Illuminate\Database\Schema\MariaDbBuilder::flushMacros();
         }
 
             }
@@ -20779,6 +21310,19 @@ namespace Illuminate\Support\Facades {
         }
 
         /**
+         * Assert that the disk contains no files.
+         *
+         * @return \Illuminate\Filesystem\LocalFilesystemAdapter
+         * @static
+         */
+        public static function assertEmpty()
+        {
+            //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
+            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
+            return $instance->assertEmpty();
+        }
+
+        /**
          * Determine if a file or directory exists.
          *
          * @param string $path
@@ -20956,6 +21500,18 @@ namespace Illuminate\Support\Facades {
             //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
             /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
             return $instance->download($path, $name, $headers);
+        }
+
+        /**
+         * Create an image instance from a file in storage.
+         *
+         * @static
+         */
+        public static function image($path)
+        {
+            //Method inherited from \Illuminate\Filesystem\FilesystemAdapter 
+            /** @var \Illuminate\Filesystem\LocalFilesystemAdapter $instance */
+            return $instance->image($path);
         }
 
         /**
@@ -22250,6 +22806,19 @@ namespace Illuminate\Support\Facades {
         {
             /** @var \Illuminate\Validation\Factory $instance */
             $instance->excludeUnvalidatedArrayKeys();
+        }
+
+        /**
+         * Fake the DNS lookups performed by validation rules so they always succeed.
+         *
+         * @param bool $value
+         * @return void
+         * @static
+         */
+        public static function fakeDnsLookups($value = true)
+        {
+            /** @var \Illuminate\Validation\Factory $instance */
+            $instance->fakeDnsLookups($value);
         }
 
         /**
@@ -24257,6 +24826,636 @@ namespace Riverskies\Laravel\MobileDetect\Facades {
             }
     }
 
+namespace Barryvdh\DomPDF\Facade {
+    /**
+     * @method static BasePDF setBaseHost(string $baseHost)
+     * @method static BasePDF setBasePath(string $basePath)
+     * @method static BasePDF setCanvas(\Dompdf\Canvas $canvas)
+     * @method static BasePDF setCallbacks(array<string, mixed> $callbacks)
+     * @method static BasePDF setCss(\Dompdf\Css\Stylesheet $css)
+     * @method static BasePDF setDefaultView(string $defaultView, array<string, mixed> $options)
+     * @method static BasePDF setDom(\DOMDocument $dom)
+     * @method static BasePDF setFontMetrics(\Dompdf\FontMetrics $fontMetrics)
+     * @method static BasePDF setHttpContext(resource|array<string, mixed> $httpContext)
+     * @method static BasePDF setPaper(string|float[] $paper, string $orientation = 'portrait')
+     * @method static BasePDF setProtocol(string $protocol)
+     * @method static BasePDF setTree(\Dompdf\Frame\FrameTree $tree)
+     */
+    class Pdf {
+        /**
+         * Get the DomPDF instance
+         *
+         * @static
+         */
+        public static function getDomPDF()
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->getDomPDF();
+        }
+
+        /**
+         * Show or hide warnings
+         *
+         * @static
+         */
+        public static function setWarnings($warnings)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setWarnings($warnings);
+        }
+
+        /**
+         * Load a HTML string
+         *
+         * @param string|null $encoding Not used yet
+         * @static
+         */
+        public static function loadHTML($string, $encoding = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadHTML($string, $encoding);
+        }
+
+        /**
+         * Load a HTML file
+         *
+         * @static
+         */
+        public static function loadFile($file)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadFile($file);
+        }
+
+        /**
+         * Add metadata info
+         *
+         * @param array<string, string> $info
+         * @static
+         */
+        public static function addInfo($info)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->addInfo($info);
+        }
+
+        /**
+         * Load a View and convert to HTML
+         *
+         * @param array<string, mixed> $data
+         * @param array<string, mixed> $mergeData
+         * @param string|null $encoding Not used yet
+         * @static
+         */
+        public static function loadView($view, $data = [], $mergeData = [], $encoding = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadView($view, $data, $mergeData, $encoding);
+        }
+
+        /**
+         * Set/Change an option (or array of options) in Dompdf
+         *
+         * @param array<string, mixed>|string $attribute
+         * @param null|mixed $value
+         * @static
+         */
+        public static function setOption($attribute, $value = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setOption($attribute, $value);
+        }
+
+        /**
+         * Replace all the Options from DomPDF
+         *
+         * @param array<string, mixed> $options
+         * @static
+         */
+        public static function setOptions($options, $mergeWithDefaults = false)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setOptions($options, $mergeWithDefaults);
+        }
+
+        /**
+         * Output the PDF as a string.
+         *
+         * The options parameter controls the output. Accepted options are:
+         *
+         * 'compress' = > 1 or 0 - apply content stream compression, this is
+         *    on (1) by default
+         *
+         * @param array<string, int> $options
+         * @return string The rendered PDF as string
+         * @static
+         */
+        public static function output($options = [])
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->output($options);
+        }
+
+        /**
+         * Save the PDF to a file
+         *
+         * @static
+         */
+        public static function save($filename, $disk = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->save($filename, $disk);
+        }
+
+        /**
+         * Make the PDF downloadable by the user
+         *
+         * @static
+         */
+        public static function download($filename = 'document.pdf')
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->download($filename);
+        }
+
+        /**
+         * Return a response with the PDF to show in the browser
+         *
+         * @static
+         */
+        public static function stream($filename = 'document.pdf')
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->stream($filename);
+        }
+
+        /**
+         * Render the PDF
+         *
+         * @static
+         */
+        public static function render()
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->render();
+        }
+
+        /**
+         * @param array<string> $pc
+         * @static
+         */
+        public static function setEncryption($password, $ownerpassword = '', $pc = [])
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setEncryption($password, $ownerpassword, $pc);
+        }
+
+            }
+    /**
+     * @method static BasePDF setBaseHost(string $baseHost)
+     * @method static BasePDF setBasePath(string $basePath)
+     * @method static BasePDF setCanvas(\Dompdf\Canvas $canvas)
+     * @method static BasePDF setCallbacks(array<string, mixed> $callbacks)
+     * @method static BasePDF setCss(\Dompdf\Css\Stylesheet $css)
+     * @method static BasePDF setDefaultView(string $defaultView, array<string, mixed> $options)
+     * @method static BasePDF setDom(\DOMDocument $dom)
+     * @method static BasePDF setFontMetrics(\Dompdf\FontMetrics $fontMetrics)
+     * @method static BasePDF setHttpContext(resource|array<string, mixed> $httpContext)
+     * @method static BasePDF setPaper(string|float[] $paper, string $orientation = 'portrait')
+     * @method static BasePDF setProtocol(string $protocol)
+     * @method static BasePDF setTree(\Dompdf\Frame\FrameTree $tree)
+     */
+    class Pdf {
+        /**
+         * Get the DomPDF instance
+         *
+         * @static
+         */
+        public static function getDomPDF()
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->getDomPDF();
+        }
+
+        /**
+         * Show or hide warnings
+         *
+         * @static
+         */
+        public static function setWarnings($warnings)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setWarnings($warnings);
+        }
+
+        /**
+         * Load a HTML string
+         *
+         * @param string|null $encoding Not used yet
+         * @static
+         */
+        public static function loadHTML($string, $encoding = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadHTML($string, $encoding);
+        }
+
+        /**
+         * Load a HTML file
+         *
+         * @static
+         */
+        public static function loadFile($file)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadFile($file);
+        }
+
+        /**
+         * Add metadata info
+         *
+         * @param array<string, string> $info
+         * @static
+         */
+        public static function addInfo($info)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->addInfo($info);
+        }
+
+        /**
+         * Load a View and convert to HTML
+         *
+         * @param array<string, mixed> $data
+         * @param array<string, mixed> $mergeData
+         * @param string|null $encoding Not used yet
+         * @static
+         */
+        public static function loadView($view, $data = [], $mergeData = [], $encoding = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->loadView($view, $data, $mergeData, $encoding);
+        }
+
+        /**
+         * Set/Change an option (or array of options) in Dompdf
+         *
+         * @param array<string, mixed>|string $attribute
+         * @param null|mixed $value
+         * @static
+         */
+        public static function setOption($attribute, $value = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setOption($attribute, $value);
+        }
+
+        /**
+         * Replace all the Options from DomPDF
+         *
+         * @param array<string, mixed> $options
+         * @static
+         */
+        public static function setOptions($options, $mergeWithDefaults = false)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setOptions($options, $mergeWithDefaults);
+        }
+
+        /**
+         * Output the PDF as a string.
+         *
+         * The options parameter controls the output. Accepted options are:
+         *
+         * 'compress' = > 1 or 0 - apply content stream compression, this is
+         *    on (1) by default
+         *
+         * @param array<string, int> $options
+         * @return string The rendered PDF as string
+         * @static
+         */
+        public static function output($options = [])
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->output($options);
+        }
+
+        /**
+         * Save the PDF to a file
+         *
+         * @static
+         */
+        public static function save($filename, $disk = null)
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->save($filename, $disk);
+        }
+
+        /**
+         * Make the PDF downloadable by the user
+         *
+         * @static
+         */
+        public static function download($filename = 'document.pdf')
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->download($filename);
+        }
+
+        /**
+         * Return a response with the PDF to show in the browser
+         *
+         * @static
+         */
+        public static function stream($filename = 'document.pdf')
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->stream($filename);
+        }
+
+        /**
+         * Render the PDF
+         *
+         * @static
+         */
+        public static function render()
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->render();
+        }
+
+        /**
+         * @param array<string> $pc
+         * @static
+         */
+        public static function setEncryption($password, $ownerpassword = '', $pc = [])
+        {
+            /** @var \Barryvdh\DomPDF\PDF $instance */
+            return $instance->setEncryption($password, $ownerpassword, $pc);
+        }
+
+            }
+    }
+
+namespace Milon\Barcode\Facades {
+    /**
+     * @method static string|false getBarcodePNGPath(string $code, string $type, int $w = 2, int $h = 30, array $color = [0, 0, 0], ?array $bgcolor = null)
+     */
+    class DNS2DFacade {
+        /**
+         * Return a SVG string representation of barcode.
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in user units.
+         * @param $h (int) Height of a single rectangle element in user units.
+         * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+         * @return string SVG code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeSVG($code, $type, $w = 3, $h = 3, $color = 'black')
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodeSVG($code, $type, $w, $h, $color);
+        }
+
+        /**
+         * Return an HTML representation of barcode.
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (string) Foreground color for bar elements (background is transparent).
+         * @return string HTML code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeHTML($code, $type, $w = 10, $h = 10, $color = 'black')
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodeHTML($code, $type, $w, $h, $color);
+        }
+
+        /**
+         * Return a PNG image representation of barcode (requires GD or Imagick library).
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements.
+         * @param $bgcolor (array) RGB (0-255) background color (transparent as default).
+         * @return string|false path or false in case of error.
+         * @protected
+         * @static
+         */
+        public static function getBarcodePNG($code, $type, $w = 3, $h = 3, $color = [], $bgcolor = null)
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodePNG($code, $type, $w, $h, $color, $bgcolor);
+        }
+
+        /**
+         * @static
+         */
+        public static function setStorPath($path)
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->setStorPath($path);
+        }
+
+            }
+    /**
+     * @method static string|false getBarcodePNGPath(string $code, string $type, int|float $w = 2, int|float $h = 30, array $color = [0, 0, 0], bool $showCode = false)
+     * @method static \Illuminate\Contracts\Routing\UrlGenerator|string getBarcodePNGUri(string $code, string $type, int|float $w = 2, int|float $h = 30, array $color = [0, 0, 0])
+     */
+    class DNS1DFacade {
+        /**
+         * Return a SVG string representation of barcode.
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Minimum width of a single bar in user units.
+         * @param $h (int) Height of barcode in user units.
+         * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+         * @return string SVG code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeSVG($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = true, $inline = false)
+        {
+            /** @var \Milon\Barcode\DNS1D $instance */
+            return $instance->getBarcodeSVG($code, $type, $w, $h, $color, $showCode, $inline);
+        }
+
+        /**
+         * Return an HTML representation of barcode.
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (string) Foreground color for bar elements (background is transparent).
+         * @param $showcode (int) font size of the shown code, default 0.
+         * @return string HTML code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeHTML($code, $type, $w = 2, $h = 30, $color = 'black', $showCode = 0)
+        {
+            /** @var \Milon\Barcode\DNS1D $instance */
+            return $instance->getBarcodeHTML($code, $type, $w, $h, $color, $showCode);
+        }
+
+        /**
+         * Return a PNG image representation of barcode (requires GD or Imagick library).
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+         * @return string|false in case of error.
+         * @protected
+         * @static
+         */
+        public static function getBarcodePNG($code, $type, $w = 2, $h = 30, $color = [], $showCode = false)
+        {
+            /** @var \Milon\Barcode\DNS1D $instance */
+            return $instance->getBarcodePNG($code, $type, $w, $h, $color, $showCode);
+        }
+
+        /**
+         * @static
+         */
+        public static function setStorPath($path)
+        {
+            /** @var \Milon\Barcode\DNS1D $instance */
+            return $instance->setStorPath($path);
+        }
+
+        /**
+         * Return a JPG image representation of barcode (requires GD or Imagick library).
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>C39 : CODE 39 - ANSI MH10.8M-1983 - USD-3 - 3 of 9.</li><li>C39+ : CODE 39 with checksum</li><li>C39E : CODE 39 EXTENDED</li><li>C39E+ : CODE 39 EXTENDED + CHECKSUM</li><li>C93 : CODE 93 - USS-93</li><li>S25 : Standard 2 of 5</li><li>S25+ : Standard 2 of 5 + CHECKSUM</li><li>I25 : Interleaved 2 of 5</li><li>I25+ : Interleaved 2 of 5 + CHECKSUM</li><li>C128 : CODE 128</li><li>C128A : CODE 128 A</li><li>C128B : CODE 128 B</li><li>C128C : CODE 128 C</li><li>EAN2 : 2-Digits UPC-Based Extention</li><li>EAN5 : 5-Digits UPC-Based Extention</li><li>EAN8 : EAN 8</li><li>EAN13 : EAN 13</li><li>UPCA : UPC-A</li><li>UPCE : UPC-E</li><li>MSI : MSI (Variation of Plessey code)</li><li>MSI+ : MSI + CHECKSUM (modulo 11)</li><li>POSTNET : POSTNET</li><li>PLANET : PLANET</li><li>RMS4CC : RMS4CC (Royal Mail 4-state Customer Code) - CBC (Customer Bar Code)</li><li>KIX : KIX (Klant index - Customer index)</li><li>IMB: Intelligent Mail Barcode - Onecode - USPS-B-3200</li><li>CODABAR : CODABAR</li><li>CODE11 : CODE 11</li><li>PHARMA : PHARMACODE</li><li>PHARMA2T : PHARMACODE TWO-TRACKS</li></ul>
+         * @param $w (int) Width of a single bar element in pixels.
+         * @param $h (int) Height of a single bar element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements (background is transparent).
+         * @return string|false in case of error.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeJPG($code, $type, $w = 2, $h = 30, $color = [], $showCode = false)
+        {
+            /** @var \Milon\Barcode\DNS1D $instance */
+            return $instance->getBarcodeJPG($code, $type, $w, $h, $color, $showCode);
+        }
+
+            }
+    /**
+     * @method static string|false getBarcodePNGPath(string $code, string $type, int $w = 2, int $h = 30, array $color = [0, 0, 0], ?array $bgcolor = null)
+     */
+    class DNS2DFacade {
+        /**
+         * Return a SVG string representation of barcode.
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in user units.
+         * @param $h (int) Height of a single rectangle element in user units.
+         * @param $color (string) Foreground color (in SVG format) for bar elements (background is transparent).
+         * @return string SVG code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeSVG($code, $type, $w = 3, $h = 3, $color = 'black')
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodeSVG($code, $type, $w, $h, $color);
+        }
+
+        /**
+         * Return an HTML representation of barcode.
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (string) Foreground color for bar elements (background is transparent).
+         * @return string HTML code.
+         * @protected
+         * @static
+         */
+        public static function getBarcodeHTML($code, $type, $w = 10, $h = 10, $color = 'black')
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodeHTML($code, $type, $w, $h, $color);
+        }
+
+        /**
+         * Return a PNG image representation of barcode (requires GD or Imagick library).
+         *
+         * <li>$arrcode['code'] code to be printed on text label</li>
+         * <li>$arrcode['num_rows'] required number of rows</li>
+         * <li>$arrcode['num_cols'] required number of columns</li>
+         * <li>$arrcode['bcode'][$r][$c] value of the cell is $r row and $c column (0 = transparent, 1 = black)</li></ul>
+         *
+         * @param $code (string) code to print
+         * @param $type (string) type of barcode: <ul><li>DATAMATRIX : Datamatrix (ISO/IEC 16022)</li><li>PDF417 : PDF417 (ISO/IEC 15438:2006)</li><li>PDF417,a,e,t,s,f,o0,o1,o2,o3,o4,o5,o6 : PDF417 with parameters: a = aspect ratio (width/height); e = error correction level (0-8); t = total number of macro segments; s = macro segment index (0-99998); f = file ID; o0 = File Name (text); o1 = Segment Count (numeric); o2 = Time Stamp (numeric); o3 = Sender (text); o4 = Addressee (text); o5 = File Size (numeric); o6 = Checksum (numeric). NOTES: Parameters t, s and f are required for a Macro Control Block, all other parametrs are optional. To use a comma character ',' on text options, replace it with the character 255: "\xff".</li><li>QRCODE : QRcode Low error correction</li><li>QRCODE,L : QRcode Low error correction</li><li>QRCODE,M : QRcode Medium error correction</li><li>QRCODE,Q : QRcode Better error correction</li><li>QRCODE,H : QR-CODE Best error correction</li><li>RAW: raw mode - comma-separad list of array rows</li><li>RAW2: raw mode - array rows are surrounded by square parenthesis.</li><li>TEST : Test matrix</li></ul>
+         * @param $w (int) Width of a single rectangle element in pixels.
+         * @param $h (int) Height of a single rectangle element in pixels.
+         * @param $color (array) RGB (0-255) foreground color for bar elements.
+         * @param $bgcolor (array) RGB (0-255) background color (transparent as default).
+         * @return string|false path or false in case of error.
+         * @protected
+         * @static
+         */
+        public static function getBarcodePNG($code, $type, $w = 3, $h = 3, $color = [], $bgcolor = null)
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->getBarcodePNG($code, $type, $w, $h, $color, $bgcolor);
+        }
+
+        /**
+         * @static
+         */
+        public static function setStorPath($path)
+        {
+            /** @var \Milon\Barcode\DNS2D $instance */
+            return $instance->setStorPath($path);
+        }
+
+            }
+    }
+
 namespace ArielMejiaDev\LarapexCharts\Facades {
     /**
      */
@@ -24907,6 +26106,161 @@ namespace ArielMejiaDev\LarapexCharts\Facades {
             }
     }
 
+namespace Laravel\Mcp\Facades {
+    /**
+     * @see Registrar
+     */
+    class Mcp {
+        /**
+         * @param class-string<Server> $serverClass
+         * @static
+         */
+        public static function web($route, $serverClass)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->web($route, $serverClass);
+        }
+
+        /**
+         * @param class-string<Server> $serverClass
+         * @static
+         */
+        public static function local($handle, $serverClass)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->local($handle, $serverClass);
+        }
+
+        /**
+         * @param \Closure():  Client  $factory
+         * @static
+         */
+        public static function registerClient($name, $factory)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->registerClient($name, $factory);
+        }
+
+        /**
+         * @static
+         */
+        public static function client($name)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->client($name);
+        }
+
+        /**
+         * @param \Closure(string, TokenSet):  mixed|array{0: class-string, 1: string}  $handler
+         * @param array<int, string>|string $middleware
+         * @static
+         */
+        public static function oAuthRoutesFor($client, $handler, $middleware = 'web', $connectUri = null, $callbackUri = null)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->oAuthRoutesFor($client, $handler, $middleware, $connectUri, $callbackUri);
+        }
+
+        /**
+         * @static
+         */
+        public static function getLocalServer($handle)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->getLocalServer($handle);
+        }
+
+        /**
+         * @static
+         */
+        public static function getWebServer($route)
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->getWebServer($route);
+        }
+
+        /**
+         * @return array<string, callable|Route>
+         * @static
+         */
+        public static function servers()
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->servers();
+        }
+
+        /**
+         * @static
+         */
+        public static function oauthRoutes($oauthPrefix = 'oauth')
+        {
+            /** @var \Laravel\Mcp\Server\Registrar $instance */
+            return $instance->oauthRoutes($oauthPrefix);
+        }
+
+        /**
+         * @return array<string, string>
+         * @static
+         */
+        public static function ensureMcpScope()
+        {
+            return \Laravel\Mcp\Server\Registrar::ensureMcpScope();
+        }
+
+        /**
+         * Register a custom macro.
+         *
+         * @param string $name
+         * @param object|callable $macro
+         * @param-closure-this static  $macro
+         * @return void
+         * @static
+         */
+        public static function macro($name, $macro)
+        {
+            \Laravel\Mcp\Server\Registrar::macro($name, $macro);
+        }
+
+        /**
+         * Mix another object into the class.
+         *
+         * @param object $mixin
+         * @param bool $replace
+         * @return void
+         * @throws \ReflectionException
+         * @static
+         */
+        public static function mixin($mixin, $replace = true)
+        {
+            \Laravel\Mcp\Server\Registrar::mixin($mixin, $replace);
+        }
+
+        /**
+         * Checks if macro is registered.
+         *
+         * @param string $name
+         * @return bool
+         * @static
+         */
+        public static function hasMacro($name)
+        {
+            return \Laravel\Mcp\Server\Registrar::hasMacro($name);
+        }
+
+        /**
+         * Flush the existing macros.
+         *
+         * @return void
+         * @static
+         */
+        public static function flushMacros()
+        {
+            \Laravel\Mcp\Server\Registrar::flushMacros();
+        }
+
+            }
+    }
+
 namespace Flux {
     /**
      * @see \Flux\FluxManager
@@ -25104,10 +26458,10 @@ namespace Flux {
         /**
          * @static
          */
-        public static function toast($text, $heading = null, $duration = 5000, $variant = null, $position = null)
+        public static function toast($text, $heading = null, $duration = 5000, $variant = null, $position = null, $link = null)
         {
             /** @var \Flux\FluxManager $instance */
-            return $instance->toast($text, $heading, $duration, $variant, $position);
+            return $instance->toast($text, $heading, $duration, $variant, $position, $link);
         }
 
             }
@@ -26078,6 +27432,16 @@ namespace Illuminate\Database\Query {
             return \Illuminate\Database\Query\Builder::getSelect();
         }
 
+        /**
+         * @see \App\Providers\AppServiceProvider::registerMacros()
+         * @param mixed $callback
+         * @static
+         */
+        public static function showSql($callback = null)
+        {
+            return \Illuminate\Database\Query\Builder::showSql($callback);
+        }
+
             }
     }
 
@@ -26453,6 +27817,35 @@ namespace Illuminate\View {
         public static function response($callback)
         {
             return \Illuminate\View\View::response($callback);
+        }
+
+            }
+    }
+
+namespace Illuminate\Database\Schema {
+    /**
+     */
+    class Blueprint {
+        /**
+         * @see \Orbit\OrbitServiceProvider::boot()
+         * @param string $name
+         * @return bool
+         * @static
+         */
+        public static function hasColumn($name)
+        {
+            return \Illuminate\Database\Schema\Blueprint::hasColumn($name);
+        }
+
+        /**
+         * @see \Orbit\OrbitServiceProvider::boot()
+         * @param string $name
+         * @return \Illuminate\Database\Schema\ColumnDefinition|null
+         * @static
+         */
+        public static function orbitGetColumn($name)
+        {
+            return \Illuminate\Database\Schema\Blueprint::orbitGetColumn($name);
         }
 
             }
@@ -28940,6 +30333,16 @@ namespace  {
         }
 
         /**
+         * @see \App\Providers\AppServiceProvider::registerMacros()
+         * @param mixed $callback
+         * @static
+         */
+        public static function showSql($callback = null)
+        {
+            return \Illuminate\Database\Eloquent\Builder::showSql($callback);
+        }
+
+        /**
          * Set the columns to be selected.
          *
          * @param mixed $columns
@@ -29043,6 +30446,7 @@ namespace  {
          * @param \Illuminate\Support\Collection<int, float>|\Illuminate\Contracts\Support\Arrayable|array<int, float>|string $vector
          * @param string|null $as
          * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @throws \JsonException
          * @static
          */
         public static function selectVectorDistance($column, $vector, $as = null)
@@ -29459,6 +30863,7 @@ namespace  {
          * @param float $maxDistance
          * @param string $boolean
          * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @throws \JsonException
          * @static
          */
         public static function whereVectorDistanceLessThan($column, $vector, $maxDistance, $boolean = 'and')
@@ -30840,6 +32245,7 @@ namespace  {
          * @param \Illuminate\Contracts\Database\Query\Expression|string $column
          * @param \Illuminate\Support\Collection<int, float>|\Illuminate\Contracts\Support\Arrayable|array<int, float> $vector
          * @return \Illuminate\Database\Eloquent\Builder<static>
+         * @throws \JsonException
          * @static
          */
         public static function orderByVectorDistance($column, $vector)
@@ -32016,6 +33422,7 @@ namespace  {
     class Gate extends \Illuminate\Support\Facades\Gate {}
     class Hash extends \Illuminate\Support\Facades\Hash {}
     class Http extends \Illuminate\Support\Facades\Http {}
+    class Image extends \Illuminate\Support\Facades\Image {}
     class Js extends \Illuminate\Support\Js {}
     class Lang extends \Illuminate\Support\Facades\Lang {}
     class Log extends \Illuminate\Support\Facades\Log {}
@@ -32041,12 +33448,19 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class MobileDetect extends \Riverskies\Laravel\MobileDetect\Facades\MobileDetect {}
+    class Pdf extends \Barryvdh\DomPDF\Facade\Pdf {}
+    class QR extends \Milon\Barcode\Facades\DNS2DFacade {}
     class LarapexChart extends \ArielMejiaDev\LarapexCharts\Facades\LarapexChart {}
+    class PDF extends \Barryvdh\DomPDF\Facade\Pdf {}
+    class Mcp extends \Laravel\Mcp\Facades\Mcp {}
     class Flux extends \Flux\Flux {}
     class Livewire extends \Livewire\Livewire {}
     class Action extends \Lorisleiva\Actions\Facades\Actions {}
     class Lody extends \Lorisleiva\Lody\Lody {}
+    class DNS1D extends \Milon\Barcode\Facades\DNS1DFacade {}
+    class DNS2D extends \Milon\Barcode\Facades\DNS2DFacade {}
     class Flasher extends \Flasher\Laravel\Facade\Flasher {}
+    class MasukStatus extends \App\Wms\MasukStatusEnum {}
 }
 
 
