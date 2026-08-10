@@ -147,6 +147,7 @@
             <div class="flex justify-between"><span>Label</span><strong>LOC-01</strong></div>
             <div class="flex justify-between"><span>Qty</span><strong>1</strong></div>
         </div>
+        <div class="print-area-boundary" aria-hidden="true">........................................................................</div>
     </div>
 
     {{-- 5. Share & Image --}}
@@ -539,6 +540,32 @@
                 border: 0;
             }
         }
+
+        body.print-area-only {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+        }
+        body.print-area-only > *:not(#print-area) {
+            display: none !important;
+        }
+        body.print-area-only #print-area {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+            border: 0 !important;
+            border-radius: 0 !important;
+        }
+        .print-area-boundary {
+            margin-top: 1rem;
+            padding-top: 0.25rem;
+            border-top: 1px dotted #111827;
+            color: #111827;
+            font: 700 0.75rem/1 monospace;
+            letter-spacing: 0.08em;
+            overflow: hidden;
+            white-space: nowrap;
+        }
     </style>
 
     <script>
@@ -666,35 +693,37 @@
         }
 
         // === Print & Save ===
-        function testPrintPage() {
+        function runForPrintArea(nativeAction, message) {
             if (!hasNativeBridge()) return;
-            NativeBridge.printPage();
-            log('printPage() → print dialog opened', 'success');
+
+            document.body.classList.add('print-area-only');
+            requestAnimationFrame(function() {
+                requestAnimationFrame(function() {
+                    NativeBridge[nativeAction]();
+                    log(message, 'success');
+                });
+            });
+        }
+
+        function testPrintPage() {
+            runForPrintArea('printPage', 'printPage() → print area only');
         }
 
         function testSaveAsPdf() {
-            if (!hasNativeBridge()) return;
-            NativeBridge.saveAsPdf();
-            log('saveAsPdf() → save dialog opened', 'success');
+            runForPrintArea('saveAsPdf', 'saveAsPdf() → print area only');
         }
 
         function testPrintArea() {
-            if (!hasNativeBridge()) return;
-            NativeBridge.printPage();
-            log('printPage() → printing #print-area only', 'success');
+            runForPrintArea('printPage', 'printPage() → printing #print-area only');
         }
 
         // === Share & Image ===
         function testShareAsImage() {
-            if (!hasNativeBridge()) return;
-            NativeBridge.shareAsImage();
-            log('shareAsImage() → share dialog opened', 'success');
+            runForPrintArea('shareAsImage', 'shareAsImage() → print area only');
         }
 
         function testSaveAsImage() {
-            if (!hasNativeBridge()) return;
-            NativeBridge.saveAsImage();
-            log('saveAsImage() → saving to gallery', 'success');
+            runForPrintArea('saveAsImage', 'saveAsImage() → print area only');
         }
 
         // === Camera & Gallery ===

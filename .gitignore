@@ -8,6 +8,7 @@
 /storage/*
 /vendor
 /android
+/android/*
 .env
 .env.backup
 .env.production
