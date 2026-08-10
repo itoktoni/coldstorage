@@ -44,7 +44,7 @@ const BluetoothPrinter = {
     setEngine(engine) {
         if (!this.isNative()) return;
         if (typeof NativeBridge.setPrinterEngine !== 'function') return;
-        NativeBridge.setPrinterEngine(engine);
+        NativeBridge.setPrinterEngine('manual');
     },
 
     // ─── Discovery ───

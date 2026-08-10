@@ -18,7 +18,6 @@ INJECTED from D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:2:1-8
 MERGED from [androidx.databinding:viewbinding:9.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\57d588f837a7db682109f37caa1d2457\transformed\viewbinding-9.3.0\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bd64af41659784fcbcc1bbf6cf3040bd\transformed\material-1.12.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\4c6a41705bcd6200e799a0df8a26e4d4\transformed\constraintlayout-2.2.0\AndroidManifest.xml:2:1-9:12
-MERGED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:2:1-18:12
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bb5387cd5d82c274037daab26742cdc8\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.appcompat:appcompat:1.7.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\054ddc18e0d142cb394d27ac74115614\transformed\appcompat-1.7.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.viewpager2:viewpager2:1.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\ecd118dafc78f2028c857b7fcd055041\transformed\viewpager2-1.0.0\AndroidManifest.xml:17:1-24:12
@@ -53,13 +52,10 @@ MERGED from [androidx.viewpager:viewpager:1.0.0] C:\Users\itokt\.gradle\caches\9
 MERGED from [androidx.recyclerview:recyclerview:1.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d7c0a45ed166f8363f634e5988c9b91a\transformed\recyclerview-1.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.customview:customview:1.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1e30b791a46e092f8745b0b72b93391d\transformed\customview-1.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:17:1-30:12
-MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d6197caf529247626f97cb5cbde081b1\transformed\lifecycle-extensions-2.2.0\AndroidManifest.xml:17:1-27:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c684ba3ded124a14aba2d475b13edd74\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3cd3501bfa85cdb697844adb15664665\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\685ac7eb53b5280f736d52b693eb76cf\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\8df73783b2b174eaa0a2760930d37b0d\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:17:1-35:12
-MERGED from [androidx.lifecycle:lifecycle-livedata-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\f22697330e121b8a5fe00579cb7dbd84\transformed\lifecycle-livedata-ktx-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\e8fa53f34c68002812599136206b1fc5\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-service:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\8ef14c88cede0bc040cc65ce7ec949ca\transformed\lifecycle-service-2.6.2\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.lifecycle:lifecycle-livedata:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\2ad020ff01d940bcd4f4519fb8b1613e\transformed\lifecycle-livedata-2.6.2\AndroidManifest.xml:17:1-22:12
@@ -235,8 +231,6 @@ MERGED from [com.google.android.material:material:1.12.0] C:\Users\itokt\.gradle
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bd64af41659784fcbcc1bbf6cf3040bd\transformed\material-1.12.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\4c6a41705bcd6200e799a0df8a26e4d4\transformed\constraintlayout-2.2.0\AndroidManifest.xml:7:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\4c6a41705bcd6200e799a0df8a26e4d4\transformed\constraintlayout-2.2.0\AndroidManifest.xml:7:5-20
-MERGED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:11:5-16:19
-MERGED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:11:5-16:19
 MERGED from [com.google.android.gms:play-services-location:21.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\390ea061bf52b0bb27699bac5e0681bb\transformed\play-services-location-21.3.0\AndroidManifest.xml:6:5-20
 MERGED from [com.google.android.gms:play-services-location:21.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\390ea061bf52b0bb27699bac5e0681bb\transformed\play-services-location-21.3.0\AndroidManifest.xml:6:5-20
 MERGED from [com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:22:5-30:19
@@ -263,8 +257,6 @@ MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\itokt\.
 MERGED from [com.google.android.gms:play-services-stats:17.0.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\769eea5da59537bb9d3ff7faba988091\transformed\play-services-stats-17.0.2\AndroidManifest.xml:7:5-20
 MERGED from [androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:28:5-89
 MERGED from [androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:28:5-89
-MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d6197caf529247626f97cb5cbde081b1\transformed\lifecycle-extensions-2.2.0\AndroidManifest.xml:24:5-25:19
-MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d6197caf529247626f97cb5cbde081b1\transformed\lifecycle-extensions-2.2.0\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:23:5-33:19
 MERGED from [com.google.android.gms:play-services-tasks:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\9d690543201c22dcf010ca6b147c8d1b\transformed\play-services-tasks-18.2.0\AndroidManifest.xml:4:5-20
@@ -309,7 +301,6 @@ MERGED from [com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\
 		ADDED from D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:35:9-44
 	android:name
 		ADDED from D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:28:9-35
-		REJECTED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:12:9-45
 activity#com.itoktoni.coldstorage.SplashActivity
 ADDED from D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:39:9-47:20
 	android:exported
@@ -384,8 +375,6 @@ MERGED from [com.google.android.material:material:1.12.0] C:\Users\itokt\.gradle
 MERGED from [com.google.android.material:material:1.12.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bd64af41659784fcbcc1bbf6cf3040bd\transformed\material-1.12.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\4c6a41705bcd6200e799a0df8a26e4d4\transformed\constraintlayout-2.2.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\4c6a41705bcd6200e799a0df8a26e4d4\transformed\constraintlayout-2.2.0\AndroidManifest.xml:5:5-44
-MERGED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:7:5-9:41
-MERGED from [com.github.KhairoHumsi:Printer-ktx:1.0.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\614e3353cf63843c68439fee5943f774\transformed\Printer-ktx-1.0.1\AndroidManifest.xml:7:5-9:41
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bb5387cd5d82c274037daab26742cdc8\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat-resources:1.7.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bb5387cd5d82c274037daab26742cdc8\transformed\appcompat-resources-1.7.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.appcompat:appcompat:1.7.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\054ddc18e0d142cb394d27ac74115614\transformed\appcompat-1.7.0\AndroidManifest.xml:5:5-44
@@ -454,10 +443,6 @@ MERGED from [androidx.customview:customview:1.1.0] C:\Users\itokt\.gradle\caches
 MERGED from [androidx.customview:customview:1.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1e30b791a46e092f8745b0b72b93391d\transformed\customview-1.1.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d6197caf529247626f97cb5cbde081b1\transformed\lifecycle-extensions-2.2.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\d6197caf529247626f97cb5cbde081b1\transformed\lifecycle-extensions-2.2.0\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c684ba3ded124a14aba2d475b13edd74\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c684ba3ded124a14aba2d475b13edd74\transformed\lifecycle-livedata-core-ktx-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3cd3501bfa85cdb697844adb15664665\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3cd3501bfa85cdb697844adb15664665\transformed\lifecycle-viewmodel-ktx-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-viewmodel:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\685ac7eb53b5280f736d52b693eb76cf\transformed\lifecycle-viewmodel-2.6.2\AndroidManifest.xml:20:5-44
@@ -466,8 +451,6 @@ MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\itokt\.gra
 MERGED from [androidx.lifecycle:lifecycle-runtime-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\8df73783b2b174eaa0a2760930d37b0d\transformed\lifecycle-runtime-ktx-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
 MERGED from [androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:21:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\f22697330e121b8a5fe00579cb7dbd84\transformed\lifecycle-livedata-ktx-2.6.2\AndroidManifest.xml:20:5-44
-MERGED from [androidx.lifecycle:lifecycle-livedata-ktx:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\f22697330e121b8a5fe00579cb7dbd84\transformed\lifecycle-livedata-ktx-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\e8fa53f34c68002812599136206b1fc5\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\e8fa53f34c68002812599136206b1fc5\transformed\lifecycle-livedata-core-2.6.2\AndroidManifest.xml:20:5-44
 MERGED from [androidx.lifecycle:lifecycle-service:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\8ef14c88cede0bc040cc65ce7ec949ca\transformed\lifecycle-service-2.6.2\AndroidManifest.xml:20:5-44

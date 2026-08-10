@@ -1,0 +1,11 @@
+{
+    "id": 80,
+    "name": "title_field",
+    "label": "Title Field",
+    "type": "text",
+    "is_required": true,
+    "sort_order": 0,
+    "mode": "multiple",
+    "created_at": "2026-08-10T11:28:35.000000Z",
+    "updated_at": "2026-08-10T11:28:35.000000Z"
+}

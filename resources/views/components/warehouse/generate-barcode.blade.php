@@ -54,7 +54,8 @@
                 <h3 class="font-semibold text-base mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-[#00288e]">preview</span> Preview
                 </h3>
-                <div class="bg-[#f2f4f6] rounded-lg p-8 flex flex-col items-center">
+                <div class="bg-[#f2f4f6] rounded-lg p-4 flex flex-col items-center">
+                    <div class="w-[55mm] h-[30mm] max-w-full bg-white border border-[#c4c5d5] p-2 flex flex-col items-center justify-center overflow-hidden">
                     <!-- Barcode SVG placeholder -->
                     <svg class="h-24 mb-4" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
                         <rect x="0" y="0" width="4" height="80" fill="#000"/>
@@ -84,7 +85,8 @@
                         <rect x="184" y="0" width="4" height="80" fill="#000"/>
                         <rect x="192" y="0" width="6" height="80" fill="#000"/>
                     </svg>
-                    <p class="font-mono text-lg font-bold text-[#191c1e] tracking-wider">SKU-BRG-2024-X9</p>
+                    <p class="font-mono text-[9px] font-bold text-[#191c1e] tracking-wider">SKU-BRG-2024-X9</p>
+                    </div>
                 </div>
                 <div class="flex gap-3 mt-4">
                     <button class="flex-1 bg-[#f2f4f6] text-[#00288e] border border-[#00288e]/20 h-12 rounded-xl font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-all">

@@ -66,7 +66,7 @@
             </h3>
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                 @foreach($qrcodes as $qr)
-                <div class="border border-outline-variant rounded-lg p-2 md:p-3 text-center bg-white qr-item">
+                <div class="border border-outline-variant rounded-lg p-2 md:p-3 text-center bg-white qr-item aspect-55/30 flex flex-col items-center justify-center">
                     <p style="font-size: 5px;" class="qr-label md:text-xs mb-1 md:mb-2 text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $qr['content'] }}</p>
                     <img src="data:image/png;base64,{{ $qr['image'] }}" alt="QR Code" class="mx-auto mb-1 md:mb-2" style="width:120px;height:120px;" />
                     <p class="qr-label text-[10px] md:text-xs text-on-surface font-medium truncate" title="{{ $qr['content'] }}">{{ $product->product_nama }}</p>

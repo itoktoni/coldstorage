@@ -30,15 +30,6 @@
                 </div>
             </div>
 
-            {{-- Engine Selector --}}
-            <div>
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Engine</label>
-                <div class="flex gap-2">
-                    <button onclick="PrinterModal.setEngine('manual')" id="pm-engine-manual" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors">Manual</button>
-                    <button onclick="PrinterModal.setEngine('ktx')" id="pm-engine-ktx" class="flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors">Library (Printer-ktx)</button>
-                </div>
-            </div>
-
             {{-- Saved Printer --}}
             <div id="pm-saved" class="hidden">
                 <label class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 block">Saved Printer</label>
@@ -103,7 +94,6 @@ const PrinterModal = {
         this.modal = document.getElementById('{{ $id }}');
         this.paperWidth = parseInt(localStorage.getItem('printer_paper_width') || '58');
         this.updatePaperButtons();
-        this.updateEngineButtons();
 
         // Auto-connect on init
         if (this.isNative()) {
@@ -140,24 +130,6 @@ const PrinterModal = {
 
     isNative() {
         return typeof NativeBridge !== 'undefined' && typeof NativeBridge.getPairedPrinters === 'function';
-    },
-
-    setEngine(engine) {
-        BluetoothPrinter.setEngine(engine);
-        this.updateEngineButtons();
-        this.refreshStatus();
-        if (typeof window.showToast === 'function') showToast('Engine: ' + (engine === 'ktx' ? 'Library (Printer-ktx)' : 'Manual'), 'info');
-    },
-
-    updateEngineButtons() {
-        const engine = BluetoothPrinter.getEngine();
-        const manual = document.getElementById('pm-engine-manual');
-        const ktx = document.getElementById('pm-engine-ktx');
-        if (!manual || !ktx) return;
-        const active = 'flex-1 py-2 rounded-xl text-sm font-bold border-2 border-blue-500 bg-blue-50 text-blue-600 transition-colors';
-        const inactive = 'flex-1 py-2 rounded-xl text-sm font-bold border-2 border-gray-200 text-gray-500 hover:border-gray-300 transition-colors';
-        manual.className = engine === 'ktx' ? inactive : active;
-        ktx.className = engine === 'ktx' ? active : inactive;
     },
 
     open() {

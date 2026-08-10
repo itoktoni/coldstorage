@@ -69,6 +69,4 @@ dependencies {
     implementation("org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5")
     implementation("org.eclipse.paho:org.eclipse.paho.android.service:1.1.1")
 
-    // ESC/POS Bluetooth Printer (KhairoHumsi/Printer-ktx) — library-based backend
-    implementation("com.github.KhairoHumsi:Printer-ktx:1.0.1")
 }

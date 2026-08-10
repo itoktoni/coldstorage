@@ -794,7 +794,6 @@ class NativeBridge(private val context: Context) {
     }
 
     private var printer: BluetoothPrinter? = null
-    private var ktxPrinter: PrinterKtxBackend? = null
     private var printerEngine: String = "manual"
 
     private fun getPrinter(): BluetoothPrinter {
@@ -804,21 +803,13 @@ class NativeBridge(private val context: Context) {
         return printer!!
     }
 
-    private fun getKtxPrinter(): PrinterKtxBackend {
-        if (ktxPrinter == null) {
-            ktxPrinter = PrinterKtxBackend(context)
-        }
-        return ktxPrinter!!
-    }
-
     private fun getActivePrinter(): IPrinterBackend {
-        return if (printerEngine == "ktx") getKtxPrinter() else getPrinter()
+        return getPrinter()
     }
 
     @JavascriptInterface
     fun setPrinterEngine(engine: String) {
-        val normalized = engine.trim().lowercase(java.util.Locale.ROOT)
-        printerEngine = if (normalized == "ktx" || normalized == "library") "ktx" else "manual"
+        printerEngine = "manual"
     }
 
     @JavascriptInterface

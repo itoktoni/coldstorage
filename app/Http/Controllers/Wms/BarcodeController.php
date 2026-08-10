@@ -89,8 +89,8 @@ class BarcodeController extends Controller
             ];
         }
 
-        $paperWidth = 58 * 2.835;
-        $paperHeight = 44 * 2.835;
+        $paperWidth = 55 * 2.835;
+        $paperHeight = 30 * 2.835;
 
         $qrHtml = '';
         foreach ($qrcodes as $index => $qr) {
@@ -109,12 +109,13 @@ class BarcodeController extends Controller
         $fullHtml = '<html><head><meta charset="UTF-8">'
             .'<style>'
             .'* { margin: 0; padding: 0; box-sizing: border-box; }'
+            .'@page { size: 55mm 30mm; margin: 0; }'
             .'body { font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #333; }'
-            .'.qr-page { width: '.$paperWidth.'pt; height: '.$paperHeight.'pt; text-align: center; padding: 2mm; page-break-after: always; }'
+            .'.qr-page { width: '.$paperWidth.'pt; height: '.$paperHeight.'pt; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5mm; page-break-after: always; overflow: hidden; }'
             .'.qr-page:last-child { page-break-after: auto; }'
             .'img { width: 25mm; height: 25mm; display: block; margin: 0 auto 1mm; }'
-            .'.name { font-size: 7px; font-weight: bold; color: #333; margin-bottom: 1px; line-height: 1.2; }'
-            .'.info { font-size: 6px; color: #666; line-height: 1.3; }'
+            .'.name { font-size: 6.5px; font-weight: bold; color: #333; margin-bottom: 1px; line-height: 1.1; }'
+            .'.info { font-size: 5.5px; color: #666; line-height: 1.2; }'
             .'</style></head><body>'.$qrHtml.'</body></html>';
 
         $pdf = Pdf::loadHTML($fullHtml);

@@ -127,10 +127,25 @@
                 <span class="material-symbols-outlined text-sm">print</span>
                 printPage()
             </button>
+            <button onclick="testPrintArea()" class="btn-test">
+                <span class="material-symbols-outlined text-sm">print</span>
+                Print Area Only
+            </button>
             <button onclick="testSaveAsPdf()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">picture_as_pdf</span>
                 saveAsPdf()
             </button>
+        </div>
+    </div>
+
+    {{-- Dedicated print area. Browser/Android print hides the rest of this test page. --}}
+    <div id="print-area" class="bg-white border-2 border-dashed border-outline-variant rounded-xl p-5 mb-4 text-center">
+        <div class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Invoice</div>
+        <div class="mt-2 text-xl font-bold text-on-surface">COLD STORAGE</div>
+        <div class="mt-1 text-sm text-on-surface-variant">Print area example</div>
+        <div class="mt-4 border-t border-outline-variant pt-3 text-left text-sm text-on-surface">
+            <div class="flex justify-between"><span>Label</span><strong>LOC-01</strong></div>
+            <div class="flex justify-between"><span>Qty</span><strong>1</strong></div>
         </div>
     </div>
 
@@ -511,6 +526,19 @@
             word-break: break-word;
             overflow-x: hidden;
         }
+
+        @media print {
+            body * { visibility: hidden !important; }
+            #print-area,
+            #print-area * { visibility: visible !important; }
+            #print-area {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                margin: 0;
+                border: 0;
+            }
+        }
     </style>
 
     <script>
@@ -648,6 +676,12 @@
             if (!hasNativeBridge()) return;
             NativeBridge.saveAsPdf();
             log('saveAsPdf() → save dialog opened', 'success');
+        }
+
+        function testPrintArea() {
+            if (!hasNativeBridge()) return;
+            NativeBridge.printPage();
+            log('printPage() → printing #print-area only', 'success');
         }
 
         // === Share & Image ===

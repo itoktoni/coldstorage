@@ -23,8 +23,8 @@ class LokasiController extends Controller
     {
         return array_merge([
             'model' => $this->model,
-            'categoryOptions'   => Category::getOptions(),
-            'gudangOptions' => Gudang::pluck('gudang_nama', 'gudang_code')
+            'categoryOptions' => Category::getOptions(),
+            'gudangOptions' => Gudang::pluck('gudang_nama', 'gudang_code'),
         ], $data);
     }
 
@@ -36,13 +36,16 @@ class LokasiController extends Controller
     public function printQrPdf(string $code)
     {
         $lokasi = $this->model->with('gudang')->where('lokasi_code', $code)->firstOrFail();
-        $qrPng  = DNS2DFacade::getBarcodePNG($lokasi->lokasi_code, 'QRCODE', 8, 8);
+        $qrPng = DNS2DFacade::getBarcodePNG($lokasi->lokasi_code, 'QRCODE', 8, 8);
+
+        $paperWidth = 55 * 2.835;
+        $paperHeight = 30 * 2.835;
 
         $pdf = Pdf::loadView('pdf.lokasi-qr', [
             'lokasi' => $lokasi,
-            'qrPng'  => $qrPng,
-        ])->setPaper('a4', 'portrait');
+            'qrPng' => $qrPng,
+        ])->setPaper([0, 0, $paperWidth, $paperHeight], 'portrait');
 
-        return $pdf->stream('qr-lokasi-' . $lokasi->lokasi_code . '.pdf');
+        return $pdf->stream('qr-lokasi-'.$lokasi->lokasi_code.'.pdf');
     }
 }

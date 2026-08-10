@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-51:/values-ky/values-ky.xml",
+            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-48:/values-ky/values-ky.xml",
             "map": [
                 {
                     "source": "C:\\Users\\itokt\\.gradle\\caches\\9.7.0\\transforms\\05bf8a74522fbe42f57349977a41bc26\\transformed\\play-services-base-18.5.0\\res\\values-ky\\values.xml",
