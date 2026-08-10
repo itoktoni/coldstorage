@@ -49,7 +49,7 @@
                     @endif
 
                     {{-- One multipart input is used by both the native camera and file picker. --}}
-                    <input type="file" id="input-product-image" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" capture="environment" class="hidden">
+                    <input type="file" id="input-product-image" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp">
                     <input type="hidden" id="input-remove" name="remove_image" value="0">
                 </div>
             @endbind

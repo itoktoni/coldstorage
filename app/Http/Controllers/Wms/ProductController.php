@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Services\SecureImageUploadService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Milon\Barcode\Facades\DNS2DFacade;
 
 class ProductController extends Controller
@@ -69,16 +70,26 @@ class ProductController extends Controller
         $service = app(SecureImageUploadService::class);
         $record = $this->model->findOrFail($id);
 
-        $validated = $request->validate($this->model->rules());
+        $validated = $request->validate([
+            ...$this->model->rules(),
+            'product_code' => [
+                'nullable',
+                'string',
+                'max:11',
+                Rule::unique('product', 'product_code')->ignore($record->product_id, 'product_id'),
+            ],
+        ]);
 
         if ($request->hasFile('product_image')) {
-            if ($record->product_image) {
-                $service->deleteFile($record->product_image);
-            }
-            $validated['product_image'] = $service->upload(
+            $newImagePath = $service->upload(
                 $request->file('product_image'),
                 'products'
             );
+
+            if ($record->product_image) {
+                $service->deleteFile($record->product_image);
+            }
+            $validated['product_image'] = $newImagePath;
         } elseif ($request->input('remove_image') === '1') {
             if ($record->product_image) {
                 $service->deleteFile($record->product_image);
