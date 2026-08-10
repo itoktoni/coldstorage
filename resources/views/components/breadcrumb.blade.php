@@ -1,5 +1,5 @@
 @props(['items' => []])
-<nav class="font-body-sm text-on-surface-variant mb-6 flex items-center gap-2" aria-label="Breadcrumb">
+<nav class="font-body-sm text-on-surface-variant my-4 flex items-center gap-2" aria-label="Breadcrumb">
     @foreach($items as $item)
         @if(!$loop->last)
             <a href="{{ $item['url'] }}" class="cursor-pointer hover:text-primary transition-colors">{{ $item['label'] }}</a>

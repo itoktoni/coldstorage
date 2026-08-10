@@ -92,54 +92,14 @@ class BarcodeController extends Controller
         $paperWidth = 55 * 2.835;
         $paperHeight = 30 * 2.835;
 
-        $qrHtml = '';
-        foreach ($qrcodes as $index => $qr) {
-            $expDisplay = $request->expired_date
-                ? '<div class="info">Exp: '.Carbon::parse($request->expired_date)->format('d M Y').'</div>'
-                : '';
-
-            $qrHtml .= '<div class="qr-page">'
-                .'<img src="data:image/png;base64,'.$qr['image'].'" />'
-                .'<div class="name">'.e($product->product_nama).'</div>'
-                .'<div class="info">Qty: '.e($request->qty).'</div>'
-                .$expDisplay
-                .'</div>';
-        }
-
-        $fullHtml = '<html><head><meta charset="UTF-8">'
-            .'<style>'
-            .'* { margin: 0; padding: 0; box-sizing: border-box; }'
-            .'@page { size: 55mm 30mm; margin: 0; }'
-            .'body { font-family: Helvetica, Arial, sans-serif; font-size: 10px; color: #333; }'
-            .'.qr-page { width: '.$paperWidth.'pt; height: '.$paperHeight.'pt; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 1.5mm; page-break-after: always; overflow: hidden; }'
-            .'.qr-page:last-child { page-break-after: auto; }'
-            .'img { width: 25mm; height: 25mm; display: block; margin: 0 auto 1mm; }'
-            .'.name { font-size: 6.5px; font-weight: bold; color: #333; margin-bottom: 1px; line-height: 1.1; }'
-            .'.info { font-size: 5.5px; color: #666; line-height: 1.2; }'
-            .'</style></head><body>'.$qrHtml.'</body></html>';
-
-        $pdf = Pdf::loadHTML($fullHtml);
+        $pdf = Pdf::loadView('pages.barcode.pdf', [
+            'product' => $product,
+            'qrcodes' => $qrcodes,
+            'qty' => $request->qty,
+            'expired' => $request->expired_date,
+        ]);
         $pdf->setPaper([0, 0, $paperWidth, $paperHeight], 'portrait');
 
-        if ($request->boolean('print')) {
-            $printScript = <<<'HTML'
-<script>
-    window.addEventListener('load', function () {
-        setTimeout(function () {
-            if (window.NativeBridge && typeof NativeBridge.printPage === 'function') {
-                NativeBridge.printPage();
-            } else {
-                window.print();
-            }
-        }, 250);
-    });
-</script>
-HTML;
-
-            return response(str_replace('</body>', $printScript.'</body>', $fullHtml))
-                ->header('Content-Type', 'text/html; charset=UTF-8');
-        }
-
-        return $pdf->download('qrcode-'.$product->product_code.'.pdf');
+        return $pdf->stream('qrcode-'.$product->product_code.'.pdf');
     }
 }

@@ -17,7 +17,7 @@
         }
         .qr-container { flex: 0 0 24mm; }
         .qr-container img { width: 24mm; height: 24mm; display: block; }
-        .name { flex: 1; font-size: 9pt; font-weight: bold; overflow-wrap: anywhere; }
+        .name { flex: 1; font-size: 9pt; font-weight: bold; overflow-wrap: anywhere; text-align: center; }
     </style>
 </head>
 <body>

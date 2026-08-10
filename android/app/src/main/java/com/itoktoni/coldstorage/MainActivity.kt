@@ -454,7 +454,11 @@ class MainActivity : AppCompatActivity() {
                 val isImageOnly = acceptTypes.any { it.startsWith("image/") }
 
                 if (isImageOnly) {
-                    showImageChooser()
+                    if (fileChooserParams?.isCaptureEnabled == true) {
+                        openCameraForForm()
+                    } else {
+                        showImageChooser()
+                    }
                 } else {
                     val intent = fileChooserParams?.createIntent()
                         ?: Intent(Intent.ACTION_GET_CONTENT).apply {

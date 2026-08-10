@@ -49,7 +49,7 @@
                     @endif
 
                     {{-- Hidden inputs --}}
-                    <input type="file" id="input-camera" accept="image/jpg,image/jpeg,image/png,image/webp" capture="environment" class="hidden">
+                    <input type="file" id="input-camera" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" capture="environment" class="hidden" disabled>
                     <input type="file" id="input-file" name="product_image" accept="image/jpg,image/jpeg,image/png,image/webp" class="hidden">
                     <input type="hidden" id="input-remove" name="remove_image" value="0">
                 </div>
@@ -94,25 +94,24 @@
             reader.readAsDataURL(file);
         }
 
-        function transferFile(file, target) {
-            const dt = new DataTransfer();
-            dt.items.add(file);
-            target.files = dt.files;
-        }
-
         btnCamera.addEventListener('click', () => inputCamera.click());
 
         btnBrowse.addEventListener('click', () => inputFile.click());
 
         inputCamera.addEventListener('change', function() {
             if (this.files[0]) {
-                transferFile(this.files[0], inputFile);
+                inputFile.value = '';
+                inputFile.disabled = true;
+                inputCamera.disabled = false;
                 showPreview(this.files[0]);
             }
         });
 
         inputFile.addEventListener('change', function() {
             if (this.files[0]) {
+                inputCamera.value = '';
+                inputCamera.disabled = true;
+                inputFile.disabled = false;
                 showPreview(this.files[0]);
             }
         });
@@ -120,6 +119,8 @@
         btnRemove.addEventListener('click', function() {
             inputFile.value = '';
             inputCamera.value = '';
+            inputFile.disabled = false;
+            inputCamera.disabled = true;
             preview.classList.add('hidden');
             previewImg.src = '';
             btnCamera.classList.remove('hidden');

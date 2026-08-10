@@ -21,8 +21,9 @@
                 <span class="material-symbols-outlined text-primary text-xl">qr_code</span>
                 Generate QR Code
             </h3>
-            <form method="POST" action="{{ route('wms-barcode.postGenerate') }}">
+            <form method="POST" action="{{ route('wms-barcode.pdf') }}" target="_blank">
                 @csrf
+                <input type="hidden" name="print" value="1">
                 <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
                     <div class="col-span-2">
                         <x-select label="Product" name="product_id" :options="$products" :default="$selectedProduct ?? ''" required />
