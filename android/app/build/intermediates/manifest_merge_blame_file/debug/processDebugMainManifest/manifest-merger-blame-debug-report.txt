@@ -12,600 +12,630 @@
 9-->INJECTED
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->D:\prd\android\app\src\main\AndroidManifest.xml:5:5-67
-11-->D:\prd\android\app\src\main\AndroidManifest.xml:5:22-64
+11-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:5:5-67
+11-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:5:22-64
 12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-12-->D:\prd\android\app\src\main\AndroidManifest.xml:6:5-79
-12-->D:\prd\android\app\src\main\AndroidManifest.xml:6:22-76
+12-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:6:5-79
+12-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:6:22-76
 13    <uses-permission android:name="android.permission.CAMERA" />
-13-->D:\prd\android\app\src\main\AndroidManifest.xml:7:5-65
-13-->D:\prd\android\app\src\main\AndroidManifest.xml:7:22-62
-14    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-14-->D:\prd\android\app\src\main\AndroidManifest.xml:8:5-79
-14-->D:\prd\android\app\src\main\AndroidManifest.xml:8:22-76
-15    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-15-->D:\prd\android\app\src\main\AndroidManifest.xml:9:5-81
-15-->D:\prd\android\app\src\main\AndroidManifest.xml:9:22-78
-16    <uses-permission
-16-->D:\prd\android\app\src\main\AndroidManifest.xml:10:5-11:38
-17        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-17-->D:\prd\android\app\src\main\AndroidManifest.xml:10:22-78
-18        android:maxSdkVersion="28" />
-18-->D:\prd\android\app\src\main\AndroidManifest.xml:11:9-35
-19    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-19-->D:\prd\android\app\src\main\AndroidManifest.xml:12:5-77
-19-->D:\prd\android\app\src\main\AndroidManifest.xml:12:22-74
-20    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-20-->D:\prd\android\app\src\main\AndroidManifest.xml:13:5-81
-20-->D:\prd\android\app\src\main\AndroidManifest.xml:13:22-78
-21    <uses-permission android:name="android.permission.WAKE_LOCK" />
-21-->D:\prd\android\app\src\main\AndroidManifest.xml:14:5-68
-21-->D:\prd\android\app\src\main\AndroidManifest.xml:14:22-65
-22    <uses-permission android:name="android.permission.VIBRATE" />
-22-->D:\prd\android\app\src\main\AndroidManifest.xml:15:5-66
-22-->D:\prd\android\app\src\main\AndroidManifest.xml:15:22-63
-23    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-23-->D:\prd\android\app\src\main\AndroidManifest.xml:16:5-79
-23-->D:\prd\android\app\src\main\AndroidManifest.xml:16:22-76
-24    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-24-->D:\prd\android\app\src\main\AndroidManifest.xml:17:5-74
-24-->D:\prd\android\app\src\main\AndroidManifest.xml:17:22-71
-25
-26    <uses-feature
-26-->D:\prd\android\app\src\main\AndroidManifest.xml:18:5-85
-27        android:name="android.hardware.camera"
-27-->D:\prd\android\app\src\main\AndroidManifest.xml:18:19-57
-28        android:required="false" />
-28-->D:\prd\android\app\src\main\AndroidManifest.xml:18:58-82
-29    <uses-feature
-29-->D:\prd\android\app\src\main\AndroidManifest.xml:19:5-95
-30        android:name="android.hardware.camera.autofocus"
-30-->D:\prd\android\app\src\main\AndroidManifest.xml:19:19-67
-31        android:required="false" />
-31-->D:\prd\android\app\src\main\AndroidManifest.xml:19:68-92
-32
-33    <!-- Required by older versions of Google Play services to create IID tokens -->
-34    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-34-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:26:5-82
-34-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:26:22-79
-35    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-35-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:26:5-77
-35-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:26:22-74
+13-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:7:5-65
+13-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:7:22-62
+14    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+14-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:8:5-75
+14-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:8:22-72
+15    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+15-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:9:5-79
+15-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:9:22-76
+16    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+16-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:10:5-81
+16-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:10:22-78
+17    <uses-permission
+17-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:11:5-12:38
+18        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+18-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:11:22-78
+19        android:maxSdkVersion="28" />
+19-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:12:9-35
+20    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+20-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:13:5-77
+20-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:13:22-74
+21    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+21-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:14:5-81
+21-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:14:22-78
+22    <uses-permission android:name="android.permission.WAKE_LOCK" />
+22-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:15:5-68
+22-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:15:22-65
+23    <uses-permission android:name="android.permission.VIBRATE" />
+23-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:16:5-66
+23-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:16:22-63
+24    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+24-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:17:5-79
+24-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:17:22-76
+25    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+25-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:18:5-74
+25-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:18:22-71
+26    <uses-permission
+26-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:19:5-95
+27        android:name="android.permission.BLUETOOTH"
+27-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:19:22-65
+28        android:maxSdkVersion="30" />
+28-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:19:66-92
+29    <uses-permission
+29-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:20:5-101
+30        android:name="android.permission.BLUETOOTH_ADMIN"
+30-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:20:22-71
+31        android:maxSdkVersion="30" />
+31-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:20:72-98
+32    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+32-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:21:5-76
+32-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:21:22-73
+33    <uses-permission
+33-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:22:5-120
+34        android:name="android.permission.BLUETOOTH_SCAN"
+34-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:22:22-70
+35        android:usesPermissionFlags="neverForLocation" />
+35-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:22:71-117
 36
-37    <permission
-37-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
-38        android:name="com.itoktoni.coldstorage.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-38-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
-39        android:protectionLevel="signature" />
-39-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
-40
-41    <uses-permission android:name="com.itoktoni.coldstorage.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-41-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
-41-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
-42
-43    <application
-43-->D:\prd\android\app\src\main\AndroidManifest.xml:21:5-78:19
-44        android:name="com.itoktoni.coldstorage.Web2ApkApp"
-44-->D:\prd\android\app\src\main\AndroidManifest.xml:22:9-35
-45        android:allowBackup="true"
-45-->D:\prd\android\app\src\main\AndroidManifest.xml:23:9-35
-46        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-46-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
-47        android:debuggable="true"
-48        android:extractNativeLibs="false"
-48-->INJECTED
-49        android:icon="@mipmap/ic_launcher"
-49-->D:\prd\android\app\src\main\AndroidManifest.xml:24:9-43
-50        android:label="@string/app_name"
-50-->D:\prd\android\app\src\main\AndroidManifest.xml:25:9-41
-51        android:roundIcon="@mipmap/ic_launcher_round"
-51-->D:\prd\android\app\src\main\AndroidManifest.xml:26:9-54
-52        android:supportsRtl="true"
-52-->D:\prd\android\app\src\main\AndroidManifest.xml:27:9-35
-53        android:theme="@style/Theme.ColdStorage.Splash"
-53-->D:\prd\android\app\src\main\AndroidManifest.xml:28:9-56
-54        android:usesCleartextTraffic="true" >
-54-->D:\prd\android\app\src\main\AndroidManifest.xml:29:9-44
-55        <activity
-55-->D:\prd\android\app\src\main\AndroidManifest.xml:32:9-40:20
-56            android:name="com.itoktoni.coldstorage.SplashActivity"
-56-->D:\prd\android\app\src\main\AndroidManifest.xml:33:13-43
-57            android:exported="true"
-57-->D:\prd\android\app\src\main\AndroidManifest.xml:34:13-36
-58            android:theme="@style/Theme.ColdStorage.Splash" >
-58-->D:\prd\android\app\src\main\AndroidManifest.xml:35:13-60
-59            <intent-filter>
-59-->D:\prd\android\app\src\main\AndroidManifest.xml:36:13-39:29
-60                <action android:name="android.intent.action.MAIN" />
-60-->D:\prd\android\app\src\main\AndroidManifest.xml:37:17-69
-60-->D:\prd\android\app\src\main\AndroidManifest.xml:37:25-66
-61
-62                <category android:name="android.intent.category.LAUNCHER" />
-62-->D:\prd\android\app\src\main\AndroidManifest.xml:38:17-77
-62-->D:\prd\android\app\src\main\AndroidManifest.xml:38:27-74
-63            </intent-filter>
-64        </activity>
-65        <activity
-65-->D:\prd\android\app\src\main\AndroidManifest.xml:42:9-46:56
-66            android:name="com.itoktoni.coldstorage.MainActivity"
-66-->D:\prd\android\app\src\main\AndroidManifest.xml:43:13-41
-67            android:configChanges="orientation|screenSize|keyboardHidden"
-67-->D:\prd\android\app\src\main\AndroidManifest.xml:45:13-74
-68            android:exported="false"
-68-->D:\prd\android\app\src\main\AndroidManifest.xml:44:13-37
-69            android:theme="@style/Theme.ColdStorage" />
-69-->D:\prd\android\app\src\main\AndroidManifest.xml:46:13-53
-70
-71        <provider
-71-->INJECTED
-72            android:name="androidx.core.content.FileProvider"
-72-->D:\prd\android\app\src\main\AndroidManifest.xml:49:13-62
-73            android:authorities="com.itoktoni.coldstorage.debug.fileprovider"
-73-->INJECTED
-74            android:exported="false"
-74-->D:\prd\android\app\src\main\AndroidManifest.xml:51:13-37
-75            android:grantUriPermissions="true" >
-75-->D:\prd\android\app\src\main\AndroidManifest.xml:52:13-47
-76            <meta-data
-76-->D:\prd\android\app\src\main\AndroidManifest.xml:53:13-55:54
-77                android:name="android.support.FILE_PROVIDER_PATHS"
-77-->D:\prd\android\app\src\main\AndroidManifest.xml:54:17-67
-78                android:resource="@xml/file_paths" />
-78-->D:\prd\android\app\src\main\AndroidManifest.xml:55:17-51
-79        </provider>
-80
-81        <service
-81-->D:\prd\android\app\src\main\AndroidManifest.xml:58:9-64:19
-82            android:name="com.itoktoni.coldstorage.FcmService"
-82-->D:\prd\android\app\src\main\AndroidManifest.xml:59:13-39
-83            android:exported="false" >
-83-->D:\prd\android\app\src\main\AndroidManifest.xml:60:13-37
-84            <intent-filter>
-84-->D:\prd\android\app\src\main\AndroidManifest.xml:61:13-63:29
-85                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-85-->D:\prd\android\app\src\main\AndroidManifest.xml:62:17-78
-85-->D:\prd\android\app\src\main\AndroidManifest.xml:62:25-75
-86            </intent-filter>
-87        </service>
-88
-89        <receiver
-89-->D:\prd\android\app\src\main\AndroidManifest.xml:66:9-72:20
-90            android:name="com.itoktoni.coldstorage.LocalNotification$NotificationReceiver"
-90-->D:\prd\android\app\src\main\AndroidManifest.xml:67:13-67
-91            android:exported="false" >
-91-->D:\prd\android\app\src\main\AndroidManifest.xml:68:13-37
-92            <intent-filter>
-92-->D:\prd\android\app\src\main\AndroidManifest.xml:69:13-71:29
-93                <action android:name="com.itoktoni.coldstorage.NOTIFICATION_ALARM" />
-93-->D:\prd\android\app\src\main\AndroidManifest.xml:70:17-86
-93-->D:\prd\android\app\src\main\AndroidManifest.xml:70:25-83
-94            </intent-filter>
-95        </receiver>
-96
-97        <service
-97-->D:\prd\android\app\src\main\AndroidManifest.xml:74:9-76:40
-98            android:name="org.eclipse.paho.android.service.MqttService"
-98-->D:\prd\android\app\src\main\AndroidManifest.xml:75:13-72
-99            android:exported="false" />
-99-->D:\prd\android\app\src\main\AndroidManifest.xml:76:13-37
-100        <service
-100-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:23:9-29:19
-101            android:name="com.google.firebase.components.ComponentDiscoveryService"
-101-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:24:13-84
-102            android:directBootAware="true"
-102-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
-103            android:exported="false" >
-103-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:25:13-37
-104            <meta-data
-104-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:26:13-28:85
-105                android:name="com.google.firebase.components:com.google.firebase.messaging.ktx.FirebaseMessagingLegacyRegistrar"
-105-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:27:17-129
-106                android:value="com.google.firebase.components.ComponentRegistrar" />
-106-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:28:17-82
-107            <meta-data
-107-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:57:13-59:85
-108                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
-108-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:58:17-122
-109                android:value="com.google.firebase.components.ComponentRegistrar" />
-109-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:59:17-82
-110            <meta-data
-110-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:60:13-62:85
-111                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
-111-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:61:17-119
-112                android:value="com.google.firebase.components.ComponentRegistrar" />
-112-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:62:17-82
-113            <meta-data
-113-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:15:13-17:85
-114                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
-114-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:16:17-130
-115                android:value="com.google.firebase.components.ComponentRegistrar" />
-115-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:17:17-82
-116            <meta-data
-116-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:18:13-20:85
-117                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
-117-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:19:17-127
-118                android:value="com.google.firebase.components.ComponentRegistrar" />
-118-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:20:17-82
-119            <meta-data
-119-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
-120                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
-120-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
-121                android:value="com.google.firebase.components.ComponentRegistrar" />
-121-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
-122            <meta-data
-122-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
-123                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
-123-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
-124                android:value="com.google.firebase.components.ComponentRegistrar" />
-124-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
-125            <meta-data
-125-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:25:13-27:85
-126                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
-126-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:26:17-115
-127                android:value="com.google.firebase.components.ComponentRegistrar" />
-127-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:27:17-82
-128        </service>
-129
-130        <receiver
-130-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:29:9-40:20
-131            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
-131-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:30:13-78
-132            android:exported="true"
-132-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:31:13-36
-133            android:permission="com.google.android.c2dm.permission.SEND" >
-133-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:32:13-73
-134            <intent-filter>
-134-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:33:13-35:29
-135                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-135-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:34:17-81
-135-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:34:25-78
-136            </intent-filter>
-137
-138            <meta-data
-138-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:37:13-39:40
-139                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
-139-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:38:17-92
-140                android:value="true" />
-140-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:39:17-37
-141        </receiver>
-142        <!--
-143             FirebaseMessagingService performs security checks at runtime,
-144             but set to not exported to explicitly avoid allowing another app to call it.
-145        -->
-146        <service
-146-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:46:9-53:19
-147            android:name="com.google.firebase.messaging.FirebaseMessagingService"
-147-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:47:13-82
-148            android:directBootAware="true"
-148-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:48:13-43
-149            android:exported="false" >
-149-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:49:13-37
-150            <intent-filter android:priority="-500" >
-150-->D:\prd\android\app\src\main\AndroidManifest.xml:61:13-63:29
-151                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-151-->D:\prd\android\app\src\main\AndroidManifest.xml:62:17-78
-151-->D:\prd\android\app\src\main\AndroidManifest.xml:62:25-75
-152            </intent-filter>
-153        </service>
-154
-155        <activity
-155-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
-156            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-156-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
-157            android:exported="false"
-157-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
-158            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-158-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
-159
-160        <provider
-160-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
-161            android:name="com.google.firebase.provider.FirebaseInitProvider"
-161-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
-162            android:authorities="com.itoktoni.coldstorage.debug.firebaseinitprovider"
-162-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
-163            android:directBootAware="true"
-163-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
-164            android:exported="false"
-164-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
-165            android:initOrder="100" />
-165-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
-166        <provider
-166-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:29:9-37:20
-167            android:name="androidx.startup.InitializationProvider"
-167-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:30:13-67
-168            android:authorities="com.itoktoni.coldstorage.debug.androidx-startup"
-168-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:31:13-68
-169            android:exported="false" >
-169-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:32:13-37
-170            <meta-data
-170-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:34:13-36:52
-171                android:name="androidx.work.WorkManagerInitializer"
-171-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:35:17-68
-172                android:value="androidx.startup" />
-172-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:36:17-49
-173            <meta-data
-173-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-174                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-174-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-175                android:value="androidx.startup" />
-175-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-176            <meta-data
-176-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
-177                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-177-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
-178                android:value="androidx.startup" />
-178-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
-179            <meta-data
-179-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
-180                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-180-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
-181                android:value="androidx.startup" />
-181-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
-182        </provider>
-183
-184        <service
-184-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:39:9-45:35
-185            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
-185-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:40:13-88
-186            android:directBootAware="false"
-186-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:41:13-44
-187            android:enabled="@bool/enable_system_alarm_service_default"
-187-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:42:13-72
-188            android:exported="false" />
-188-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:43:13-37
-189        <service
-189-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:46:9-52:35
-190            android:name="androidx.work.impl.background.systemjob.SystemJobService"
-190-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:47:13-84
-191            android:directBootAware="false"
-191-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:48:13-44
-192            android:enabled="@bool/enable_system_job_service_default"
-192-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:49:13-70
-193            android:exported="true"
-193-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:50:13-36
-194            android:permission="android.permission.BIND_JOB_SERVICE" />
-194-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:51:13-69
-195        <service
-195-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:53:9-59:35
-196            android:name="androidx.work.impl.foreground.SystemForegroundService"
-196-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:54:13-81
-197            android:directBootAware="false"
-197-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:55:13-44
-198            android:enabled="@bool/enable_system_foreground_service_default"
-198-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:56:13-77
-199            android:exported="false" />
-199-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:57:13-37
-200
-201        <receiver
-201-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:61:9-66:35
-202            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
-202-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:62:13-88
-203            android:directBootAware="false"
-203-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:63:13-44
-204            android:enabled="true"
-204-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:64:13-35
-205            android:exported="false" />
-205-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:65:13-37
-206        <receiver
-206-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:67:9-77:20
-207            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
-207-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:68:13-106
-208            android:directBootAware="false"
-208-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:69:13-44
-209            android:enabled="false"
-209-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:70:13-36
-210            android:exported="false" >
-210-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:71:13-37
-211            <intent-filter>
-211-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:73:13-76:29
-212                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-212-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:17-87
-212-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:25-84
-213                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-213-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:17-90
-213-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:25-87
-214            </intent-filter>
-215        </receiver>
-216        <receiver
-216-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:78:9-88:20
-217            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
-217-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:79:13-104
-218            android:directBootAware="false"
-218-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:80:13-44
-219            android:enabled="false"
-219-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:81:13-36
-220            android:exported="false" >
-220-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:82:13-37
-221            <intent-filter>
-221-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:84:13-87:29
-222                <action android:name="android.intent.action.BATTERY_OKAY" />
-222-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:17-77
-222-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:25-74
-223                <action android:name="android.intent.action.BATTERY_LOW" />
-223-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:17-76
-223-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:25-73
-224            </intent-filter>
-225        </receiver>
-226        <receiver
-226-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:89:9-99:20
-227            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
-227-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:90:13-104
-228            android:directBootAware="false"
-228-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:91:13-44
-229            android:enabled="false"
-229-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:92:13-36
-230            android:exported="false" >
-230-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:93:13-37
-231            <intent-filter>
-231-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:95:13-98:29
-232                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
-232-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:17-83
-232-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:25-80
-233                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
-233-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:17-82
-233-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:25-79
-234            </intent-filter>
-235        </receiver>
-236        <receiver
-236-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:100:9-109:20
-237            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
-237-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:101:13-103
-238            android:directBootAware="false"
-238-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:102:13-44
-239            android:enabled="false"
-239-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:103:13-36
-240            android:exported="false" >
-240-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:104:13-37
-241            <intent-filter>
-241-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:106:13-108:29
-242                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-242-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:17-79
-242-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:25-76
-243            </intent-filter>
-244        </receiver>
-245        <receiver
-245-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:110:9-121:20
-246            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
-246-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:111:13-88
-247            android:directBootAware="false"
-247-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:112:13-44
-248            android:enabled="false"
-248-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:113:13-36
-249            android:exported="false" >
-249-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:114:13-37
-250            <intent-filter>
-250-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:116:13-120:29
-251                <action android:name="android.intent.action.BOOT_COMPLETED" />
-251-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:17-79
-251-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:25-76
-252                <action android:name="android.intent.action.TIME_SET" />
-252-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:17-73
-252-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:25-70
-253                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-253-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:17-81
-253-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:25-78
-254            </intent-filter>
-255        </receiver>
-256        <receiver
-256-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:122:9-131:20
-257            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
-257-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:123:13-99
-258            android:directBootAware="false"
-258-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:124:13-44
-259            android:enabled="@bool/enable_system_alarm_service_default"
-259-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:125:13-72
-260            android:exported="false" >
-260-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:126:13-37
-261            <intent-filter>
-261-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:128:13-130:29
-262                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
-262-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:17-98
-262-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:25-95
-263            </intent-filter>
-264        </receiver>
-265        <receiver
-265-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:132:9-142:20
-266            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
-266-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:133:13-78
-267            android:directBootAware="false"
-267-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:134:13-44
-268            android:enabled="true"
-268-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:135:13-35
-269            android:exported="true"
-269-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:136:13-36
-270            android:permission="android.permission.DUMP" >
-270-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:137:13-57
-271            <intent-filter>
-271-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:139:13-141:29
-272                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
-272-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:17-88
-272-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:25-85
-273            </intent-filter>
-274        </receiver>
-275
-276        <service
-276-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
-277            android:name="androidx.room.MultiInstanceInvalidationService"
-277-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
-278            android:directBootAware="true"
-278-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
-279            android:exported="false" />
-279-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
-280
-281        <meta-data
-281-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
-282            android:name="com.google.android.gms.version"
-282-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
-283            android:value="@integer/google_play_services_version" />
-283-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
-284
-285        <receiver
-285-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
-286            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-286-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
-287            android:directBootAware="false"
-287-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
-288            android:enabled="true"
-288-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
-289            android:exported="true"
-289-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
-290            android:permission="android.permission.DUMP" >
-290-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
-291            <intent-filter>
-291-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
-292                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-292-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
-292-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
-293            </intent-filter>
-294            <intent-filter>
-294-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
-295                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-295-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
-295-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
-296            </intent-filter>
-297            <intent-filter>
-297-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
-298                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-298-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
-298-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
-299            </intent-filter>
-300            <intent-filter>
-300-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
-301                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-301-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
-301-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
-302            </intent-filter>
-303        </receiver>
-304
-305        <service
-305-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:28:9-34:19
-306            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
-306-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:29:13-103
-307            android:exported="false" >
-307-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:30:13-37
-308            <meta-data
-308-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:31:13-33:39
-309                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
-309-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:32:17-94
-310                android:value="cct" />
-310-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:33:17-36
-311        </service>
-312        <service
-312-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:26:9-30:19
-313            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
-313-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:27:13-117
-314            android:exported="false"
-314-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:28:13-37
-315            android:permission="android.permission.BIND_JOB_SERVICE" >
-315-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:29:13-69
-316        </service>
-317
-318        <receiver
-318-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:32:9-34:40
-319            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
-319-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:33:13-132
-320            android:exported="false" />
-320-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:34:13-37
-321    </application>
-322
-323</manifest>
+37    <uses-feature
+37-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:23:5-85
+38        android:name="android.hardware.camera"
+38-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:23:19-57
+39        android:required="false" />
+39-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:23:58-82
+40    <uses-feature
+40-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:24:5-95
+41        android:name="android.hardware.camera.autofocus"
+41-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:24:19-67
+42        android:required="false" />
+42-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:24:68-92
+43    <uses-feature
+43-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:25:5-88
+44        android:name="android.hardware.bluetooth"
+44-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:25:19-60
+45        android:required="false" />
+45-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:25:61-85
+46
+47    <!-- Required by older versions of Google Play services to create IID tokens -->
+48    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+48-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:26:5-82
+48-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:26:22-79
+49    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+49-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:26:5-77
+49-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:26:22-74
+50
+51    <permission
+51-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+52        android:name="com.itoktoni.coldstorage.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+52-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+53        android:protectionLevel="signature" />
+53-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+54
+55    <uses-permission android:name="com.itoktoni.coldstorage.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+55-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+55-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
+56
+57    <application
+57-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:27:5-84:19
+58        android:name="com.itoktoni.coldstorage.Web2ApkApp"
+58-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:28:9-35
+59        android:allowBackup="true"
+59-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:29:9-35
+60        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+60-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+61        android:debuggable="true"
+62        android:extractNativeLibs="false"
+62-->INJECTED
+63        android:icon="@mipmap/ic_launcher"
+63-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:30:9-43
+64        android:label="@string/app_name"
+64-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:31:9-41
+65        android:roundIcon="@mipmap/ic_launcher_round"
+65-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:32:9-54
+66        android:supportsRtl="true"
+66-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:33:9-35
+67        android:theme="@style/Theme.ColdStorage.Splash"
+67-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:34:9-56
+68        android:usesCleartextTraffic="true" >
+68-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:35:9-44
+69        <activity
+69-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:38:9-46:20
+70            android:name="com.itoktoni.coldstorage.SplashActivity"
+70-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:39:13-43
+71            android:exported="true"
+71-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:40:13-36
+72            android:theme="@style/Theme.ColdStorage.Splash" >
+72-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:41:13-60
+73            <intent-filter>
+73-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:42:13-45:29
+74                <action android:name="android.intent.action.MAIN" />
+74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:43:17-69
+74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:43:25-66
+75
+76                <category android:name="android.intent.category.LAUNCHER" />
+76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:17-77
+76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:27-74
+77            </intent-filter>
+78        </activity>
+79        <activity
+79-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:48:9-52:56
+80            android:name="com.itoktoni.coldstorage.MainActivity"
+80-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:49:13-41
+81            android:configChanges="orientation|screenSize|keyboardHidden"
+81-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:51:13-74
+82            android:exported="false"
+82-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:50:13-37
+83            android:theme="@style/Theme.ColdStorage" />
+83-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:52:13-53
+84
+85        <provider
+85-->INJECTED
+86            android:name="androidx.core.content.FileProvider"
+86-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:55:13-62
+87            android:authorities="com.itoktoni.coldstorage.debug.fileprovider"
+87-->INJECTED
+88            android:exported="false"
+88-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:57:13-37
+89            android:grantUriPermissions="true" >
+89-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:58:13-47
+90            <meta-data
+90-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:59:13-61:54
+91                android:name="android.support.FILE_PROVIDER_PATHS"
+91-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:60:17-67
+92                android:resource="@xml/file_paths" />
+92-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:61:17-51
+93        </provider>
+94
+95        <service
+95-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:64:9-70:19
+96            android:name="com.itoktoni.coldstorage.FcmService"
+96-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:65:13-39
+97            android:exported="false" >
+97-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:66:13-37
+98            <intent-filter>
+98-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:67:13-69:29
+99                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:17-78
+99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:25-75
+100            </intent-filter>
+101        </service>
+102
+103        <receiver
+103-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:72:9-78:20
+104            android:name="com.itoktoni.coldstorage.LocalNotification$NotificationReceiver"
+104-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:73:13-67
+105            android:exported="false" >
+105-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:74:13-37
+106            <intent-filter>
+106-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:75:13-77:29
+107                <action android:name="com.itoktoni.coldstorage.NOTIFICATION_ALARM" />
+107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:76:17-86
+107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:76:25-83
+108            </intent-filter>
+109        </receiver>
+110
+111        <service
+111-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:80:9-82:40
+112            android:name="org.eclipse.paho.android.service.MqttService"
+112-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:81:13-72
+113            android:exported="false" />
+113-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:82:13-37
+114        <service
+114-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:23:9-29:19
+115            android:name="com.google.firebase.components.ComponentDiscoveryService"
+115-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:24:13-84
+116            android:directBootAware="true"
+116-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:32:13-43
+117            android:exported="false" >
+117-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:25:13-37
+118            <meta-data
+118-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:26:13-28:85
+119                android:name="com.google.firebase.components:com.google.firebase.messaging.ktx.FirebaseMessagingLegacyRegistrar"
+119-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:27:17-129
+120                android:value="com.google.firebase.components.ComponentRegistrar" />
+120-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:28:17-82
+121            <meta-data
+121-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:57:13-59:85
+122                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingKtxRegistrar"
+122-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:58:17-122
+123                android:value="com.google.firebase.components.ComponentRegistrar" />
+123-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:59:17-82
+124            <meta-data
+124-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:60:13-62:85
+125                android:name="com.google.firebase.components:com.google.firebase.messaging.FirebaseMessagingRegistrar"
+125-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:61:17-119
+126                android:value="com.google.firebase.components.ComponentRegistrar" />
+126-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:62:17-82
+127            <meta-data
+127-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:15:13-17:85
+128                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsKtxRegistrar"
+128-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:16:17-130
+129                android:value="com.google.firebase.components.ComponentRegistrar" />
+129-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:17:17-82
+130            <meta-data
+130-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:18:13-20:85
+131                android:name="com.google.firebase.components:com.google.firebase.installations.FirebaseInstallationsRegistrar"
+131-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:19:17-127
+132                android:value="com.google.firebase.components.ComponentRegistrar" />
+132-->[com.google.firebase:firebase-installations:18.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b1505a51822a62222dc7c5b7e5916e99\transformed\firebase-installations-18.0.0\AndroidManifest.xml:20:17-82
+133            <meta-data
+133-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:12:13-14:85
+134                android:name="com.google.firebase.components:com.google.firebase.ktx.FirebaseCommonLegacyRegistrar"
+134-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:13:17-116
+135                android:value="com.google.firebase.components.ComponentRegistrar" />
+135-->[com.google.firebase:firebase-common-ktx:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\bff2db93ee083fb3bad698c7a9d1d6fb\transformed\firebase-common-ktx-21.0.0\AndroidManifest.xml:14:17-82
+136            <meta-data
+136-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:35:13-37:85
+137                android:name="com.google.firebase.components:com.google.firebase.FirebaseCommonKtxRegistrar"
+137-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:36:17-109
+138                android:value="com.google.firebase.components.ComponentRegistrar" />
+138-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:37:17-82
+139            <meta-data
+139-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:25:13-27:85
+140                android:name="com.google.firebase.components:com.google.firebase.datatransport.TransportRegistrar"
+140-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:26:17-115
+141                android:value="com.google.firebase.components.ComponentRegistrar" />
+141-->[com.google.firebase:firebase-datatransport:18.2.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\b49ade07c047ec5289b8232126169a32\transformed\firebase-datatransport-18.2.0\AndroidManifest.xml:27:17-82
+142        </service>
+143
+144        <receiver
+144-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:29:9-40:20
+145            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+145-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:30:13-78
+146            android:exported="true"
+146-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:31:13-36
+147            android:permission="com.google.android.c2dm.permission.SEND" >
+147-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:32:13-73
+148            <intent-filter>
+148-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:33:13-35:29
+149                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+149-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:34:17-81
+149-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:34:25-78
+150            </intent-filter>
+151
+152            <meta-data
+152-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:37:13-39:40
+153                android:name="com.google.android.gms.cloudmessaging.FINISHED_AFTER_HANDLED"
+153-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:38:17-92
+154                android:value="true" />
+154-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:39:17-37
+155        </receiver>
+156        <!--
+157             FirebaseMessagingService performs security checks at runtime,
+158             but set to not exported to explicitly avoid allowing another app to call it.
+159        -->
+160        <service
+160-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:46:9-53:19
+161            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+161-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:47:13-82
+162            android:directBootAware="true"
+162-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:48:13-43
+163            android:exported="false" >
+163-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:49:13-37
+164            <intent-filter android:priority="-500" >
+164-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:67:13-69:29
+165                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:17-78
+165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:25-75
+166            </intent-filter>
+167        </service>
+168
+169        <activity
+169-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
+170            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+170-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
+171            android:exported="false"
+171-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
+172            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+172-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\05bf8a74522fbe42f57349977a41bc26\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
+173
+174        <provider
+174-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:23:9-28:39
+175            android:name="com.google.firebase.provider.FirebaseInitProvider"
+175-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:24:13-77
+176            android:authorities="com.itoktoni.coldstorage.debug.firebaseinitprovider"
+176-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:25:13-72
+177            android:directBootAware="true"
+177-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:26:13-43
+178            android:exported="false"
+178-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:27:13-37
+179            android:initOrder="100" />
+179-->[com.google.firebase:firebase-common:21.0.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\37b9fbeb1363d37382300351fb0378b2\transformed\firebase-common-21.0.0\AndroidManifest.xml:28:13-36
+180        <provider
+180-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:29:9-37:20
+181            android:name="androidx.startup.InitializationProvider"
+181-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:30:13-67
+182            android:authorities="com.itoktoni.coldstorage.debug.androidx-startup"
+182-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:31:13-68
+183            android:exported="false" >
+183-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:32:13-37
+184            <meta-data
+184-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:34:13-36:52
+185                android:name="androidx.work.WorkManagerInitializer"
+185-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:35:17-68
+186                android:value="androidx.startup" />
+186-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:36:17-49
+187            <meta-data
+187-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+188                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+188-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+189                android:value="androidx.startup" />
+189-->[androidx.emoji2:emoji2:1.3.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\a380d8e5f6b7d3761e42f6f58aa1af02\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+190            <meta-data
+190-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+191                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+191-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+192                android:value="androidx.startup" />
+192-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\itokt\.gradle\caches\9.7.0\transforms\02ac68f4f595421d333a491e638a6ec4\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+193            <meta-data
+193-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
+194                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+194-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
+195                android:value="androidx.startup" />
+195-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
+196        </provider>
+197
+198        <service
+198-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:39:9-45:35
+199            android:name="androidx.work.impl.background.systemalarm.SystemAlarmService"
+199-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:40:13-88
+200            android:directBootAware="false"
+200-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:41:13-44
+201            android:enabled="@bool/enable_system_alarm_service_default"
+201-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:42:13-72
+202            android:exported="false" />
+202-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:43:13-37
+203        <service
+203-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:46:9-52:35
+204            android:name="androidx.work.impl.background.systemjob.SystemJobService"
+204-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:47:13-84
+205            android:directBootAware="false"
+205-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:48:13-44
+206            android:enabled="@bool/enable_system_job_service_default"
+206-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:49:13-70
+207            android:exported="true"
+207-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:50:13-36
+208            android:permission="android.permission.BIND_JOB_SERVICE" />
+208-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:51:13-69
+209        <service
+209-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:53:9-59:35
+210            android:name="androidx.work.impl.foreground.SystemForegroundService"
+210-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:54:13-81
+211            android:directBootAware="false"
+211-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:55:13-44
+212            android:enabled="@bool/enable_system_foreground_service_default"
+212-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:56:13-77
+213            android:exported="false" />
+213-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:57:13-37
+214
+215        <receiver
+215-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:61:9-66:35
+216            android:name="androidx.work.impl.utils.ForceStopRunnable$BroadcastReceiver"
+216-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:62:13-88
+217            android:directBootAware="false"
+217-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:63:13-44
+218            android:enabled="true"
+218-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:64:13-35
+219            android:exported="false" />
+219-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:65:13-37
+220        <receiver
+220-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:67:9-77:20
+221            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryChargingProxy"
+221-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:68:13-106
+222            android:directBootAware="false"
+222-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:69:13-44
+223            android:enabled="false"
+223-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:70:13-36
+224            android:exported="false" >
+224-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:71:13-37
+225            <intent-filter>
+225-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:73:13-76:29
+226                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+226-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:17-87
+226-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:74:25-84
+227                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+227-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:17-90
+227-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:75:25-87
+228            </intent-filter>
+229        </receiver>
+230        <receiver
+230-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:78:9-88:20
+231            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$BatteryNotLowProxy"
+231-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:79:13-104
+232            android:directBootAware="false"
+232-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:80:13-44
+233            android:enabled="false"
+233-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:81:13-36
+234            android:exported="false" >
+234-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:82:13-37
+235            <intent-filter>
+235-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:84:13-87:29
+236                <action android:name="android.intent.action.BATTERY_OKAY" />
+236-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:17-77
+236-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:85:25-74
+237                <action android:name="android.intent.action.BATTERY_LOW" />
+237-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:17-76
+237-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:86:25-73
+238            </intent-filter>
+239        </receiver>
+240        <receiver
+240-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:89:9-99:20
+241            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$StorageNotLowProxy"
+241-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:90:13-104
+242            android:directBootAware="false"
+242-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:91:13-44
+243            android:enabled="false"
+243-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:92:13-36
+244            android:exported="false" >
+244-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:93:13-37
+245            <intent-filter>
+245-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:95:13-98:29
+246                <action android:name="android.intent.action.DEVICE_STORAGE_LOW" />
+246-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:17-83
+246-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:96:25-80
+247                <action android:name="android.intent.action.DEVICE_STORAGE_OK" />
+247-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:17-82
+247-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:97:25-79
+248            </intent-filter>
+249        </receiver>
+250        <receiver
+250-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:100:9-109:20
+251            android:name="androidx.work.impl.background.systemalarm.ConstraintProxy$NetworkStateProxy"
+251-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:101:13-103
+252            android:directBootAware="false"
+252-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:102:13-44
+253            android:enabled="false"
+253-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:103:13-36
+254            android:exported="false" >
+254-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:104:13-37
+255            <intent-filter>
+255-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:106:13-108:29
+256                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+256-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:17-79
+256-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:107:25-76
+257            </intent-filter>
+258        </receiver>
+259        <receiver
+259-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:110:9-121:20
+260            android:name="androidx.work.impl.background.systemalarm.RescheduleReceiver"
+260-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:111:13-88
+261            android:directBootAware="false"
+261-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:112:13-44
+262            android:enabled="false"
+262-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:113:13-36
+263            android:exported="false" >
+263-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:114:13-37
+264            <intent-filter>
+264-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:116:13-120:29
+265                <action android:name="android.intent.action.BOOT_COMPLETED" />
+265-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:17-79
+265-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:117:25-76
+266                <action android:name="android.intent.action.TIME_SET" />
+266-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:17-73
+266-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:118:25-70
+267                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+267-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:17-81
+267-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:119:25-78
+268            </intent-filter>
+269        </receiver>
+270        <receiver
+270-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:122:9-131:20
+271            android:name="androidx.work.impl.background.systemalarm.ConstraintProxyUpdateReceiver"
+271-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:123:13-99
+272            android:directBootAware="false"
+272-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:124:13-44
+273            android:enabled="@bool/enable_system_alarm_service_default"
+273-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:125:13-72
+274            android:exported="false" >
+274-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:126:13-37
+275            <intent-filter>
+275-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:128:13-130:29
+276                <action android:name="androidx.work.impl.background.systemalarm.UpdateProxies" />
+276-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:17-98
+276-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:129:25-95
+277            </intent-filter>
+278        </receiver>
+279        <receiver
+279-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:132:9-142:20
+280            android:name="androidx.work.impl.diagnostics.DiagnosticsReceiver"
+280-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:133:13-78
+281            android:directBootAware="false"
+281-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:134:13-44
+282            android:enabled="true"
+282-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:135:13-35
+283            android:exported="true"
+283-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:136:13-36
+284            android:permission="android.permission.DUMP" >
+284-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:137:13-57
+285            <intent-filter>
+285-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:139:13-141:29
+286                <action android:name="androidx.work.diagnostics.REQUEST_DIAGNOSTICS" />
+286-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:17-88
+286-->[androidx.work:work-runtime:2.10.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\c24af1452d720bf96062dbc5abe09895\transformed\work-runtime-2.10.0\AndroidManifest.xml:140:25-85
+287            </intent-filter>
+288        </receiver>
+289
+290        <service
+290-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:24:9-28:63
+291            android:name="androidx.room.MultiInstanceInvalidationService"
+291-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:25:13-74
+292            android:directBootAware="true"
+292-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:26:13-43
+293            android:exported="false" />
+293-->[androidx.room:room-runtime:2.6.1] C:\Users\itokt\.gradle\caches\9.7.0\transforms\5a9deb163ee76142a8f481b681806a5d\transformed\room-runtime-2.6.1\AndroidManifest.xml:27:13-37
+294
+295        <meta-data
+295-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
+296            android:name="com.google.android.gms.version"
+296-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
+297            android:value="@integer/google_play_services_version" />
+297-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\1f50b3fc88657ec03c8a6a351085bf7f\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
+298
+299        <receiver
+299-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
+300            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+300-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
+301            android:directBootAware="false"
+301-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
+302            android:enabled="true"
+302-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
+303            android:exported="true"
+303-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
+304            android:permission="android.permission.DUMP" >
+304-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
+305            <intent-filter>
+305-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
+306                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+306-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
+306-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
+307            </intent-filter>
+308            <intent-filter>
+308-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
+309                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+309-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
+309-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
+310            </intent-filter>
+311            <intent-filter>
+311-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
+312                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+312-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
+312-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
+313            </intent-filter>
+314            <intent-filter>
+314-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
+315                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+315-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
+315-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\011ef7e4bfd858acf1d52ac7b83b618a\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
+316            </intent-filter>
+317        </receiver>
+318
+319        <service
+319-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:28:9-34:19
+320            android:name="com.google.android.datatransport.runtime.backends.TransportBackendDiscovery"
+320-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:29:13-103
+321            android:exported="false" >
+321-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:30:13-37
+322            <meta-data
+322-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:31:13-33:39
+323                android:name="backend:com.google.android.datatransport.cct.CctBackendFactory"
+323-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:32:17-94
+324                android:value="cct" />
+324-->[com.google.android.datatransport:transport-backend-cct:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\12b10e5b95f7654469fb099662903ac1\transformed\transport-backend-cct-3.1.9\AndroidManifest.xml:33:17-36
+325        </service>
+326        <service
+326-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:26:9-30:19
+327            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.JobInfoSchedulerService"
+327-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:27:13-117
+328            android:exported="false"
+328-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:28:13-37
+329            android:permission="android.permission.BIND_JOB_SERVICE" >
+329-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:29:13-69
+330        </service>
+331
+332        <receiver
+332-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:32:9-34:40
+333            android:name="com.google.android.datatransport.runtime.scheduling.jobscheduling.AlarmManagerSchedulerBroadcastReceiver"
+333-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:33:13-132
+334            android:exported="false" />
+334-->[com.google.android.datatransport:transport-runtime:3.1.9] C:\Users\itokt\.gradle\caches\9.7.0\transforms\fca28e821b0fd89b9ad701f6037f3f22\transformed\transport-runtime-3.1.9\AndroidManifest.xml:34:13-37
+335    </application>
+336
+337</manifest>

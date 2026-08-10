@@ -1,3 +1,4 @@
+<script>
 /**
  * BluetoothPrinter — JavaScript API untuk koneksi Bluetooth printer
  *
@@ -193,3 +194,5 @@ const BluetoothPrinter = {
 function formatNumber(num) {
     return new Intl.NumberFormat('id-ID').format(num);
 }
+</script>
+

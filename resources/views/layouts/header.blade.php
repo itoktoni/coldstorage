@@ -14,8 +14,8 @@
 
     <div class="flex items-center gap-2">
         {{-- Printer Button --}}
-        <button onclick="PrinterModal.open()" class="relative p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant" title="Bluetooth Printer">
-            <span class="material-symbols-outlined text-[22px]">printer</span>
+        <button onclick="PrinterModal.open()" class="relative p-2 rounded-full bg-surface-container text-primary border border-outline-variant hover:bg-surface-container-highest hover:border-primary hover:text-on-surface shadow-sm transition-colors active:scale-95" title="Bluetooth Printer">
+            <span class="material-symbols-outlined text-[22px]">print</span>
             <span class="absolute top-1 right-1 w-2 h-2 rounded-full hidden" id="header-printer-dot"></span>
         </button>
 

@@ -50,6 +50,8 @@ int string offline_title 0x0
 int string open_settings 0x0
 int string permission_camera_message 0x0
 int string permission_camera_title 0x0
+int string permission_phone_state_message 0x0
+int string permission_phone_state_title 0x0
 int string retry 0x0
 int style Theme_ColdStorage 0x0
 int style Theme_ColdStorage_Splash 0x0

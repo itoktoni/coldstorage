@@ -52,6 +52,8 @@ string offline_title
 string open_settings
 string permission_camera_message
 string permission_camera_title
+string permission_phone_state_message
+string permission_phone_state_title
 string retry
 style Theme.ColdStorage
 style Theme.ColdStorage.Splash

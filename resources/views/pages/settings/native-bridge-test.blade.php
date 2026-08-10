@@ -469,10 +469,33 @@
 
     <style>
         .btn-test {
-            @apply flex items-center justify-center gap-2 px-3 py-2.5 bg-surface-container-high text-on-surface text-sm font-medium rounded-lg hover:bg-surface-container-highest transition-colors active:scale-95;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 0.75rem;
+            background-color: var(--color-primary);
+            color: var(--color-on-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1.25rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease, transform 150ms ease;
+        }
+        .btn-test:hover {
+            background-color: var(--color-primary-container);
+            color: #ffffff;
+            border-color: var(--color-primary);
         }
         .btn-test:active {
             transform: scale(0.97);
+        }
+        .btn-test:focus-visible {
+            outline: 2px solid var(--color-primary);
+            outline-offset: 2px;
         }
     </style>
 

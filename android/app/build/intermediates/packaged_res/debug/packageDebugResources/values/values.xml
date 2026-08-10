@@ -32,6 +32,8 @@
     <string name="open_settings">Open Settings</string>
     <string name="permission_camera_message">This app needs camera access to scan barcodes and QR codes.</string>
     <string name="permission_camera_title">Camera Permission Required</string>
+    <string name="permission_phone_state_message">This app needs phone access to get device serial number for identification.</string>
+    <string name="permission_phone_state_title">Phone Permission Required</string>
     <string name="retry">Retry</string>
     <style name="Theme.ColdStorage" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
