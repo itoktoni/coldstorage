@@ -9,7 +9,6 @@
         body { width: 55mm; height: 30mm; font-family: Helvetica, Arial, sans-serif; color: #1a1a1a; }
         .page {
             width: 55mm;
-            height: 30mm;
             display: flex;
             align-items: center;
             gap: 2mm;
@@ -17,15 +16,16 @@
         }
         .qr-container { flex: 0 0 24mm; }
         .qr-container img { width: 24mm; height: 24mm; display: block; }
-        .name { flex: 1; font-size: 9pt; font-weight: bold; overflow-wrap: anywhere; text-align: center; }
     </style>
 </head>
 <body>
-    <div class="page">
-        <div class="qr-container">
-            <img src="data:image/png;base64,{{ $qrPng }}" alt="QR {{ $lokasi->lokasi_code }}">
+    <div class="page" style="width:100%;margin-left:-10px">
+        <h2 style="text-align:center">
+        <div class="qr-container" style="margin:0px auto">
+            <img style="height: 70px;width:70px" src="data:image/png;base64,{{ $qrPng }}" alt="QR {{ $lokasi->lokasi_code }}">
         </div>
-        <div class="name">{{ $lokasi->lokasi_nama }}</div>
+        <div class="name" style="font-size:12px;margin-top:5px">{{ $lokasi->lokasi_nama }}</div>
+        </h2>
     </div>
 </body>
 </html>

@@ -546,10 +546,17 @@
             padding: 0 !important;
             background: #ffffff !important;
         }
-        body.print-area-only > *:not(#print-area) {
-            display: none !important;
+        body.print-area-only * {
+            visibility: hidden !important;
+        }
+        body.print-area-only #print-area,
+        body.print-area-only #print-area * {
+            visibility: visible !important;
         }
         body.print-area-only #print-area {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
             display: block !important;
             width: 100% !important;
             margin: 0 !important;

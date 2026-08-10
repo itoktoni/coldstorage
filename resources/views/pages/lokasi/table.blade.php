@@ -70,6 +70,11 @@
                             <span class="text-[9px] font-mono text-on-surface-variant bg-surface-container px-2 py-0.5 rounded">{{ $table->field_primary }}</span>
                             <div class="flex gap-1" onclick="event.stopPropagation()">
                                 <x-table-action :model="$model" :id="$table->field_primary" />
+                                <a href="{{ route('wms-lokasi.printQr', ['code' => $table->field_primary]) }}" target="_blank"
+                                   class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-success/10 text-success hover:bg-success/20 transition-colors"
+                                   title="Print QR Code">
+                                    <span class="material-symbols-outlined text-lg">qr_code_2</span>
+                                </a>
                             </div>
                         </div>
                     </div>

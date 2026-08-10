@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Picture
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -500,15 +499,14 @@ class NativeBridge(private val context: Context) {
 
     private fun captureWebView(webView: WebView): Bitmap? {
         return try {
-            val picture: Picture? = webView.capturePicture()
-            val width = picture?.width ?: return null
-            val height = picture?.height ?: return null
+            val width = webView.width
+            val height = webView.height
 
             if (width <= 0 || height <= 0) return null
 
             val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
-            picture.draw(canvas)
+            webView.draw(canvas)
             bitmap
         } catch (e: Exception) {
             null
