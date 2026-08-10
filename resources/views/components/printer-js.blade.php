@@ -65,7 +65,13 @@ const BluetoothPrinter = {
             }
             return;
         }
-        NativeBridge.scanPrinters();
+        try {
+            NativeBridge.scanPrinters();
+        } catch (e) {
+            if (typeof window.onPrintersFound === 'function') {
+                window.onPrintersFound(JSON.stringify([{ error: e.message || 'Bluetooth scan failed' }]));
+            }
+        }
     },
 
     cancelScan() {
@@ -219,7 +225,13 @@ const BluetoothPrinter = {
 
     testPrint() {
         if (!this.isNative()) return;
-        NativeBridge.testPrint();
+        try {
+            NativeBridge.testPrint();
+        } catch (e) {
+            if (typeof window.onPrintResult === 'function') {
+                window.onPrintResult(JSON.stringify({ success: false, error: e.message || 'Print failed' }));
+            }
+        }
     },
 };
 

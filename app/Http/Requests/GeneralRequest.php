@@ -17,6 +17,7 @@ class GeneralRequest extends FormRequest
         }
 
         $action = str_replace(['get', 'post'], '', strtolower(request()->route()->getActionMethod()));
+        $action = $action === 'index' ? 'table' : $action;
 
         return $this->user()->can($action, $model);
     }

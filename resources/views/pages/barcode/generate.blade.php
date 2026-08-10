@@ -60,7 +60,7 @@
                 <span class="text-sm font-normal text-on-surface-variant shrink-0">({{ count($qrcodes) }})</span>
                 <button type="button" onclick="downloadPdf()" class="ml-auto shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors text-sm">
                     <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
-                    <span class="hidden sm:inline">Download PDF</span>
+                    <span class="hidden sm:inline">Print PDF</span>
                     <span class="sm:hidden">PDF</span>
                 </button>
             </h3>
@@ -105,10 +105,12 @@
             var jumlah = jmlEl ? jmlEl.value : document.querySelector('[name="jumlah"]').value;
             var f = document.createElement('form');
             f.method = 'POST';
+            f.target = '_blank';
             f.action = '{{ route("wms-barcode.pdf") }}';
             document.body.appendChild(f);
-            f.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="product_id" value="' + productId + '"><input type="hidden" name="qty" value="' + qty + '"><input type="hidden" name="expired_date" value="' + expired + '"><input type="hidden" name="jumlah" value="' + jumlah + '">';
+            f.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="print" value="1"><input type="hidden" name="product_id" value="' + productId + '"><input type="hidden" name="qty" value="' + qty + '"><input type="hidden" name="expired_date" value="' + expired + '"><input type="hidden" name="jumlah" value="' + jumlah + '">';
             f.submit();
+            f.remove();
         }
     </script>
 </x-layouts::app>

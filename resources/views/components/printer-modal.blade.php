@@ -175,6 +175,12 @@ const PrinterModal = {
             return;
         }
 
+        if (!BluetoothPrinter.hasPermission()) {
+            this.setStatus('disconnected', 'Bluetooth permission needed', 'Allow Bluetooth access first');
+            document.getElementById('pm-paired-list').innerHTML = '<div class="text-sm text-gray-400 text-center py-4">Bluetooth permission required</div>';
+            return;
+        }
+
         const connected = BluetoothPrinter.isConnected();
         if (connected) {
             const dev = BluetoothPrinter.getConnected();
@@ -207,9 +213,15 @@ const PrinterModal = {
 
     loadPairedDevices() {
         const list = document.getElementById('pm-paired-list');
-        const paired = BluetoothPrinter.getPairedPrinters();
+        let paired = [];
+        try {
+            paired = BluetoothPrinter.getPairedPrinters();
+        } catch (e) {
+            list.innerHTML = '<div class="text-sm text-red-400 text-center py-4">Unable to read paired devices</div>';
+            return;
+        }
 
-        if (!paired || paired.length === 0) {
+        if (!Array.isArray(paired) || paired.length === 0) {
             list.innerHTML = '<div class="text-sm text-gray-400 text-center py-4">No paired printers found</div>';
             return;
         }
@@ -229,6 +241,12 @@ const PrinterModal = {
     },
 
     scan() {
+        if (!BluetoothPrinter.hasPermission()) {
+            this.setStatus('disconnected', 'Permission needed', 'Grant Bluetooth access first');
+            BluetoothPrinter.requestPermission();
+            return;
+        }
+
         document.getElementById('pm-discovered').classList.remove('hidden');
         document.getElementById('pm-scanning').classList.remove('hidden');
         document.getElementById('pm-discovered-list').innerHTML = '';
@@ -249,6 +267,11 @@ const PrinterModal = {
         const list = document.getElementById('pm-discovered-list');
         if (!devices || devices.length === 0) {
             list.innerHTML = '<div class="text-sm text-gray-400 text-center py-4">No devices found</div>';
+            return;
+        }
+
+        if (devices[0]?.error) {
+            list.innerHTML = `<div class="text-sm text-red-400 text-center py-4">${this.escapeHtml(devices[0].error)}</div>`;
             return;
         }
 
