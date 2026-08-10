@@ -99,6 +99,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val bluetoothPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissions[Manifest.permission.BLUETOOTH_CONNECT] == true
+        } else {
+            true
+        }
+        nativeBridge?.callJsCallback("onBluetoothPermission", if (granted) "granted" else "denied")
+        if (!granted) {
+            Toast.makeText(this, "Bluetooth permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private val fileChooserLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -622,5 +636,18 @@ class MainActivity : AppCompatActivity() {
 
     fun requestPhoneStatePermission() {
         phoneStatePermissionLauncher.launch(arrayOf(Manifest.permission.READ_PHONE_STATE))
+    }
+
+    fun requestBluetoothPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            bluetoothPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_CONNECT,
+                    Manifest.permission.BLUETOOTH_SCAN
+                )
+            )
+        } else {
+            nativeBridge?.callJsCallback("onBluetoothPermission", "granted")
+        }
     }
 }

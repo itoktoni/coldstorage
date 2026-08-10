@@ -10,7 +10,7 @@
             </h3>
             <button onclick="clearLog()" class="text-xs px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant hover:bg-surface-container-highest transition-colors">Clear</button>
         </div>
-        <div id="log-panel" class="bg-black rounded-lg p-3 h-40 overflow-y-auto font-mono text-xs text-green-400">
+        <div id="log-panel" class="bg-black rounded-lg p-3 h-40 overflow-x-hidden overflow-y-auto font-mono text-xs text-green-400 break-all">
             <div class="text-gray-500">Ready. Click any button to test NativeBridge functions.</div>
         </div>
     </div>
@@ -21,7 +21,7 @@
             <span class="material-symbols-outlined text-primary text-xl">info</span>
             Device Info
         </h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testGetDeviceModel()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">phone_iphone</span>
                 getDeviceModel()
@@ -58,7 +58,7 @@
                 <span class="material-symbols-outlined text-sm">key</span>
                 getUniqueId()
             </button>
-            <button onclick="testGetDeviceInfo()" class="btn-test col-span-2 sm:col-span-3">
+            <button onclick="testGetDeviceInfo()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">devices</span>
                 getDeviceInfo() (Full)
             </button>
@@ -71,7 +71,7 @@
             <span class="material-symbols-outlined text-primary text-xl">notifications</span>
             UI Feedback
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testShowToast()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">message</span>
                 showToast()
@@ -97,7 +97,7 @@
             <span class="material-symbols-outlined text-primary text-xl">wifi</span>
             Network
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testIsConnected()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">wifi_find</span>
                 isConnected()
@@ -122,7 +122,7 @@
             <span class="material-symbols-outlined text-primary text-xl">print</span>
             Print & Save
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testPrintPage()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">print</span>
                 printPage()
@@ -140,7 +140,7 @@
             <span class="material-symbols-outlined text-primary text-xl">share</span>
             Share & Image
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testShareAsImage()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">share</span>
                 shareAsImage()
@@ -158,7 +158,7 @@
             <span class="material-symbols-outlined text-primary text-xl">photo_camera</span>
             Camera & Gallery
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testCaptureCamera()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">photo_camera</span>
                 captureCamera()
@@ -188,7 +188,7 @@
             <span class="material-symbols-outlined text-primary text-xl">location_on</span>
             Location
         </h3>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testHasLocationPermission()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">admin_panel_settings</span>
                 hasLocationPermission()
@@ -197,7 +197,7 @@
                 <span class="material-symbols-outlined text-sm">lock_open</span>
                 requestLocationPermission()
             </button>
-            <button onclick="testGetCurrentLocation()" class="btn-test col-span-2">
+            <button onclick="testGetCurrentLocation()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">my_location</span>
                 getCurrentLocation()
             </button>
@@ -212,7 +212,7 @@
             <span class="material-symbols-outlined text-primary text-xl">notifications_active</span>
             Push Notifications
         </h3>
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testGetFcmToken()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">vpn_key</span>
                 getFcmToken()
@@ -259,7 +259,7 @@
             Status: Checking...
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testGetPairedPrinters()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">bluetooth_searching</span>
                 getPairedPrinters()
@@ -311,7 +311,7 @@
         {{-- Quick Connect --}}
         <div class="mt-3">
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Quick Connect (MAC Address)</label>
-            <div class="flex gap-2">
+            <div class="flex flex-col sm:flex-row gap-2">
                 <input type="text" id="printer-mac-input" placeholder="AA:BB:CC:DD:EE:FF" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
                 <button onclick="testConnectPrinter(document.getElementById('printer-mac-input').value)" class="btn-test">Connect</button>
             </div>
@@ -320,7 +320,7 @@
         {{-- Print Receipt Test --}}
         <div class="mt-3">
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Print Receipt Test</label>
-            <div class="flex gap-2">
+            <div class="flex flex-col sm:flex-row gap-2">
                 <button onclick="testPrintReceipt()" class="btn-test flex-1">
                     <span class="material-symbols-outlined text-sm">receipt_long</span>
                     Print Receipt
@@ -350,7 +350,7 @@
         {{-- Create File --}}
         <div class="mb-3">
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Create / Update File</label>
-            <div class="flex gap-2 mb-2">
+            <div class="flex flex-col sm:flex-row gap-2 mb-2">
                 <input type="text" id="file-name-input" placeholder="filename.txt" value="test.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
                 <button onclick="testFileExists()" class="btn-test">
                     <span class="material-symbols-outlined text-sm">check_circle</span>
@@ -358,7 +358,7 @@
                 </button>
             </div>
             <textarea id="file-content-input" rows="3" placeholder="File content..." class="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono mb-2">Hello from NativeBridge!</textarea>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="grid grid-cols-1 gap-2">
                 <button onclick="testCreateFile()" class="btn-test">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     createFile()
@@ -381,12 +381,12 @@
         {{-- Rename / Delete --}}
         <div class="mb-3">
             <label class="text-xs font-bold text-on-surface-variant uppercase tracking-wide mb-1 block">Rename / Delete</label>
-            <div class="flex gap-2 mb-2">
-                <input type="text" id="file-rename-old" placeholder="old.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+            <div class="flex flex-col gap-2 mb-2">
+                <input type="text" id="file-rename-old" placeholder="old.txt" class="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
                 <span class="material-symbols-outlined text-on-surface-variant self-center">arrow_forward</span>
-                <input type="text" id="file-rename-new" placeholder="new.txt" class="flex-1 px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
+                <input type="text" id="file-rename-new" placeholder="new.txt" class="w-full px-3 py-2 bg-surface-container-high border border-outline-variant rounded-lg text-sm font-mono">
             </div>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-1 gap-2">
                 <button onclick="testRenameFile()" class="btn-test">
                     <span class="material-symbols-outlined text-sm">drive_file_rename</span>
                     renameFile()
@@ -399,7 +399,7 @@
         </div>
 
         {{-- List & Info --}}
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 gap-2">
             <button onclick="testListFiles()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">list</span>
                 listFiles()
@@ -455,7 +455,7 @@
         </div>
 
         {{-- Manual Actions --}}
-        <div class="mt-3 grid grid-cols-2 gap-2">
+        <div class="mt-3 grid grid-cols-1 gap-2">
             <button onclick="testGetPollingStatus()" class="btn-test">
                 <span class="material-symbols-outlined text-sm">info</span>
                 getStatus()
@@ -496,6 +496,20 @@
         .btn-test:focus-visible {
             outline: 2px solid var(--color-primary);
             outline-offset: 2px;
+        }
+
+        /* Prevent horizontal overflow on status/log containers (long JSON, paths, etc.)
+           regardless of Tailwind classes being swapped by JS */
+        #log-panel,
+        #network-status,
+        #location-result,
+        #printer-status,
+        #file-dir,
+        #file-list,
+        #polling-status {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            overflow-x: hidden;
         }
     </style>
 

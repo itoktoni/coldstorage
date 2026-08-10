@@ -114,7 +114,7 @@
 55-->[androidx.core:core:1.15.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\3abeda70a478faa4dc1b7d3be57d1a28\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
 56
 57    <application
-57-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:27:5-84:19
+57-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:27:5-85:19
 58        android:name="com.itoktoni.coldstorage.Web2ApkApp"
 58-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:28:9-35
 59        android:allowBackup="true"
@@ -137,87 +137,87 @@
 68        android:usesCleartextTraffic="true" >
 68-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:35:9-44
 69        <activity
-69-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:38:9-46:20
+69-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:39:9-47:20
 70            android:name="com.itoktoni.coldstorage.SplashActivity"
-70-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:39:13-43
+70-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:40:13-43
 71            android:exported="true"
-71-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:40:13-36
+71-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:41:13-36
 72            android:theme="@style/Theme.ColdStorage.Splash" >
-72-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:41:13-60
+72-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:42:13-60
 73            <intent-filter>
-73-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:42:13-45:29
+73-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:43:13-46:29
 74                <action android:name="android.intent.action.MAIN" />
-74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:43:17-69
-74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:43:25-66
+74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:17-69
+74-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:25-66
 75
 76                <category android:name="android.intent.category.LAUNCHER" />
-76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:17-77
-76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:44:27-74
+76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:45:17-77
+76-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:45:27-74
 77            </intent-filter>
 78        </activity>
 79        <activity
-79-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:48:9-52:56
+79-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:49:9-53:56
 80            android:name="com.itoktoni.coldstorage.MainActivity"
-80-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:49:13-41
+80-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:50:13-41
 81            android:configChanges="orientation|screenSize|keyboardHidden"
-81-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:51:13-74
+81-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:52:13-74
 82            android:exported="false"
-82-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:50:13-37
+82-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:51:13-37
 83            android:theme="@style/Theme.ColdStorage" />
-83-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:52:13-53
+83-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:53:13-53
 84
 85        <provider
 85-->INJECTED
 86            android:name="androidx.core.content.FileProvider"
-86-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:55:13-62
+86-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:56:13-62
 87            android:authorities="com.itoktoni.coldstorage.debug.fileprovider"
 87-->INJECTED
 88            android:exported="false"
-88-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:57:13-37
+88-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:58:13-37
 89            android:grantUriPermissions="true" >
-89-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:58:13-47
+89-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:59:13-47
 90            <meta-data
-90-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:59:13-61:54
+90-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:60:13-62:54
 91                android:name="android.support.FILE_PROVIDER_PATHS"
-91-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:60:17-67
+91-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:61:17-67
 92                android:resource="@xml/file_paths" />
-92-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:61:17-51
+92-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:62:17-51
 93        </provider>
 94
 95        <service
-95-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:64:9-70:19
+95-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:65:9-71:19
 96            android:name="com.itoktoni.coldstorage.FcmService"
-96-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:65:13-39
+96-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:66:13-39
 97            android:exported="false" >
-97-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:66:13-37
+97-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:67:13-37
 98            <intent-filter>
-98-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:67:13-69:29
+98-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:13-70:29
 99                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:17-78
-99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:25-75
+99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:69:17-78
+99-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:69:25-75
 100            </intent-filter>
 101        </service>
 102
 103        <receiver
-103-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:72:9-78:20
+103-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:73:9-79:20
 104            android:name="com.itoktoni.coldstorage.LocalNotification$NotificationReceiver"
-104-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:73:13-67
+104-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:74:13-67
 105            android:exported="false" >
-105-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:74:13-37
+105-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:75:13-37
 106            <intent-filter>
-106-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:75:13-77:29
+106-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:76:13-78:29
 107                <action android:name="com.itoktoni.coldstorage.NOTIFICATION_ALARM" />
-107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:76:17-86
-107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:76:25-83
+107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:77:17-86
+107-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:77:25-83
 108            </intent-filter>
 109        </receiver>
 110
 111        <service
-111-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:80:9-82:40
+111-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:81:9-83:40
 112            android:name="org.eclipse.paho.android.service.MqttService"
-112-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:81:13-72
+112-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:82:13-72
 113            android:exported="false" />
-113-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:82:13-37
+113-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:83:13-37
 114        <service
 114-->[com.google.firebase:firebase-messaging-ktx:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\7aae4260c067f05a2d7b71bf6d15b220\transformed\firebase-messaging-ktx-24.1.0\AndroidManifest.xml:23:9-29:19
 115            android:name="com.google.firebase.components.ComponentDiscoveryService"
@@ -311,10 +311,10 @@
 163            android:exported="false" >
 163-->[com.google.firebase:firebase-messaging:24.1.0] C:\Users\itokt\.gradle\caches\9.7.0\transforms\49f651c645de0ef50208af4dee31552d\transformed\firebase-messaging-24.1.0\AndroidManifest.xml:49:13-37
 164            <intent-filter android:priority="-500" >
-164-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:67:13-69:29
+164-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:13-70:29
 165                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:17-78
-165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:68:25-75
+165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:69:17-78
+165-->D:\laravel\sidoraya\android\app\src\main\AndroidManifest.xml:69:25-75
 166            </intent-filter>
 167        </service>
 168

@@ -33,6 +33,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ColdStorage.Splash"
         android:usesCleartextTraffic="true"
+        tools:replace="android:name"
         tools:targetApi="36">
 
         <activity

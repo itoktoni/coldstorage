@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-48:/values-bn/values-bn.xml",
+            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-51:/values-bn/values-bn.xml",
             "map": [
                 {
                     "source": "C:\\Users\\itokt\\.gradle\\caches\\9.7.0\\transforms\\054ddc18e0d142cb394d27ac74115614\\transformed\\appcompat-1.7.0\\res\\values-bn\\values-bn.xml",

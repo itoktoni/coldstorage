@@ -774,7 +774,28 @@ class NativeBridge(private val context: Context) {
 
     // ─── BLUETOOTH PRINTER ───
 
+    @JavascriptInterface
+    fun hasBluetoothPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            context.checkSelfPermission(android.Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+    @JavascriptInterface
+    fun requestBluetoothPermission() {
+        Handler(context.mainLooper).post {
+            val currentActivity = activity ?: return@post
+            if (currentActivity is MainActivity) {
+                currentActivity.requestBluetoothPermission()
+            }
+        }
+    }
+
     private var printer: BluetoothPrinter? = null
+    private var ktxPrinter: PrinterKtxBackend? = null
+    private var printerEngine: String = "manual"
 
     private fun getPrinter(): BluetoothPrinter {
         if (printer == null) {
@@ -783,88 +804,108 @@ class NativeBridge(private val context: Context) {
         return printer!!
     }
 
+    private fun getKtxPrinter(): PrinterKtxBackend {
+        if (ktxPrinter == null) {
+            ktxPrinter = PrinterKtxBackend(context)
+        }
+        return ktxPrinter!!
+    }
+
+    private fun getActivePrinter(): IPrinterBackend {
+        return if (printerEngine == "ktx") getKtxPrinter() else getPrinter()
+    }
+
+    @JavascriptInterface
+    fun setPrinterEngine(engine: String) {
+        val normalized = engine.trim().lowercase(java.util.Locale.ROOT)
+        printerEngine = if (normalized == "ktx" || normalized == "library") "ktx" else "manual"
+    }
+
+    @JavascriptInterface
+    fun getPrinterEngine(): String = printerEngine
+
     @JavascriptInterface
     fun getPairedPrinters(): String {
-        return getPrinter().getPairedDevices()
+        return getActivePrinter().getPairedDevices()
     }
 
     @JavascriptInterface
     fun scanPrinters() {
-        getPrinter().startDiscovery { result ->
+        getActivePrinter().startDiscovery { result ->
             callJsCallback("onPrintersFound", result)
         }
     }
 
     @JavascriptInterface
     fun cancelPrinterScan() {
-        getPrinter().cancelDiscovery()
+        getActivePrinter().cancelDiscovery()
     }
 
     @JavascriptInterface
     fun connectPrinter(address: String) {
-        getPrinter().connect(address) { result ->
+        getActivePrinter().connect(address) { result ->
             callJsCallback("onPrinterConnected", result)
         }
     }
 
     @JavascriptInterface
     fun disconnectPrinter() {
-        getPrinter().disconnect()
+        getActivePrinter().disconnect()
         callJsCallback("onPrinterDisconnected", "{\"success\":true}")
     }
 
     @JavascriptInterface
     fun isPrinterConnected(): Boolean {
-        return getPrinter().isConnected()
+        return getActivePrinter().isConnected()
     }
 
     @JavascriptInterface
     fun getConnectedPrinter(): String {
-        return getPrinter().getConnectedDevice()
+        return getActivePrinter().getConnectedDevice()
     }
 
     @JavascriptInterface
     fun getSavedPrinter(): String {
-        return getPrinter().getSavedPrinter()
+        return getActivePrinter().getSavedPrinter()
     }
 
     @JavascriptInterface
     fun removeSavedPrinter() {
-        getPrinter().removeSavedPrinter()
+        getActivePrinter().removeSavedPrinter()
         callJsCallback("onPrinterRemoved", "{\"success\":true}")
     }
 
     @JavascriptInterface
     fun autoConnectPrinter() {
-        getPrinter().autoConnectAsync { result ->
+        getActivePrinter().autoConnectAsync { result ->
             callJsCallback("onPrinterConnected", result)
         }
     }
 
     @JavascriptInterface
     fun testPrint() {
-        getPrinter().testPrint { result ->
+        getActivePrinter().testPrint { result ->
             callJsCallback("onPrintResult", result)
         }
     }
 
     @JavascriptInterface
     fun printReceipt(data: String) {
-        getPrinter().printReceipt(data) { result ->
+        getActivePrinter().printReceipt(data) { result ->
             callJsCallback("onPrintResult", result)
         }
     }
 
     @JavascriptInterface
     fun printLabel(data: String) {
-        getPrinter().printLabel(data) { result ->
+        getActivePrinter().printLabel(data) { result ->
             callJsCallback("onPrintResult", result)
         }
     }
 
     @JavascriptInterface
     fun printRaw(base64Data: String) {
-        getPrinter().printRaw(base64Data) { result ->
+        getActivePrinter().printRaw(base64Data) { result ->
             callJsCallback("onPrintResult", result)
         }
     }
@@ -874,7 +915,7 @@ class NativeBridge(private val context: Context) {
         val bytes = android.util.Base64.decode(base64Data, android.util.Base64.DEFAULT)
         val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
         if (bitmap != null) {
-            getPrinter().printBitmap(bitmap) { result ->
+            getActivePrinter().printBitmap(bitmap) { result ->
                 callJsCallback("onPrintResult", result)
             }
         } else {

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-48:/values/values.xml",
+            "outputFile": "com.itoktoni.coldstorage.app-mergeDebugResources-51:/values/values.xml",
             "map": [
                 {
                     "source": "C:\\Users\\itokt\\.gradle\\caches\\9.7.0\\transforms\\f3aa2ca05b74001e00ad76290e53eea3\\transformed\\cardview-1.0.0\\res\\values\\values.xml",

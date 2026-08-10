@@ -15,6 +15,38 @@ const BluetoothPrinter = {
         return typeof NativeBridge !== 'undefined' && typeof NativeBridge.getPairedPrinters === 'function';
     },
 
+    hasPermission() {
+        if (!this.isNative()) return true;
+        if (typeof NativeBridge.hasBluetoothPermission !== 'function') return true;
+        try {
+            return NativeBridge.hasBluetoothPermission() === true;
+        } catch (e) {
+            return true;
+        }
+    },
+
+    requestPermission() {
+        if (!this.isNative()) return;
+        if (typeof NativeBridge.requestBluetoothPermission !== 'function') return;
+        NativeBridge.requestBluetoothPermission();
+    },
+
+    getEngine() {
+        if (!this.isNative()) return 'manual';
+        if (typeof NativeBridge.getPrinterEngine !== 'function') return 'manual';
+        try {
+            return NativeBridge.getPrinterEngine();
+        } catch (e) {
+            return 'manual';
+        }
+    },
+
+    setEngine(engine) {
+        if (!this.isNative()) return;
+        if (typeof NativeBridge.setPrinterEngine !== 'function') return;
+        NativeBridge.setPrinterEngine(engine);
+    },
+
     // ─── Discovery ───
 
     getPairedPrinters() {
