@@ -151,6 +151,11 @@ Route::middleware(['auth', 'verified', 'access'])->group(function () {
     Route::auto('/cms/tag', 'Cms\TagController', ['name' => 'tag']);
     Route::auto('/cms/menu', 'Cms\MenuController', ['name' => 'menu']);
 
+    // NativeBridge Test Page
+    Route::get('/native-bridge-test', function () {
+        return view('pages.settings.native-bridge-test');
+    })->name('native-bridge-test');
+
     // Section HTML API (AJAX section loading)
     Route::get('/cms/content-entry/field-group-html/{id}', [ContentController::class, 'getSectionHtml'])->name('cms.section.html');
 

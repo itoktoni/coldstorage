@@ -33,3 +33,6 @@ npm.lock
 /.kiro
 /.opencode
 /.agents
+
+# EnvKit — never commit .env backups (they contain secrets)
+.env.bkp*

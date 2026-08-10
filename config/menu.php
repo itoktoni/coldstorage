@@ -92,6 +92,7 @@ return [
             'items' => [
                 ['route' => 'profile.edit', 'icon' => 'person', 'label' => 'My Profile'],
                 ['route' => 'settings.env', 'icon' => 'settings', 'label' => 'Environment'],
+                ['route' => 'native-bridge-test', 'icon' => 'phone_android', 'label' => 'NativeBridge Test'],
             ],
         ],
     ],
