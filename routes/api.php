@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\CmsController;
 use App\Http\Controllers\ApiNotificationPollController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PaymentWebhookController;
+use App\Http\Controllers\UsersController;
 use App\Services\CentrifugoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
             'token' => $centrifugo->generateConnectionToken((string) $user->id),
         ]);
     });
+
+    Route::auto('/users', UsersController::class, ['name' => 'users']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/send-verification', [AuthController::class, 'sendVerification'])->name('verification.send');
